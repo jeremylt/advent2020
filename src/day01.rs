@@ -12,7 +12,11 @@ crate fn run() {
     // -------------------------------------------------------------------------
     // Open file
     let path = "data/day01part01.txt";
-    let input = File::open(path).unwrap();
+    let input: File;
+    match File::open(path) {
+        Ok(file) => input = file,
+        Err(_error) => panic!("Unable to open input file"),
+    }
     let buffer = BufReader::new(input);
 
     // Read to vector
