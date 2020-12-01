@@ -1,0 +1,26 @@
+name: Rust
+
+on:
+  push:
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - name: Environment setup
+      uses: actions/checkout@v2
+    - name: Rust setup
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+    - name: Rust test
+      run: |
+        cargo test
+    - name: Rust style
+      run: |
+        cargo fmt -- --check
