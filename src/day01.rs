@@ -5,7 +5,8 @@ use std::io::{BufRead, BufReader};
 // Day 1
 // -----------------------------------------------------------------------------
 crate fn run() {
-    println!("- Day 1");
+    println!("- Day 1:");
+
     // -------------------------------------------------------------------------
     // Part 1
     // -------------------------------------------------------------------------
@@ -23,8 +24,8 @@ crate fn run() {
     // Mask array
     const YEAR: usize = 2020;
     let mut mask = [false; YEAR + 1];
-    for value in values {
-        mask[value] = true;
+    for value in &values {
+        mask[*value] = true;
     }
 
     // Look for pair
@@ -34,12 +35,34 @@ crate fn run() {
         .zip(mask.iter().rev())
         .find_map(|((i, a), b)| if a & b { Some(i) } else { None })
         .unwrap();
+    let tuple = (index, YEAR - index);
 
     // Report
-    println!("  Part 1:");
-    println!("    Product: {}", index * (2020 - index));
+    println!("    Part 1:");
+    println!("      Values : {}, {}", tuple.0, tuple.1);
+    println!("      Product: {}", tuple.0 * tuple.1);
 
     // -------------------------------------------------------------------------
     // Part 2
     // -------------------------------------------------------------------------
+    // Look for triple
+    let mut triple = (0, 0, 0);
+    for value in &values {
+        let chunk_size = YEAR - *value + 1;
+        let chunk = mask.chunks(chunk_size).next().unwrap();
+        let index = chunk
+            .iter()
+            .enumerate()
+            .zip(chunk.iter().rev())
+            .find_map(|((i, a), b)| if a & b { Some(i) } else { None });
+        if index != None {
+            triple = (*value, index.unwrap(), YEAR - *value - index.unwrap());
+            break;
+        }
+    }
+
+    // Report
+    println!("    Part 2:");
+    println!("      Values : {}, {}, {}", triple.0, triple.1, triple.2);
+    println!("      Product: {}", triple.0 * triple.1 * triple.2);
 }
