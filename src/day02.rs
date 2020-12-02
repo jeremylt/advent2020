@@ -25,9 +25,9 @@ pub fn run() -> (usize, usize) {
     lazy_static! {
         static ref RE_LINE: Regex = Regex::new(
             r"(?x)
-            (?P<min>\d+) # min number of reps
+            (?P<lower>\d+) # lower requirement
             -
-            (?P<max>\d+) # max number of reps
+            (?P<upper>\d+) # upper requirement
             \s
             (?P<required>\w): # required character
             \s
@@ -39,38 +39,34 @@ pub fn run() -> (usize, usize) {
     for line in buffer.lines() {
         // Parse line
         let capture_groups = RE_LINE.captures(line.as_ref().unwrap()).unwrap();
-        let min = capture_groups
-            .name("min")
-            .map_or("", |m| m.as_str())
-            .parse()
-            .unwrap();
-        let max = capture_groups
-            .name("max")
-            .map_or("", |m| m.as_str())
-            .parse()
-            .unwrap();
+        let lower = capture_groups
+            .name("lower")
+            .map_or(0, |lower| lower.as_str().parse().unwrap());
+        let upper = capture_groups
+            .name("upper")
+            .map_or(0, |upper| upper.as_str().parse().unwrap());
         let required: String = (*capture_groups
             .name("required")
-            .map_or("", |m| m.as_str()))
+            .map_or("", |required| required.as_str()))
         .to_string();
         let password: String = (*capture_groups
             .name("password")
-            .map_or("", |m| m.as_str()))
+            .map_or("", |password| password.as_str()))
         .to_string();
-        data.push((min, max, required, password));
+        data.push((lower, upper, required, password));
     }
 
     // -------------------------------------------------------------------------
     // Part 1
     // -------------------------------------------------------------------------
-    let mut part_1 = 0;
-    for (min, max, required, password) in &data {
-        // Check line
+    let part_1 = data.iter().fold(0, |acc, (min, max, required, password)| {
         let number_matches = password.matches(required).count();
         if (number_matches >= *min) && (number_matches <= *max) {
-            part_1 += 1;
+            acc + 1
+        } else {
+            acc
         }
-    }
+    });
 
     // Report
     println!("    Part 1:");
@@ -79,18 +75,18 @@ pub fn run() -> (usize, usize) {
     // -------------------------------------------------------------------------
     // Part 2
     // -------------------------------------------------------------------------
-    let mut part_2 = 0;
-    for (min, max, required, password) in &data {
-        // Check line
-        let length = password.len();
-        if (length >= *min) && (length >= *max) {
-            let first = &password[min - 1..*min];
-            let second = &password[max - 1..*max];
+    let part_2 = data
+        .iter()
+        .fold(0, |acc, (lower, upper, required, password)| {
+            let first = &password[lower - 1..*lower];
+            let second = &password[upper - 1..*upper];
             if (first != second) && ((first == required) || (second == required)) {
-                part_2 += 1;
+                acc + 1
+            } else {
+                acc
             }
-        }
-    }
+        });
+
     // Report
     println!("    Part 2:");
     println!("      Number of Valid: {}", part_2);
