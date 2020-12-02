@@ -3,6 +3,37 @@ use std::fs::File;
 use std::io::{BufRead, BufReader};
 
 // -----------------------------------------------------------------------------
+// Part 1
+// -----------------------------------------------------------------------------
+fn part01(
+    acc: usize,
+    (upper, lower, required, password): &(usize, usize, String, String),
+) -> usize {
+    let number_matches = password.matches(required).count();
+    if (number_matches >= *upper) && (number_matches <= *lower) {
+        acc + 1
+    } else {
+        acc
+    }
+}
+
+// -----------------------------------------------------------------------------
+// Part 2
+// -----------------------------------------------------------------------------
+fn part02(
+    acc: usize,
+    (upper, lower, required, password): &(usize, usize, String, String),
+) -> usize {
+    let first = &password[lower - 1..*lower];
+    let second = &password[upper - 1..*upper];
+    if (first != second) && ((first == required) || (second == required)) {
+        acc + 1
+    } else {
+        acc
+    }
+}
+
+// -----------------------------------------------------------------------------
 // Day 2
 // -----------------------------------------------------------------------------
 pub fn run() -> (usize, usize) {
@@ -59,14 +90,7 @@ pub fn run() -> (usize, usize) {
     // -------------------------------------------------------------------------
     // Part 1
     // -------------------------------------------------------------------------
-    let part_1 = data.iter().fold(0, |acc, (min, max, required, password)| {
-        let number_matches = password.matches(required).count();
-        if (number_matches >= *min) && (number_matches <= *max) {
-            acc + 1
-        } else {
-            acc
-        }
-    });
+    let part_1 = data.iter().fold(0, part01);
 
     // Report
     println!("    Part 1:");
@@ -75,17 +99,7 @@ pub fn run() -> (usize, usize) {
     // -------------------------------------------------------------------------
     // Part 2
     // -------------------------------------------------------------------------
-    let part_2 = data
-        .iter()
-        .fold(0, |acc, (lower, upper, required, password)| {
-            let first = &password[lower - 1..*lower];
-            let second = &password[upper - 1..*upper];
-            if (first != second) && ((first == required) || (second == required)) {
-                acc + 1
-            } else {
-                acc
-            }
-        });
+    let part_2 = data.iter().fold(0, part02);
 
     // Report
     println!("    Part 2:");
