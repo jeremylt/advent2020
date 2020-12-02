@@ -9,21 +9,54 @@ mod day01;
 mod day02;
 
 // -----------------------------------------------------------------------------
+// Results struct
+// -----------------------------------------------------------------------------
+#[derive(Debug)]
+pub(crate) struct Results {
+    part1: i32,
+    part2: i32,
+    time: u128,
+}
+
+// -----------------------------------------------------------------------------
+// Prelude
+// -----------------------------------------------------------------------------
+
+pub(crate) mod prelude {
+    pub(crate) use crate::Results;
+    pub(crate) use std::fs::File;
+    pub(crate) use std::io::{BufRead, BufReader};
+    pub(crate) use std::time::Instant;
+}
+
+// -----------------------------------------------------------------------------
 // Main Driver
 // -----------------------------------------------------------------------------
 fn main() {
-    println!("{}", "-------------------------------".green().bold());
+    println!(
+        "{}",
+        "-----------------------------------------".green().bold()
+    );
     println!(
         "{} {} {}",
-        "-----".red().bold(),
-        "Advent of Code 2020",
-        "-----".red().bold()
+        "----------".red().bold(),
+        "Advent of Code 2020".bold(),
+        "----------".red().bold()
     );
-    println!("{}", "-------------------------------".green().bold());
+    println!(
+        "{}",
+        "-----------------------------------------".green().bold()
+    );
     day01::run();
-    println!("{}", "-------------------------------".green().bold());
+    println!(
+        "{}",
+        "-----------------------------------------".green().bold()
+    );
     day02::run();
-    println!("{}", "-------------------------------".green().bold());
+    println!(
+        "{}",
+        "-----------------------------------------".green().bold()
+    );
 }
 
 // -----------------------------------------------------------------------------
@@ -36,17 +69,17 @@ mod tests {
     #[test]
     fn test01() {
         let results = day01::run();
-        assert_eq!(results.0, 326211); // Part 1
-        assert_eq!(results.1, 131347190); // Part 2
-        assert!(results.2 < 250); // Timing
+        assert_eq!(results.part1, 326211);
+        assert_eq!(results.part2, 131347190);
+        assert!(results.time < 250);
     }
 
     #[test]
     fn test02() {
         let results = day02::run();
-        assert_eq!(results.0, 538); // Part 1
-        assert_eq!(results.1, 489); // Part 2
-        assert!(results.2 < 250); // Timing
+        assert_eq!(results.part1, 538);
+        assert_eq!(results.part2, 489);
+        assert!(results.time < 250);
     }
 }
 

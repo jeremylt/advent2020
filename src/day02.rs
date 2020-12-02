@@ -1,7 +1,5 @@
+use crate::prelude::*;
 use regex::Regex;
-use std::fs::File;
-use std::io::{BufRead, BufReader};
-use std::time::Instant;
 
 // -----------------------------------------------------------------------------
 // Line parsing regex
@@ -60,7 +58,7 @@ fn part02(acc: i32, data: &PasswordData) -> i32 {
 // -----------------------------------------------------------------------------
 // Day 2
 // -----------------------------------------------------------------------------
-pub fn run() -> (i32, i32, u128) {
+pub(crate) fn run() -> Results {
     println!("- Day 2");
     let start = Instant::now();
 
@@ -110,7 +108,8 @@ pub fn run() -> (i32, i32, u128) {
 
     // Report
     println!("    Part 1:");
-    println!("      Number of Valid: {}", count_1);
+    println!("      Rule : required number");
+    println!("      Valid: {}", count_1);
 
     // -------------------------------------------------------------------------
     // Part 2
@@ -119,14 +118,19 @@ pub fn run() -> (i32, i32, u128) {
 
     // Report
     println!("    Part 2:");
-    println!("      Number of Valid: {}", count_2);
+    println!("      Rule : only one of two");
+    println!("      Valid: {}", count_2);
 
     // Timing
     let time = start.elapsed();
     println!("    Time: {:?}", time);
 
     // Return
-    return (count_1, count_2, time.as_millis());
+    return Results {
+        part1: count_1,
+        part2: count_2,
+        time: time.as_millis(),
+    };
 }
 
 // -----------------------------------------------------------------------------

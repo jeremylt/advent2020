@@ -1,6 +1,4 @@
-use std::fs::File;
-use std::io::{BufRead, BufReader};
-use std::time::Instant;
+use crate::prelude::*;
 
 const YEAR: usize = 2020;
 
@@ -51,7 +49,7 @@ fn part_2(values: &Vec<usize>, mask: &[bool]) -> (i32, i32, i32) {
 // -----------------------------------------------------------------------------
 // Day 1
 // -----------------------------------------------------------------------------
-pub fn run() -> (i32, i32, u128) {
+pub(crate) fn run() -> Results {
     println!("- Day 1");
     let start = Instant::now();
 
@@ -108,7 +106,11 @@ pub fn run() -> (i32, i32, u128) {
     println!("    Time: {:?}", time);
 
     // Return
-    return (product_1, product_2, time.as_millis());
+    return Results {
+        part1: product_1,
+        part2: product_2,
+        time: time.as_millis(),
+    };
 }
 
 // -----------------------------------------------------------------------------
