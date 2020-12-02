@@ -21,11 +21,22 @@ lazy_static! {
 }
 
 // -----------------------------------------------------------------------------
+// Password data struct
+// -----------------------------------------------------------------------------
+#[derive(Debug)]
+pub struct PasswordData {
+    lower: usize,
+    upper: usize,
+    required: String,
+    password: String,
+}
+
+// -----------------------------------------------------------------------------
 // Part 1
 // -----------------------------------------------------------------------------
-fn part01(acc: i32, (upper, lower, required, password): &(usize, usize, String, String)) -> i32 {
-    let number_matches = password.matches(required).count();
-    if (number_matches >= *upper) && (number_matches <= *lower) {
+fn part01(acc: i32, data: &PasswordData) -> i32 {
+    let number_matches = data.password.matches(&data.required).count();
+    if (number_matches >= data.lower) && (number_matches <= data.upper) {
         acc + 1
     } else {
         acc
@@ -35,10 +46,10 @@ fn part01(acc: i32, (upper, lower, required, password): &(usize, usize, String, 
 // -----------------------------------------------------------------------------
 // Part 2
 // -----------------------------------------------------------------------------
-fn part02(acc: i32, (upper, lower, required, password): &(usize, usize, String, String)) -> i32 {
-    let first = &password[lower - 1..*lower];
-    let second = &password[upper - 1..*upper];
-    if (first == required) != (second == required) {
+fn part02(acc: i32, data: &PasswordData) -> i32 {
+    let first = &data.password[data.lower - 1..data.lower];
+    let second = &data.password[data.upper - 1..data.upper];
+    if (first == data.required) != (second == data.required) {
         acc + 1
     } else {
         acc
@@ -64,7 +75,7 @@ pub fn run() -> (i32, i32) {
     let buffer = BufReader::new(input);
 
     // Read to vector
-    let mut data: Vec<(usize, usize, String, String)> = Vec::new();
+    let mut data: Vec<PasswordData> = Vec::new();
     for line in buffer.lines() {
         // Parse line
         let capture_groups = RE_LINE.captures(line.as_ref().unwrap()).unwrap();
@@ -82,7 +93,12 @@ pub fn run() -> (i32, i32) {
             .name("password")
             .map_or("", |value| value.as_str()))
         .to_string();
-        data.push((lower, upper, required, password));
+        data.push(PasswordData {
+            lower,
+            upper,
+            required,
+            password,
+        });
     }
 
     // -------------------------------------------------------------------------
