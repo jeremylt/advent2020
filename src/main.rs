@@ -1,6 +1,6 @@
 #[macro_use]
 extern crate lazy_static;
-const NUMBER_DASHES: usize = 41;
+const NUMBER_DASHES: usize = 80;
 // -----------------------------------------------------------------------------
 // Modules
 // -----------------------------------------------------------------------------
@@ -34,20 +34,14 @@ pub(crate) mod prelude {
 // Print header
 // -----------------------------------------------------------------------------
 fn header() {
-    println!(
-        "{}",
-        "-----------------------------------------".green().bold()
-    );
+    println!("{}", "-".repeat(NUMBER_DASHES).green().bold());
     println!(
         "{} {} {}",
-        "----------".red().bold(),
+        "-".repeat(NUMBER_DASHES / 2 - 10).red().bold(),
         "Advent of Code 2020".bold(),
-        "----------".red().bold()
+        "-".repeat(NUMBER_DASHES / 2 - 11).red().bold()
     );
-    println!(
-        "{}",
-        "-----------------------------------------".green().bold()
-    );
+    println!("{}", "-".repeat(NUMBER_DASHES).green().bold());
 }
 
 // -----------------------------------------------------------------------------
@@ -62,7 +56,7 @@ fn main() {
 
     // Day comparison
     header();
-    println!("- Timing Comparison");
+    println!("- {}", "Timing Comparison".bold());
     let longest: f64 = *times.iter().max().unwrap() as f64;
     for (i, &time) in times.iter().enumerate() {
         let length = std::cmp::max(

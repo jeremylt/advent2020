@@ -50,7 +50,7 @@ fn part_2(values: &Vec<usize>, mask: &[bool]) -> (i32, i32, i32) {
 // Day 1
 // -----------------------------------------------------------------------------
 pub(crate) fn run() -> Results {
-    println!("- Dec 01");
+    println!("- {}", "Day 01".bold());
     let start_all = Instant::now();
 
     // -------------------------------------------------------------------------
@@ -107,20 +107,20 @@ pub(crate) fn run() -> Results {
     // Report
     // -------------------------------------------------------------------------
     // Setup
-    println!("    {}:", "Setup".cyan());
+    println!("    {}:", "Setup".cyan().bold());
     println!("      Time     : {:?}", time_setup);
     // Part 1
-    println!("    {}:", "Part 1".yellow());
+    println!("    {}:", "Part 1".yellow().bold());
     println!("      Values   : {}, {}", tuple.0, tuple.1);
     println!("      Product  : {}", product_1);
     println!("      Time     : {:?}", time_part_1);
     // Part 2
-    println!("    {}:", "Part 2".blue());
+    println!("    {}:", "Part 2".blue().bold());
     println!("      Values   : {}, {}, {}", triple.0, triple.1, triple.2);
     println!("      Product  : {}", product_2);
     println!("      Time     : {:?}", time_part_2);
     // Timing
-    println!("    Total Time : {:?}", time);
+    println!("    {} : {:?}", "Total Time".purple().bold(), time);
     let part_1_portion = std::cmp::max(
         1,
         (NUMBER_DASHES as f64 * (time_part_1.as_nanos() as f64 / time.as_nanos() as f64)) as usize,

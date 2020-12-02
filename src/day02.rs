@@ -59,7 +59,7 @@ fn part02(acc: i32, data: &PasswordData) -> i32 {
 // Day 2
 // -----------------------------------------------------------------------------
 pub(crate) fn run() -> Results {
-    println!("- Dec 02");
+    println!("- {}", "Day 02".bold());
     let start_all = Instant::now();
 
     // -------------------------------------------------------------------------
@@ -129,20 +129,20 @@ pub(crate) fn run() -> Results {
     // Report
     // -------------------------------------------------------------------------
     // Setup
-    println!("    {}:", "Setup".cyan());
+    println!("    {}:", "Setup".cyan().bold());
     println!("      Time     : {:?}", time_setup);
     // Part 1
-    println!("    {}:", "Part 1".yellow());
+    println!("    {}:", "Part 1".yellow().bold());
     println!("      Rule     : required number");
     println!("      Valid    : {}", count_1);
     println!("      Time     : {:?}", time_part_1);
     // Part 2
-    println!("    {}:", "Part 2".blue());
+    println!("    {}:", "Part 2".blue().bold());
     println!("      Rule     : only one of two");
     println!("      Valid    : {}", count_2);
     println!("      Time     : {:?}", time_part_2);
     // Timing
-    println!("    Total Time : {:?}", time);
+    println!("    {} : {:?}", "Total Time".purple().bold(), time);
     let part_1_portion = std::cmp::max(
         1,
         (NUMBER_DASHES as f64 * (time_part_1.as_nanos() as f64 / time.as_nanos() as f64)) as usize,
