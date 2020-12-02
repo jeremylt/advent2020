@@ -38,7 +38,7 @@ fn part01(acc: i32, (upper, lower, required, password): &(usize, usize, String, 
 fn part02(acc: i32, (upper, lower, required, password): &(usize, usize, String, String)) -> i32 {
     let first = &password[lower - 1..*lower];
     let second = &password[upper - 1..*upper];
-    if (first != second) && ((first == required) || (second == required)) {
+    if (first == required) != (second == required) {
         acc + 1
     } else {
         acc
