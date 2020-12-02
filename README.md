@@ -15,7 +15,7 @@ To run
 
     cargo run --release
 
-# Try It
+## Try It
 
 You can try this repo live on [repl.it](https://repl.it/@jeremylt/advent2020#README.md).
 Note that this may be quite slow to download and install all of the packages.
