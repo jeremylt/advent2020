@@ -51,13 +51,11 @@ pub fn run() -> (usize, usize) {
             .unwrap();
         let required: String = (*capture_groups
             .name("required")
-            .map_or("", |m| m.as_str())
-            .clone())
+            .map_or("", |m| m.as_str()))
         .to_string();
         let password: String = (*capture_groups
             .name("password")
-            .map_or("", |m| m.as_str())
-            .clone())
+            .map_or("", |m| m.as_str()))
         .to_string();
         data.push((min, max, required, password));
     }
