@@ -22,21 +22,23 @@ pub fn run() -> (usize, usize) {
 
     // Read to vector
     let mut data: Vec<(usize, usize, String, String)> = Vec::new();
-    let re = Regex::new(
-        r"(?x)
-        (?P<min>\d+) # min number of reps
-        -
-        (?P<max>\d+) # max number of reps
-        \s
-        (?P<required>\w): # required character
-        \s
-        (?P<password>\w+) # password to check
-    ",
-    )
-    .unwrap();
+    lazy_static! {
+        static ref RE_LINE: Regex = Regex::new(
+            r"(?x)
+            (?P<min>\d+) # min number of reps
+            -
+            (?P<max>\d+) # max number of reps
+            \s
+            (?P<required>\w): # required character
+            \s
+            (?P<password>\w+) # password to check
+            ",
+        )
+        .unwrap();
+    }
     for line in buffer.lines() {
         // Parse line
-        let capture_groups = re.captures(line.as_ref().unwrap()).unwrap();
+        let capture_groups = RE_LINE.captures(line.as_ref().unwrap()).unwrap();
         let min = capture_groups
             .name("min")
             .map_or("", |m| m.as_str())
@@ -66,8 +68,7 @@ pub fn run() -> (usize, usize) {
     let mut part_1 = 0;
     for (min, max, required, password) in &data {
         // Check line
-        let re_password = Regex::new(&required).unwrap();
-        let number_matches = re_password.find_iter(&password).count();
+        let number_matches = password.matches(required).count();
         if (number_matches >= *min) && (number_matches <= *max) {
             part_1 += 1;
         }
