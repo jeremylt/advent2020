@@ -47,7 +47,7 @@ fn part_2(values: &Vec<usize>, mask: &[bool]) -> (usize, usize, usize) {
 // Day 1
 // -----------------------------------------------------------------------------
 pub fn run() -> (usize, usize) {
-    println!("- Day 1:");
+    println!("\n- Day 1:");
 
     // -------------------------------------------------------------------------
     // Data
@@ -63,7 +63,7 @@ pub fn run() -> (usize, usize) {
 
     // Read to vector
     let mut values: Vec<usize> = Vec::new();
-    for (_, line) in buffer.lines().enumerate() {
+    for line in buffer.lines() {
         values.push(line.unwrap().parse().unwrap());
     }
 

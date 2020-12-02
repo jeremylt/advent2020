@@ -2,6 +2,7 @@
 // Modules
 // -----------------------------------------------------------------------------
 mod day01;
+mod day02;
 
 // -----------------------------------------------------------------------------
 // Main Driver
@@ -10,6 +11,7 @@ fn main() {
     println!("Advent of Code 2020");
 
     day01::run();
+    day02::run();
 }
 
 // -----------------------------------------------------------------------------
@@ -24,6 +26,13 @@ mod tests {
         let results = day01::run();
         assert_eq!(results.0, 326211);
         assert_eq!(results.1, 131347190);
+    }
+
+    #[test]
+    fn test02() {
+        let results = day02::run();
+        assert_eq!(results.0, 538);
+        assert_eq!(results.1, 489);
     }
 }
 
