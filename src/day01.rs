@@ -6,37 +6,41 @@ const YEAR: usize = 2020;
 // -----------------------------------------------------------------------------
 // Find pair of flaged indices that sum to length of mask array
 // -----------------------------------------------------------------------------
-fn find_two(array: &[bool]) -> Option<usize> {
+fn find_two(array: &[bool]) -> Option<i32> {
     let value = array
         .iter()
         .enumerate()
         .zip(array.iter().rev())
-        .find_map(|((i, a), b)| if a & b { Some(i) } else { None });
+        .find_map(|((i, a), b)| if a & b { Some(i as i32) } else { None });
     value
 }
 
 // -----------------------------------------------------------------------------
 // Part 1
 // -----------------------------------------------------------------------------
-fn part_1(mask: &[bool]) -> (usize, usize) {
-    let index: usize;
+fn part_1(mask: &[bool]) -> (i32, i32) {
+    let index: i32;
     match find_two(&mask) {
         Some(value) => index = value,
         None => panic!("No pair found"),
     }
-    (index, YEAR - index)
+    (index, YEAR as i32 - index)
 }
 
 // -----------------------------------------------------------------------------
 // Part 2
 // -----------------------------------------------------------------------------
-fn part_2(values: &Vec<usize>, mask: &[bool]) -> (usize, usize, usize) {
+fn part_2(values: &Vec<usize>, mask: &[bool]) -> (i32, i32, i32) {
     for value in values {
         let chunk_size = YEAR - *value + 1;
         let chunk = mask.chunks(chunk_size).next().unwrap();
         let index = find_two(&chunk);
         if index != None {
-            let triple = (*value, index.unwrap(), YEAR - *value - index.unwrap());
+            let triple = (
+                *value as i32,
+                index.unwrap(),
+                YEAR as i32 - *value as i32 - index.unwrap(),
+            );
             return triple;
         }
     }
@@ -46,7 +50,7 @@ fn part_2(values: &Vec<usize>, mask: &[bool]) -> (usize, usize, usize) {
 // -----------------------------------------------------------------------------
 // Day 1
 // -----------------------------------------------------------------------------
-pub fn run() -> (usize, usize) {
+pub fn run() -> (i32, i32) {
     println!("\n- Day 1:");
 
     // -------------------------------------------------------------------------

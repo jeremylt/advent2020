@@ -5,10 +5,7 @@ use std::io::{BufRead, BufReader};
 // -----------------------------------------------------------------------------
 // Part 1
 // -----------------------------------------------------------------------------
-fn part01(
-    acc: usize,
-    (upper, lower, required, password): &(usize, usize, String, String),
-) -> usize {
+fn part01(acc: i32, (upper, lower, required, password): &(usize, usize, String, String)) -> i32 {
     let number_matches = password.matches(required).count();
     if (number_matches >= *upper) && (number_matches <= *lower) {
         acc + 1
@@ -20,10 +17,7 @@ fn part01(
 // -----------------------------------------------------------------------------
 // Part 2
 // -----------------------------------------------------------------------------
-fn part02(
-    acc: usize,
-    (upper, lower, required, password): &(usize, usize, String, String),
-) -> usize {
+fn part02(acc: i32, (upper, lower, required, password): &(usize, usize, String, String)) -> i32 {
     let first = &password[lower - 1..*lower];
     let second = &password[upper - 1..*upper];
     if (first != second) && ((first == required) || (second == required)) {
@@ -36,7 +30,7 @@ fn part02(
 // -----------------------------------------------------------------------------
 // Day 2
 // -----------------------------------------------------------------------------
-pub fn run() -> (usize, usize) {
+pub fn run() -> (i32, i32) {
     println!("\n- Day 2:");
 
     // -------------------------------------------------------------------------
