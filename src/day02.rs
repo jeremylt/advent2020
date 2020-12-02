@@ -60,7 +60,7 @@ fn part02(acc: i32, data: &PasswordData) -> i32 {
 // -----------------------------------------------------------------------------
 pub(crate) fn run() -> Results {
     println!("- Day 2");
-    let start = Instant::now();
+    let start_all = Instant::now();
 
     // -------------------------------------------------------------------------
     // Data
@@ -101,31 +101,67 @@ pub(crate) fn run() -> Results {
         });
     }
 
+    // Timing
+    let time_setup = start_all.elapsed();
+
     // -------------------------------------------------------------------------
     // Part 1
     // -------------------------------------------------------------------------
+    // Find matching passwords
+    let start_part_1 = Instant::now();
     let count_1 = data.iter().fold(0, part01);
-
-    // Report
-    println!("    Part 1:");
-    println!("      Rule : required number");
-    println!("      Valid: {}", count_1);
+    let time_part_1 = start_part_1.elapsed();
 
     // -------------------------------------------------------------------------
     // Part 2
     // -------------------------------------------------------------------------
+    // Find matching passwords
+    let start_part_2 = Instant::now();
     let count_2 = data.iter().fold(0, part02);
+    let time_part_2 = start_part_2.elapsed();
 
+    // -------------------------------------------------------------------------
+    // Timing
+    // -------------------------------------------------------------------------
+    let time = start_all.elapsed();
+
+    // -------------------------------------------------------------------------
     // Report
-    println!("    Part 2:");
+    // -------------------------------------------------------------------------
+    // Setup
+    println!("    {}:", "Setup".yellow());
+    println!("      Time: {:?}", time_setup);
+    // Part 1
+    println!("    {}:", "Part 1".cyan());
+    println!("      Rule : required number");
+    println!("      Valid: {}", count_1);
+    println!("      Time: {:?}", time_part_1);
+    // Part 2
+    println!("    {}:", "Part 2".blue());
     println!("      Rule : only one of two");
     println!("      Valid: {}", count_2);
-
+    println!("      Time: {:?}", time_part_2);
     // Timing
-    let time = start.elapsed();
-    println!("    Time: {:?}", time);
+    println!("    Final Time: {:?}", time);
+    let part_1_portion = std::cmp::max(
+        1,
+        (NUMBER_DASHES as f64 * (time_part_1.as_nanos() as f64 / time.as_nanos() as f64)) as usize,
+    );
+    let part_2_portion = std::cmp::max(
+        1,
+        (NUMBER_DASHES as f64 * (time_part_2.as_nanos() as f64 / time.as_nanos() as f64)) as usize,
+    );
+    let setup_portion = NUMBER_DASHES - part_1_portion - part_2_portion;
+    println!(
+        "{}{}{}",
+        "-".repeat(setup_portion).yellow().bold(),
+        "-".repeat(part_1_portion).cyan().bold(),
+        "-".repeat(part_2_portion).blue().bold()
+    );
 
+    // -------------------------------------------------------------------------
     // Return
+    // -------------------------------------------------------------------------
     return Results {
         part1: count_1,
         part2: count_2,

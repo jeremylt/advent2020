@@ -1,7 +1,6 @@
 #[macro_use]
 extern crate lazy_static;
-use colored::*;
-
+const NUMBER_DASHES: usize = 41;
 // -----------------------------------------------------------------------------
 // Modules
 // -----------------------------------------------------------------------------
@@ -21,9 +20,11 @@ pub(crate) struct Results {
 // -----------------------------------------------------------------------------
 // Prelude
 // -----------------------------------------------------------------------------
-
+use crate::prelude::*;
 pub(crate) mod prelude {
     pub(crate) use crate::Results;
+    pub(crate) use crate::NUMBER_DASHES;
+    pub(crate) use colored::*;
     pub(crate) use std::fs::File;
     pub(crate) use std::io::{BufRead, BufReader};
     pub(crate) use std::time::Instant;
@@ -48,11 +49,13 @@ fn main() {
         "-----------------------------------------".green().bold()
     );
     day01::run();
-    println!(
-        "{}",
-        "-----------------------------------------".green().bold()
-    );
     day02::run();
+    println!(
+        "{} {} {}",
+        "----------".red().bold(),
+        "Advent of Code 2020".bold(),
+        "----------".red().bold()
+    );
     println!(
         "{}",
         "-----------------------------------------".green().bold()

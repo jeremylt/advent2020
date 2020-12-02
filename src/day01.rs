@@ -51,10 +51,10 @@ fn part_2(values: &Vec<usize>, mask: &[bool]) -> (i32, i32, i32) {
 // -----------------------------------------------------------------------------
 pub(crate) fn run() -> Results {
     println!("- Day 1");
-    let start = Instant::now();
+    let start_all = Instant::now();
 
     // -------------------------------------------------------------------------
-    // Data
+    // Setup
     // -------------------------------------------------------------------------
     // Open file
     let path = "data/day01part01.txt";
@@ -77,35 +77,69 @@ pub(crate) fn run() -> Results {
         mask[*value] = true;
     }
 
+    // Time
+    let time_setup = start_all.elapsed();
+
     // -------------------------------------------------------------------------
     // Part 1
     // -------------------------------------------------------------------------
     // Look for pair
+    let start_part_1 = Instant::now();
     let tuple = part_1(&mask);
     let product_1 = tuple.0 * tuple.1;
-
-    // Report
-    println!("    Part 1:");
-    println!("      Values : {}, {}", tuple.0, tuple.1);
-    println!("      Product: {}", product_1);
+    let time_part_1 = start_part_1.elapsed();
 
     // -------------------------------------------------------------------------
     // Part 2
     // -------------------------------------------------------------------------
     // Look for triple
+    let start_part_2 = Instant::now();
     let triple = part_2(&values, &mask);
     let product_2 = triple.0 * triple.1 * triple.2;
+    let time_part_2 = start_part_2.elapsed();
 
+    // -------------------------------------------------------------------------
+    // Timing
+    // -------------------------------------------------------------------------
+    let time = start_all.elapsed();
+
+    // -------------------------------------------------------------------------
     // Report
-    println!("    Part 2:");
+    // -------------------------------------------------------------------------
+    // Setup
+    println!("    {}:", "Setup".yellow());
+    println!("      Time: {:?}", time_setup);
+    // Part 1
+    println!("    {}:", "Part 1".cyan());
+    println!("      Values : {}, {}", tuple.0, tuple.1);
+    println!("      Product: {}", product_1);
+    println!("      Time: {:?}", time_part_1);
+    // Part 2
+    println!("    {}:", "Part 2".blue());
     println!("      Values : {}, {}, {}", triple.0, triple.1, triple.2);
     println!("      Product: {}", product_2);
-
+    println!("      Time: {:?}", time_part_2);
     // Timing
-    let time = start.elapsed();
-    println!("    Time: {:?}", time);
+    println!("    Final Time: {:?}", time);
+    let part_1_portion = std::cmp::max(
+        1,
+        (NUMBER_DASHES as f64 * (time_part_1.as_nanos() as f64 / time.as_nanos() as f64)) as usize,
+    );
+    let part_2_portion = std::cmp::max(
+        1,
+        (NUMBER_DASHES as f64 * (time_part_2.as_nanos() as f64 / time.as_nanos() as f64)) as usize,
+    );
+    let setup_portion = NUMBER_DASHES - part_1_portion - part_2_portion;
+    println!(
+        "{}{}{}",
+        "-".repeat(setup_portion).yellow().bold(),
+        "-".repeat(part_1_portion).cyan().bold(),
+        "-".repeat(part_2_portion).blue().bold()
+    );
 
+    // -------------------------------------------------------------------------
     // Return
+    // -------------------------------------------------------------------------
     return Results {
         part1: product_1,
         part2: product_2,
