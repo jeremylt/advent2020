@@ -31,35 +31,57 @@ pub(crate) mod prelude {
 }
 
 // -----------------------------------------------------------------------------
+// Print header
+// -----------------------------------------------------------------------------
+fn header() {
+    println!(
+        "{}",
+        "-----------------------------------------".green().bold()
+    );
+    println!(
+        "{} {} {}",
+        "----------".red().bold(),
+        "Advent of Code 2020".bold(),
+        "----------".red().bold()
+    );
+    println!(
+        "{}",
+        "-----------------------------------------".green().bold()
+    );
+}
+
+// -----------------------------------------------------------------------------
 // Main Driver
 // -----------------------------------------------------------------------------
 fn main() {
-    println!(
-        "{}",
-        "-----------------------------------------".green().bold()
-    );
-    println!(
-        "{} {} {}",
-        "----------".red().bold(),
-        "Advent of Code 2020".bold(),
-        "----------".red().bold()
-    );
-    println!(
-        "{}",
-        "-----------------------------------------".green().bold()
-    );
-    day01::run();
-    day02::run();
-    println!(
-        "{} {} {}",
-        "----------".red().bold(),
-        "Advent of Code 2020".bold(),
-        "----------".red().bold()
-    );
-    println!(
-        "{}",
-        "-----------------------------------------".green().bold()
-    );
+    // Each day
+    header();
+    let mut times: Vec<u128> = Vec::with_capacity(25);
+    times.push(day01::run().time);
+    times.push(day02::run().time);
+
+    // Day comparison
+    header();
+    println!("- Timing Comparison");
+    let longest: f64 = *times.iter().max().unwrap() as f64;
+    for (i, &time) in times.iter().enumerate() {
+        let length = std::cmp::max(
+            1,
+            ((NUMBER_DASHES - 7) as f64 * (time as f64 / longest)) as usize,
+        );
+        let dashes = "-".repeat(length);
+        println!(
+            "Dec {:02} {}",
+            i+1,
+            if i % 2 == 0 {
+                dashes.red()
+            } else {
+                dashes.green()
+            }
+        );
+    }
+
+    header();
 }
 
 // -----------------------------------------------------------------------------
