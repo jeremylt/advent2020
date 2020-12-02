@@ -60,8 +60,8 @@ pub fn run() -> (usize, usize) {
             -
             (?P<upper>\d+) # upper requirement
             \s
-            (?P<required>\w): # required character
-            \s
+            (?P<required>\w) # required character
+            :\s
             (?P<password>\w+) # password to check
             ",
         )
@@ -72,17 +72,17 @@ pub fn run() -> (usize, usize) {
         let capture_groups = RE_LINE.captures(line.as_ref().unwrap()).unwrap();
         let lower = capture_groups
             .name("lower")
-            .map_or(0, |lower| lower.as_str().parse().unwrap());
+            .map_or(0, |value| value.as_str().parse().unwrap());
         let upper = capture_groups
             .name("upper")
-            .map_or(0, |upper| upper.as_str().parse().unwrap());
+            .map_or(0, |value| value.as_str().parse().unwrap());
         let required: String = (*capture_groups
             .name("required")
-            .map_or("", |required| required.as_str()))
+            .map_or("", |value| value.as_str()))
         .to_string();
         let password: String = (*capture_groups
             .name("password")
-            .map_or("", |password| password.as_str()))
+            .map_or("", |value| value.as_str()))
         .to_string();
         data.push((lower, upper, required, password));
     }
@@ -90,23 +90,23 @@ pub fn run() -> (usize, usize) {
     // -------------------------------------------------------------------------
     // Part 1
     // -------------------------------------------------------------------------
-    let part_1 = data.iter().fold(0, part01);
+    let count_1 = data.iter().fold(0, part01);
 
     // Report
     println!("    Part 1:");
-    println!("      Number of Valid: {}", part_1);
+    println!("      Number of Valid: {}", count_1);
 
     // -------------------------------------------------------------------------
     // Part 2
     // -------------------------------------------------------------------------
-    let part_2 = data.iter().fold(0, part02);
+    let count_2 = data.iter().fold(0, part02);
 
     // Report
     println!("    Part 2:");
-    println!("      Number of Valid: {}", part_2);
+    println!("      Number of Valid: {}", count_2);
 
     // Return
-    return (part_1, part_2);
+    return (count_1, count_2);
 }
 
 // -----------------------------------------------------------------------------
