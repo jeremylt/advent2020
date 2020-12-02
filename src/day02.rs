@@ -86,10 +86,9 @@ pub fn run() -> (usize, usize) {
         // Check line
         let length = password.len();
         if (length >= *min) && (length >= *max) {
-            let first = password.as_bytes()[min - 1];
-            let second = password.as_bytes()[max - 1];
-            let value = required.as_bytes()[0];
-            if (first != second) && ((first == value) || (second == value)) {
+            let first = &password[min - 1..*min];
+            let second = &password[max - 1..*max];
+            if (first != second) && ((first == required) || (second == required)) {
                 part_2 += 1;
             }
         }
