@@ -1,6 +1,7 @@
 use regex::Regex;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
+use std::time::Instant;
 
 // -----------------------------------------------------------------------------
 // Line parsing regex
@@ -59,8 +60,10 @@ fn part02(acc: i32, data: &PasswordData) -> i32 {
 // -----------------------------------------------------------------------------
 // Day 2
 // -----------------------------------------------------------------------------
-pub fn run() -> (i32, i32) {
+pub fn run() -> (i32, i32, u128) {
     println!("\n- Day 2:");
+    println!("  -----------------------------");
+    let start = Instant::now();
 
     // -------------------------------------------------------------------------
     // Data
@@ -119,8 +122,13 @@ pub fn run() -> (i32, i32) {
     println!("    Part 2:");
     println!("      Number of Valid: {}", count_2);
 
+    // Timing
+    let time = start.elapsed();
+    println!("    Time: {:?}", time);
+    println!("  -----------------------------");
+
     // Return
-    return (count_1, count_2);
+    return (count_1, count_2, time.as_millis());
 }
 
 // -----------------------------------------------------------------------------

@@ -11,10 +11,14 @@ mod day02;
 // Main Driver
 // -----------------------------------------------------------------------------
 fn main() {
-    println!("Advent of Code 2020");
+    println!("-------------------------------");
+    println!("----- Advent of Code 2020 -----");
+    println!("-------------------------------");
 
     day01::run();
     day02::run();
+
+    println!("\n-------------------------------");
 }
 
 // -----------------------------------------------------------------------------
@@ -27,15 +31,17 @@ mod tests {
     #[test]
     fn test01() {
         let results = day01::run();
-        assert_eq!(results.0, 326211);
-        assert_eq!(results.1, 131347190);
+        assert_eq!(results.0, 326211); // Part 1
+        assert_eq!(results.1, 131347190); // Part 2
+        assert!(results.2 < 250); // Timing
     }
 
     #[test]
     fn test02() {
         let results = day02::run();
-        assert_eq!(results.0, 538);
-        assert_eq!(results.1, 489);
+        assert_eq!(results.0, 538); // Part 1
+        assert_eq!(results.1, 489); // Part 2
+        assert!(results.2 < 250); // Timing
     }
 }
 

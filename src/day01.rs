@@ -1,5 +1,6 @@
 use std::fs::File;
 use std::io::{BufRead, BufReader};
+use std::time::Instant;
 
 const YEAR: usize = 2020;
 
@@ -50,8 +51,10 @@ fn part_2(values: &Vec<usize>, mask: &[bool]) -> (i32, i32, i32) {
 // -----------------------------------------------------------------------------
 // Day 1
 // -----------------------------------------------------------------------------
-pub fn run() -> (i32, i32) {
+pub fn run() -> (i32, i32, u128) {
     println!("\n- Day 1:");
+    println!("  -----------------------------");
+    let start = Instant::now();
 
     // -------------------------------------------------------------------------
     // Data
@@ -101,8 +104,13 @@ pub fn run() -> (i32, i32) {
     println!("      Values : {}, {}, {}", triple.0, triple.1, triple.2);
     println!("      Product: {}", product_2);
 
+    // Timing
+    let time = start.elapsed();
+    println!("    Time: {:?}", time);
+    println!("  -----------------------------");
+
     // Return
-    return (product_1, product_2);
+    return (product_1, product_2, time.as_millis());
 }
 
 // -----------------------------------------------------------------------------
