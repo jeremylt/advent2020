@@ -85,13 +85,13 @@ pub fn run() -> (usize, usize) {
     for (min, max, required, password) in &data {
         // Check line
         let length = password.len();
-        if (length >= *min)
-            && (length >= *max)
-            && ((password.as_bytes()[min - 1] == required.as_bytes()[0])
-                || (password.as_bytes()[max - 1] == required.as_bytes()[0]))
-            && (password.as_bytes()[min - 1] != password.as_bytes()[max - 1])
-        {
-            part_2 += 1;
+        if (length >= *min) && (length >= *max) {
+            let first = password.as_bytes()[min - 1];
+            let second = password.as_bytes()[max - 1];
+            let value = required.as_bytes()[0];
+            if (first != second) && ((first == value) || (second == value)) {
+                part_2 += 1;
+            }
         }
     }
     // Report
