@@ -19,12 +19,10 @@ fn find_two(array: &[bool]) -> Option<i32> {
 // Part 1
 // -----------------------------------------------------------------------------
 fn part_1(mask: &[bool]) -> (i32, i32) {
-    let index: i32;
     match find_two(&mask) {
-        Some(value) => index = value,
+        Some(index) => (index, YEAR as i32 - index),
         None => panic!("No pair found"),
     }
-    (index, YEAR as i32 - index)
 }
 
 // -----------------------------------------------------------------------------
