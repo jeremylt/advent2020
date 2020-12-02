@@ -28,11 +28,10 @@ fn part_1(mask: &[bool]) -> (i32, i32) {
 // -----------------------------------------------------------------------------
 // Part 2
 // -----------------------------------------------------------------------------
-fn part_2(values: &Vec<usize>, mask: &[bool]) -> (i32, i32, i32) {
+fn part_2(values: &[usize], mask: &[bool]) -> (i32, i32, i32) {
     for value in values {
-        let chunk_size = YEAR - *value + 1;
-        let chunk = mask.chunks(chunk_size).next().unwrap();
-        let index = find_two(&chunk);
+        let remainder = YEAR - *value;
+        let index = find_two(&mask[0..=remainder]);
         if index != None {
             let triple = (
                 *value as i32,
