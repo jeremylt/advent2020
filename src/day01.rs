@@ -52,8 +52,7 @@ fn part_2(values: &Vec<usize>, mask: &[bool]) -> (i32, i32, i32) {
 // Day 1
 // -----------------------------------------------------------------------------
 pub fn run() -> (i32, i32, u128) {
-    println!("\n- Day 1:");
-    println!("  -----------------------------");
+    println!("- Day 1");
     let start = Instant::now();
 
     // -------------------------------------------------------------------------
@@ -107,7 +106,6 @@ pub fn run() -> (i32, i32, u128) {
     // Timing
     let time = start.elapsed();
     println!("    Time: {:?}", time);
-    println!("  -----------------------------");
 
     // Return
     return (product_1, product_2, time.as_millis());

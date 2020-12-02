@@ -61,8 +61,7 @@ fn part02(acc: i32, data: &PasswordData) -> i32 {
 // Day 2
 // -----------------------------------------------------------------------------
 pub fn run() -> (i32, i32, u128) {
-    println!("\n- Day 2:");
-    println!("  -----------------------------");
+    println!("- Day 2");
     let start = Instant::now();
 
     // -------------------------------------------------------------------------
@@ -125,7 +124,6 @@ pub fn run() -> (i32, i32, u128) {
     // Timing
     let time = start.elapsed();
     println!("    Time: {:?}", time);
-    println!("  -----------------------------");
 
     // Return
     return (count_1, count_2, time.as_millis());
