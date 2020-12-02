@@ -130,19 +130,19 @@ pub(crate) fn run() -> Results {
     // -------------------------------------------------------------------------
     // Setup
     println!("    {}:", "Setup".cyan());
-    println!("      Time: {:?}", time_setup);
+    println!("      Time     : {:?}", time_setup);
     // Part 1
     println!("    {}:", "Part 1".yellow());
-    println!("      Rule : required number");
-    println!("      Valid: {}", count_1);
-    println!("      Time: {:?}", time_part_1);
+    println!("      Rule     : required number");
+    println!("      Valid    : {}", count_1);
+    println!("      Time     : {:?}", time_part_1);
     // Part 2
     println!("    {}:", "Part 2".blue());
-    println!("      Rule : only one of two");
-    println!("      Valid: {}", count_2);
-    println!("      Time: {:?}", time_part_2);
+    println!("      Rule     : only one of two");
+    println!("      Valid    : {}", count_2);
+    println!("      Time     : {:?}", time_part_2);
     // Timing
-    println!("    Final Time: {:?}", time);
+    println!("    Total Time : {:?}", time);
     let part_1_portion = std::cmp::max(
         1,
         (NUMBER_DASHES as f64 * (time_part_1.as_nanos() as f64 / time.as_nanos() as f64)) as usize,
