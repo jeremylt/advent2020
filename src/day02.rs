@@ -3,6 +3,24 @@ use std::fs::File;
 use std::io::{BufRead, BufReader};
 
 // -----------------------------------------------------------------------------
+// Line parsing regex
+// -----------------------------------------------------------------------------
+lazy_static! {
+    static ref RE_LINE: Regex = Regex::new(
+        r"(?x)
+            (?P<lower>\d+) # lower requirement
+            -
+            (?P<upper>\d+) # upper requirement
+            \s
+            (?P<required>\w) # required character
+            :\s
+            (?P<password>\w+) # password to check
+            ",
+    )
+    .unwrap();
+}
+
+// -----------------------------------------------------------------------------
 // Part 1
 // -----------------------------------------------------------------------------
 fn part01(acc: i32, (upper, lower, required, password): &(usize, usize, String, String)) -> i32 {
@@ -47,20 +65,6 @@ pub fn run() -> (i32, i32) {
 
     // Read to vector
     let mut data: Vec<(usize, usize, String, String)> = Vec::new();
-    lazy_static! {
-        static ref RE_LINE: Regex = Regex::new(
-            r"(?x)
-            (?P<lower>\d+) # lower requirement
-            -
-            (?P<upper>\d+) # upper requirement
-            \s
-            (?P<required>\w) # required character
-            :\s
-            (?P<password>\w+) # password to check
-            ",
-        )
-        .unwrap();
-    }
     for line in buffer.lines() {
         // Parse line
         let capture_groups = RE_LINE.captures(line.as_ref().unwrap()).unwrap();
