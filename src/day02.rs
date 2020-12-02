@@ -165,7 +165,7 @@ pub(crate) fn run() -> Results {
     return Results {
         part1: count_1,
         part2: count_2,
-        time: time.as_millis(),
+        time: time.as_nanos(),
     };
 }
 

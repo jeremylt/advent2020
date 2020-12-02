@@ -1,6 +1,9 @@
 #[macro_use]
 extern crate lazy_static;
+
+// Constants
 const NUMBER_DASHES: usize = 80;
+
 // -----------------------------------------------------------------------------
 // Modules
 // -----------------------------------------------------------------------------
@@ -57,7 +60,7 @@ fn main() {
     // Day comparison
     header();
     println!("- {}", "Timing Comparison".bold());
-    let longest: f64 = *times.iter().max().unwrap() as f64;
+    let longest: f64 = (*times.iter().max().unwrap()) as f64;
     for (i, &time) in times.iter().enumerate() {
         let length = std::cmp::max(
             1,
@@ -84,13 +87,14 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+    const MAX_TIME: u128 = 250000000;
 
     #[test]
     fn test01() {
         let results = day01::run();
         assert_eq!(results.part1, 326211);
         assert_eq!(results.part2, 131347190);
-        assert!(results.time < 250);
+        assert!(results.time < MAX_TIME);
     }
 
     #[test]
@@ -98,7 +102,7 @@ mod tests {
         let results = day02::run();
         assert_eq!(results.part1, 538);
         assert_eq!(results.part2, 489);
-        assert!(results.time < 250);
+        assert!(results.time < MAX_TIME);
     }
 }
 

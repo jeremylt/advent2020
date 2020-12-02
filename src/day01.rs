@@ -1,5 +1,6 @@
 use crate::prelude::*;
 
+// Constant
 const YEAR: usize = 2020;
 
 // -----------------------------------------------------------------------------
@@ -143,7 +144,7 @@ pub(crate) fn run() -> Results {
     return Results {
         part1: product_1,
         part2: product_2,
-        time: time.as_millis(),
+        time: time.as_nanos(),
     };
 }
 
