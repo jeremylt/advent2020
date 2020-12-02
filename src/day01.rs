@@ -107,10 +107,10 @@ pub(crate) fn run() -> Results {
     // Report
     // -------------------------------------------------------------------------
     // Setup
-    println!("    {}:", "Setup".yellow());
+    println!("    {}:", "Setup".cyan());
     println!("      Time: {:?}", time_setup);
     // Part 1
-    println!("    {}:", "Part 1".cyan());
+    println!("    {}:", "Part 1".yellow());
     println!("      Values : {}, {}", tuple.0, tuple.1);
     println!("      Product: {}", product_1);
     println!("      Time: {:?}", time_part_1);
@@ -132,8 +132,8 @@ pub(crate) fn run() -> Results {
     let setup_portion = NUMBER_DASHES - part_1_portion - part_2_portion;
     println!(
         "{}{}{}",
-        "-".repeat(setup_portion).yellow().bold(),
-        "-".repeat(part_1_portion).cyan().bold(),
+        "-".repeat(setup_portion).cyan().bold(),
+        "-".repeat(part_1_portion).yellow().bold(),
         "-".repeat(part_2_portion).blue().bold()
     );
 
