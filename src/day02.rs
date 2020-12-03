@@ -63,15 +63,14 @@ pub(crate) fn run(print_summary: bool) -> Results {
     let buffer = file::load_file("data/day02part01.txt");
 
     // Read to object iterator
-    let data = buffer.lines().map(|line| {
-        line.unwrap()
-            .parse::<PasswordData>()
-            .expect("Could not parse line")
-    });
-
-    // Collect as a Vec so we can traverse multiple times
-    //   (skip if only one traversal is needed)
-    let data: Vec<_> = data.collect();
+    let data: Vec<PasswordData> = buffer
+        .lines()
+        .map(|line| {
+            line.unwrap()
+                .parse::<PasswordData>()
+                .expect("Could not parse line")
+        })
+        .collect();
 
     // Timing
     let time_setup = start_all.elapsed();

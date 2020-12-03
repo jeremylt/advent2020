@@ -7,8 +7,7 @@ fn count_trees(data: &Vec<String>, right: usize, down: usize, line_length: usize
     data.iter()
         .enumerate()
         .filter(|(i, line)| {
-            let mut chars = line.chars();
-            (i % down == 0) && (chars.nth(right * i / down % line_length).unwrap() == '#')
+            (i % down == 0) && (line.as_bytes()[right * i / down % line_length] == b'#')
         })
         .count()
 }
@@ -29,8 +28,7 @@ pub(crate) fn run(print_summary: bool) -> Results {
     let buffer = file::load_file("data/day03part01.txt");
 
     // Read to object iterator
-    let data = buffer.lines().map(|line| line.unwrap());
-    let data: Vec<_> = data.collect();
+    let data: Vec<String> = buffer.lines().map(|line| line.unwrap()).collect();
 
     // Timing
     let time_setup = start_all.elapsed();
