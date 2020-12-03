@@ -5,12 +5,8 @@ on:
 
 jobs:
   test:
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-
-    runs-on: ${{ matrix.os }}
-
+    name: Test and Style
+    runs-on: ubuntu-latest
     steps:
     - name: Environment setup
       uses: actions/checkout@v2
@@ -19,8 +15,12 @@ jobs:
       with:
         toolchain: stable
     - name: Rust test
-      run: |
-        cargo test
+      uses: actions-rs/cargo@v1
+      with:
+        command: test
+        args: --release
     - name: Rust style
-      run: |
-        cargo fmt -- --check
+      uses: actions-rs/cargo@v1
+      with:
+        command: fmt
+        args: -- --check
