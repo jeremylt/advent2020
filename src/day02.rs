@@ -1,23 +1,4 @@
 use crate::prelude::*;
-use regex::Regex;
-
-// -----------------------------------------------------------------------------
-// Line parsing regex
-// -----------------------------------------------------------------------------
-lazy_static! {
-    static ref RE_LINE: Regex = Regex::new(
-        r"(?x)
-            (?P<lower>\d+) # lower requirement
-            -
-            (?P<upper>\d+) # upper requirement
-            \s
-            (?P<required>\w) # required character
-            :\s
-            (?P<password>\w+) # password to check
-            ",
-    )
-    .unwrap();
-}
 
 // -----------------------------------------------------------------------------
 // Password data struct
@@ -28,6 +9,24 @@ pub struct PasswordData {
     upper: usize,
     required: String,
     password: String,
+}
+
+impl std::str::FromStr for PasswordData {
+    type Err = std::num::ParseIntError;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let mut m = s.split(|c| "- :".contains(c));
+        let lower = m.next().unwrap().parse()?;
+        let upper = m.next().unwrap().parse()?;
+        let required = m.next().unwrap().to_string();
+        assert_eq!(m.next(), Some(""));
+        let password = m.next().unwrap().to_string();
+        Ok(Self {
+            lower,
+            upper,
+            required,
+            password,
+        })
+    }
 }
 
 // -----------------------------------------------------------------------------
@@ -77,28 +76,8 @@ pub(crate) fn run() -> Results {
     // Read to vector
     let mut data: Vec<PasswordData> = Vec::new();
     for line in buffer.lines() {
-        // Parse line
-        let capture_groups = RE_LINE.captures(line.as_ref().unwrap()).unwrap();
-        let lower = capture_groups
-            .name("lower")
-            .map_or(0, |value| value.as_str().parse().unwrap());
-        let upper = capture_groups
-            .name("upper")
-            .map_or(0, |value| value.as_str().parse().unwrap());
-        let required: String = (*capture_groups
-            .name("required")
-            .map_or("", |value| value.as_str()))
-        .to_string();
-        let password: String = (*capture_groups
-            .name("password")
-            .map_or("", |value| value.as_str()))
-        .to_string();
-        data.push(PasswordData {
-            lower,
-            upper,
-            required,
-            password,
-        });
+        let d = line.unwrap().parse().expect("Could not parse line");
+        data.push(d);
     }
 
     // Timing

@@ -1,6 +1,3 @@
-#[macro_use]
-extern crate lazy_static;
-
 // Constants
 const NUMBER_DASHES: usize = 80;
 
