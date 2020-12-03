@@ -21,7 +21,7 @@ pub(crate) fn print_header() {
 // Output setup summary
 // -----------------------------------------------------------------------------
 pub(crate) fn print_setup(time: std::time::Duration) {
-    println!("    {}:", "Setup".cyan().bold());
+    println!("    {}:", "Setup".blue().bold());
     println!("      Time: {:?}", time);
 }
 
@@ -37,9 +37,9 @@ pub(crate) fn print_part(
     time: std::time::Duration,
 ) {
     let part_string = if part == 1 {
-        "Part 1".yellow().bold()
+        "Part 1".red().bold()
     } else {
-        "Part 2".blue().bold()
+        "Part 2".green().bold()
     };
     println!("    {}:", part_string);
     println!("      {}: {}", property, property_value);
@@ -63,22 +63,22 @@ pub(crate) fn print_timing(
     let setup_portion = NUMBER_DASHES - part_1_portion - part_2_portion;
     println!(
         "      Setup: {}",
-        format!("{:02.1}%", 100.0 * (1.0 - part_1_percent - part_2_percent)).cyan(),
+        format!("{:02.1}%", 100.0 * (1.0 - part_1_percent - part_2_percent)).blue(),
     );
     println!(
         "      Part 1: {}",
-        format!("{:02.1}%", 100.0 * part_1_percent).yellow(),
+        format!("{:02.1}%", 100.0 * part_1_percent).red(),
     );
     println!(
         "      Part 2: {}",
-        format!("{:02.1}%", 100.0 * part_2_percent).blue(),
+        format!("{:02.1}%", 100.0 * part_2_percent).green(),
     );
     println!("      Total: {:?}", time_total,);
     println!(
         "{}{}{}",
-        "-".repeat(setup_portion).cyan().bold(),
-        "-".repeat(part_1_portion).yellow().bold(),
-        "-".repeat(part_2_portion).blue().bold()
+        "-".repeat(setup_portion).blue().bold(),
+        "-".repeat(part_1_portion).red().bold(),
+        "-".repeat(part_2_portion).green().bold()
     );
 }
 
