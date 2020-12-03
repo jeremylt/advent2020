@@ -1,5 +1,8 @@
 use crate::prelude::*;
 
+// Constants
+const NUMBER_DASHES: usize = 80;
+
 // -----------------------------------------------------------------------------
 // Print header
 // -----------------------------------------------------------------------------
@@ -77,6 +80,30 @@ pub(crate) fn print_timing(
         "-".repeat(part_1_portion).yellow().bold(),
         "-".repeat(part_2_portion).blue().bold()
     );
+}
+
+// -----------------------------------------------------------------------------
+// Output timing comparison
+// -----------------------------------------------------------------------------
+pub(crate) fn print_days_timing(times: &Vec<u128>) {
+    println!("- {}", "Timing Comparison".bold());
+    let longest: f64 = (*times.iter().max().unwrap()) as f64;
+    for (i, &time) in times.iter().enumerate() {
+        let part_length = std::cmp::max(
+            1,
+            ((NUMBER_DASHES - 7) as f64 * (time as f64 / longest)) as usize,
+        );
+        let dashes = "-".repeat(part_length);
+        println!(
+            "Dec {:02} {}",
+            i + 1,
+            if i % 2 == 0 {
+                dashes.red()
+            } else {
+                dashes.green()
+            }
+        );
+    }
 }
 
 // -----------------------------------------------------------------------------

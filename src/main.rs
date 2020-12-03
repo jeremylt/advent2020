@@ -1,6 +1,3 @@
-// Constants
-const NUMBER_DASHES: usize = 80;
-
 // -----------------------------------------------------------------------------
 // Modules
 // -----------------------------------------------------------------------------
@@ -23,9 +20,8 @@ pub(crate) struct Results {
 // -----------------------------------------------------------------------------
 // Prelude
 // -----------------------------------------------------------------------------
-use crate::prelude::*;
 pub(crate) mod prelude {
-    pub(crate) use crate::{file, output, Results, NUMBER_DASHES};
+    pub(crate) use crate::{file, output, Results};
     pub(crate) use colored::*;
     pub(crate) use std::fs::File;
     pub(crate) use std::io::{BufRead, BufReader};
@@ -36,35 +32,20 @@ pub(crate) mod prelude {
 // Main Driver
 // -----------------------------------------------------------------------------
 fn main() {
+    // Setup
+    const PRINT_OUTPUT: bool = true;
+    let mut times: Vec<u128> = Vec::with_capacity(25);
+    let days = [day01::run, day02::run, day03::run];
+
     // Each day
     output::print_header();
-    let mut times: Vec<u128> = Vec::with_capacity(25);
-    const PRINT_OUTPUT: bool = true;
-    let days = [day01::run, day02::run, day03::run];
     for day in &days {
         times.push(day(PRINT_OUTPUT).time);
     }
 
     // Day comparison
     output::print_header();
-    println!("- {}", "Timing Comparison".bold());
-    let longest: f64 = (*times.iter().max().unwrap()) as f64;
-    for (i, &time) in times.iter().enumerate() {
-        let part_length = std::cmp::max(
-            1,
-            ((NUMBER_DASHES - 7) as f64 * (time as f64 / longest)) as usize,
-        );
-        let dashes = "-".repeat(part_length);
-        println!(
-            "Dec {:02} {}",
-            i + 1,
-            if i % 2 == 0 {
-                dashes.red()
-            } else {
-                dashes.green()
-            }
-        );
-    }
+    output::print_days_timing(&times);
     output::print_header();
 }
 
