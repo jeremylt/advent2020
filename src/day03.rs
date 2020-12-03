@@ -47,11 +47,10 @@ pub(crate) fn run() -> Results {
     // -------------------------------------------------------------------------
     // Find matching passwords
     let start_part_2 = Instant::now();
-    let mut product_2 = count_1;
-    product_2 *= count_trees(&data, 1, 1, line_length);
-    product_2 *= count_trees(&data, 5, 1, line_length);
-    product_2 *= count_trees(&data, 7, 1, line_length);
-    product_2 *= count_trees(&data, 1, 2, line_length);
+    let slopes = [(1, 1), (5, 1), (7, 1), (1, 2)];
+    let product_2 = slopes.iter().fold(count_1, |product, &(right, down)| {
+        product * count_trees(&data, right, down, line_length)
+    });
     let time_part_2 = start_part_2.elapsed();
 
     // -------------------------------------------------------------------------
