@@ -73,9 +73,6 @@ pub(crate) fn run() -> Results {
             .expect("Could not parse line")
     });
 
-    // Collect as a Vec so we can traverse multiple times (skip if only one traversal is needed)
-    let data: Vec<_> = data.collect();
-
     // Timing
     let time_setup = start_all.elapsed();
 
@@ -84,7 +81,8 @@ pub(crate) fn run() -> Results {
     // -------------------------------------------------------------------------
     // Find matching passwords
     let start_part_1 = Instant::now();
-    let count_1 = data.iter().filter(|&d| part01(d)).count();
+    let (bool_1, bool_2): (Vec<_>, Vec<_>) = data.map(|d| (part01(&d), part02(&d))).unzip();
+    let count_1 = bool_1.into_iter().filter(|&x| x).count();
     let time_part_1 = start_part_1.elapsed();
 
     // -------------------------------------------------------------------------
@@ -92,7 +90,7 @@ pub(crate) fn run() -> Results {
     // -------------------------------------------------------------------------
     // Find matching passwords
     let start_part_2 = Instant::now();
-    let count_2 = data.iter().filter(|&d| part02(d)).count();
+    let count_2 = bool_2.into_iter().filter(|&x| x).count();
     let time_part_2 = start_part_2.elapsed();
 
     // -------------------------------------------------------------------------
