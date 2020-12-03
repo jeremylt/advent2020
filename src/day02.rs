@@ -121,8 +121,8 @@ pub(crate) fn run() -> Results {
     // Return
     // -------------------------------------------------------------------------
     return Results {
-        part1: count_1 as i32,
-        part2: count_2 as i32,
+        part1: count_1 as i64,
+        part2: count_2 as i64,
         time: time.as_nanos(),
     };
 }

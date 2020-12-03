@@ -15,8 +15,8 @@ mod output;
 // -----------------------------------------------------------------------------
 #[derive(Debug)]
 pub(crate) struct Results {
-    part1: i32,
-    part2: i32,
+    part1: i64,
+    part2: i64,
     time: u128,
 }
 
@@ -75,7 +75,7 @@ mod tests {
     const MAX_TIME: u128 = 250000000;
 
     #[test]
-    fn test01() {
+    fn test_01() {
         let results = day01::run();
         assert_eq!(results.part1, 326211);
         assert_eq!(results.part2, 131347190);
@@ -83,10 +83,18 @@ mod tests {
     }
 
     #[test]
-    fn test02() {
+    fn test_02() {
         let results = day02::run();
         assert_eq!(results.part1, 538);
         assert_eq!(results.part2, 489);
+        assert!(results.time < MAX_TIME);
+    }
+
+    #[test]
+    fn test_03() {
+        let results = day03::run();
+        assert_eq!(results.part1, 176);
+        assert_eq!(results.part2, 5872458240);
         assert!(results.time < MAX_TIME);
     }
 }
