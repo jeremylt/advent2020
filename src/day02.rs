@@ -32,7 +32,7 @@ impl std::str::FromStr for PasswordData {
 // -----------------------------------------------------------------------------
 // Part 1
 // -----------------------------------------------------------------------------
-fn part01(data: &&PasswordData) -> bool {
+fn part01(data: &PasswordData) -> bool {
     let number_matches = data.password.matches(&data.required).count();
     (number_matches >= data.lower) && (number_matches <= data.upper)
 }
@@ -40,7 +40,7 @@ fn part01(data: &&PasswordData) -> bool {
 // -----------------------------------------------------------------------------
 // Part 2
 // -----------------------------------------------------------------------------
-fn part02(data: &&PasswordData) -> bool {
+fn part02(data: &PasswordData) -> bool {
     let first = &data.password[data.lower - 1..data.lower];
     let second = &data.password[data.upper - 1..data.upper];
     (first == data.required) != (second == data.required)
@@ -65,12 +65,15 @@ pub(crate) fn run() -> Results {
     }
     let buffer = BufReader::new(input);
 
-    // Read to vector
-    let mut data: Vec<PasswordData> = Vec::new();
-    for line in buffer.lines() {
-        let d = line.unwrap().parse().expect("Could not parse line");
-        data.push(d);
-    }
+    // Read to object iterator
+    let data = buffer.lines().map(|line| {
+        line.unwrap()
+            .parse::<PasswordData>()
+            .expect("Could not parse line")
+    });
+
+    // Collect as a Vec so we can traverse multiple times (skip if only one traversal is needed)
+    let data: Vec<_> = data.collect();
 
     // Timing
     let time_setup = start_all.elapsed();
@@ -80,7 +83,7 @@ pub(crate) fn run() -> Results {
     // -------------------------------------------------------------------------
     // Find matching passwords
     let start_part_1 = Instant::now();
-    let count_1 = data.iter().filter(part01).count();
+    let count_1 = data.iter().filter(|&d| part01(d)).count();
     let time_part_1 = start_part_1.elapsed();
 
     // -------------------------------------------------------------------------
@@ -88,7 +91,7 @@ pub(crate) fn run() -> Results {
     // -------------------------------------------------------------------------
     // Find matching passwords
     let start_part_2 = Instant::now();
-    let count_2 = data.iter().filter(part02).count();
+    let count_2 = data.iter().filter(|&d| part02(d)).count();
     let time_part_2 = start_part_2.elapsed();
 
     // -------------------------------------------------------------------------
