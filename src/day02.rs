@@ -32,26 +32,18 @@ impl std::str::FromStr for PasswordData {
 // -----------------------------------------------------------------------------
 // Part 1
 // -----------------------------------------------------------------------------
-fn part01(acc: i32, data: &PasswordData) -> i32 {
+fn part01(data: &&PasswordData) -> bool {
     let number_matches = data.password.matches(&data.required).count();
-    if (number_matches >= data.lower) && (number_matches <= data.upper) {
-        acc + 1
-    } else {
-        acc
-    }
+    (number_matches >= data.lower) && (number_matches <= data.upper)
 }
 
 // -----------------------------------------------------------------------------
 // Part 2
 // -----------------------------------------------------------------------------
-fn part02(acc: i32, data: &PasswordData) -> i32 {
+fn part02(data: &&PasswordData) -> bool {
     let first = &data.password[data.lower - 1..data.lower];
     let second = &data.password[data.upper - 1..data.upper];
-    if (first == data.required) != (second == data.required) {
-        acc + 1
-    } else {
-        acc
-    }
+    (first == data.required) != (second == data.required)
 }
 
 // -----------------------------------------------------------------------------
@@ -88,7 +80,7 @@ pub(crate) fn run() -> Results {
     // -------------------------------------------------------------------------
     // Find matching passwords
     let start_part_1 = Instant::now();
-    let count_1 = data.iter().fold(0, part01);
+    let count_1 = data.iter().filter(part01).count();
     let time_part_1 = start_part_1.elapsed();
 
     // -------------------------------------------------------------------------
@@ -96,7 +88,7 @@ pub(crate) fn run() -> Results {
     // -------------------------------------------------------------------------
     // Find matching passwords
     let start_part_2 = Instant::now();
-    let count_2 = data.iter().fold(0, part02);
+    let count_2 = data.iter().filter(part02).count();
     let time_part_2 = start_part_2.elapsed();
 
     // -------------------------------------------------------------------------
@@ -142,8 +134,8 @@ pub(crate) fn run() -> Results {
     // Return
     // -------------------------------------------------------------------------
     return Results {
-        part1: count_1,
-        part2: count_2,
+        part1: count_1 as i32,
+        part2: count_2 as i32,
         time: time.as_nanos(),
     };
 }
