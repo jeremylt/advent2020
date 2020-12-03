@@ -36,7 +36,7 @@ pub(crate) fn run() -> Results {
     // -------------------------------------------------------------------------
     // Part 1
     // -------------------------------------------------------------------------
-    // Find matching passwords
+    // Find trees on path
     let start_part_1 = Instant::now();
     let line_length = data[0].chars().count();
     let count_1 = count_trees(&data, 3, 1, line_length);
@@ -45,7 +45,7 @@ pub(crate) fn run() -> Results {
     // -------------------------------------------------------------------------
     // Part 2
     // -------------------------------------------------------------------------
-    // Find matching passwords
+    // Find product of trees on paths
     let start_part_2 = Instant::now();
     let slopes = [(1, 1), (5, 1), (7, 1), (1, 2)];
     let product_2 = slopes.iter().fold(count_1, |product, &(right, down)| {
