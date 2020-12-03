@@ -67,8 +67,8 @@ pub(crate) fn run(print_summary: bool) -> Results {
 
     // Mask array
     let mut mask = [false; YEAR + 1];
-    for value in &values {
-        mask[*value] = true;
+    for &value in &values {
+        mask[value] = true;
     }
 
     // Time
