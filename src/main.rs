@@ -6,6 +6,7 @@ const NUMBER_DASHES: usize = 80;
 // -----------------------------------------------------------------------------
 mod day01;
 mod day02;
+mod day03;
 mod file;
 mod output;
 
@@ -40,6 +41,7 @@ fn main() {
     let mut times: Vec<u128> = Vec::with_capacity(25);
     times.push(day01::run().time);
     times.push(day02::run().time);
+    times.push(day03::run().time);
 
     // Day comparison
     output::print_header();

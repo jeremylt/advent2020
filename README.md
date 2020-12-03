@@ -9,11 +9,15 @@ Advent of Code in Rust. I'm just messing around in some spare time here. Feel fr
 
 To build
 
-    cargo build --release
+    cargo build
 
 To run
 
-    cargo run --release
+    cargo run
+
+To run with optimization
+
+    RUSTFLAGS='-Ctarget-cpu=native -Copt-level=3' cargo run --release
 
 ## Try It
 
