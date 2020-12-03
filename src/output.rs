@@ -53,17 +53,25 @@ pub(crate) fn print_timing(
     time_part_2: std::time::Duration,
 ) {
     println!("    {} : {:?}", "Total Time".purple().bold(), time_total);
-    let part_1_portion = std::cmp::max(
-        1,
-        (NUMBER_DASHES as f64 * (time_part_1.as_nanos() as f64 / time_total.as_nanos() as f64))
-            as usize,
-    );
-    let part_2_portion = std::cmp::max(
-        1,
-        (NUMBER_DASHES as f64 * (time_part_2.as_nanos() as f64 / time_total.as_nanos() as f64))
-            as usize,
-    );
+    let part_1_percent = time_part_1.as_nanos() as f64 / time_total.as_nanos() as f64;
+    let part_1_portion = std::cmp::max(1, (NUMBER_DASHES as f64 * part_1_percent) as usize);
+    let part_2_percent = time_part_2.as_nanos() as f64 / time_total.as_nanos() as f64;
+    let part_2_portion = std::cmp::max(1, (NUMBER_DASHES as f64 * part_2_percent) as usize);
     let setup_portion = NUMBER_DASHES - part_1_portion - part_2_portion;
+    println!(
+        "      Setup: {}",
+        format!("{:.4}%", 100.0 * (1.0 - part_1_percent - part_2_percent))
+            .cyan()
+            .bold()
+    );
+    println!(
+        "      Part 1: {}",
+        format!("{:.4}%", 100.0 * part_1_percent).yellow().bold()
+    );
+    println!(
+        "      Part 2: {}",
+        format!("{:.4}%", 100.0 * part_2_percent).blue().bold()
+    );
     println!(
         "{}{}{}",
         "-".repeat(setup_portion).cyan().bold(),
