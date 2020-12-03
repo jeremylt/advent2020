@@ -66,7 +66,7 @@ pub(crate) fn run(print_summary: bool) -> Results {
         output::print_part(
             1,
             "Path",
-            "right 3, down 1",
+            "(right, down) -> (3, 1)",
             "Count",
             &format!("{}", count_1),
             time_part_1,
