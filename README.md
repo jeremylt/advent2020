@@ -3,7 +3,7 @@
 [![Rust](https://github.com/jeremylt/advent2020/workflows/Rust/badge.svg?branch=main)](https://github.com/jeremylt/advent2020/actions)
 [![License](https://img.shields.io/badge/License-BSD%202--Clause-orange.svg)](https://opensource.org/licenses/BSD-2-Clause)
 
-Advent of Code in Rust. I'm just messing around in some spare time here. Feel free to comment in an issue if you see some possible improvements.
+[Advent of Code 2020](https://adventofcode.com/2020) in Rust. I'm just messing around in some spare time here. Feel free to comment in an issue if you see some possible improvements.
 
 ## Installing
 
