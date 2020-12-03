@@ -7,7 +7,7 @@ use crate::prelude::*;
 pub struct PasswordData {
     lower: usize,
     upper: usize,
-    required: String,
+    required: char,
     password: String,
 }
 
@@ -17,7 +17,7 @@ impl std::str::FromStr for PasswordData {
         let mut m = s.split(|c| "- :".contains(c));
         let lower = m.next().unwrap().parse()?;
         let upper = m.next().unwrap().parse()?;
-        let required = m.next().unwrap().to_string();
+        let required = m.next().unwrap().chars().next().unwrap();
         assert_eq!(m.next(), Some(""));
         let password = m.next().unwrap().to_string();
         Ok(Self {
@@ -33,7 +33,7 @@ impl std::str::FromStr for PasswordData {
 // Part 1
 // -----------------------------------------------------------------------------
 fn part01(data: &PasswordData) -> bool {
-    let number_matches = data.password.matches(&data.required).count();
+    let number_matches = data.password.matches(data.required).count();
     (number_matches >= data.lower) && (number_matches <= data.upper)
 }
 
@@ -41,8 +41,9 @@ fn part01(data: &PasswordData) -> bool {
 // Part 2
 // -----------------------------------------------------------------------------
 fn part02(data: &PasswordData) -> bool {
-    let first = &data.password[data.lower - 1..data.lower];
-    let second = &data.password[data.upper - 1..data.upper];
+    let mut chars = data.password.chars();
+    let first = chars.nth(data.lower - 1).unwrap();
+    let second = chars.nth(data.upper - data.lower - 1).unwrap();
     (first == data.required) != (second == data.required)
 }
 
