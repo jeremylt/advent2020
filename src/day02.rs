@@ -50,8 +50,10 @@ fn part_2(data: &PasswordData) -> bool {
 // -----------------------------------------------------------------------------
 // Day 2
 // -----------------------------------------------------------------------------
-pub(crate) fn run() -> Results {
-    println!("- {}", "Day 02".bold());
+pub(crate) fn run(print_summary: bool) -> Results {
+    if print_summary {
+        println!("- {}", "Day 02".bold());
+    }
     let start_all = Instant::now();
 
     // -------------------------------------------------------------------------
@@ -98,24 +100,26 @@ pub(crate) fn run() -> Results {
     // -------------------------------------------------------------------------
     // Report
     // -------------------------------------------------------------------------
-    output::print_setup(time_setup);
-    output::print_part(
-        1,
-        "Rule",
-        "required number",
-        "Valid",
-        &format!("{}", count_1),
-        time_part_1,
-    );
-    output::print_part(
-        2,
-        "Rule",
-        "only one of two",
-        "Valid",
-        &format!("{}", count_2),
-        time_part_2,
-    );
-    output::print_timing(time, time_part_1, time_part_2);
+    if print_summary {
+        output::print_setup(time_setup);
+        output::print_part(
+            1,
+            "Rule",
+            "required number",
+            "Valid",
+            &format!("{}", count_1),
+            time_part_1,
+        );
+        output::print_part(
+            2,
+            "Rule",
+            "only one of two",
+            "Valid",
+            &format!("{}", count_2),
+            time_part_2,
+        );
+        output::print_timing(time, time_part_1, time_part_2);
+    }
 
     // -------------------------------------------------------------------------
     // Return

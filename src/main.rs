@@ -39,20 +39,20 @@ fn main() {
     // Each day
     output::print_header();
     let mut times: Vec<u128> = Vec::with_capacity(25);
-    times.push(day01::run().time);
-    times.push(day02::run().time);
-    times.push(day03::run().time);
+    times.push(day01::run(true).time);
+    times.push(day02::run(true).time);
+    times.push(day03::run(true).time);
 
     // Day comparison
     output::print_header();
     println!("- {}", "Timing Comparison".bold());
     let longest: f64 = (*times.iter().max().unwrap()) as f64;
     for (i, &time) in times.iter().enumerate() {
-        let length = std::cmp::max(
+        let part_length = std::cmp::max(
             1,
             ((NUMBER_DASHES - 7) as f64 * (time as f64 / longest)) as usize,
         );
-        let dashes = "-".repeat(length);
+        let dashes = "-".repeat(part_length);
         println!(
             "Dec {:02} {}",
             i + 1,
@@ -76,7 +76,7 @@ mod tests {
 
     #[test]
     fn test_01() {
-        let results = day01::run();
+        let results = day01::run(false);
         assert_eq!(results.part1, 326211);
         assert_eq!(results.part2, 131347190);
         assert!(results.time < MAX_TIME);
@@ -84,7 +84,7 @@ mod tests {
 
     #[test]
     fn test_02() {
-        let results = day02::run();
+        let results = day02::run(false);
         assert_eq!(results.part1, 538);
         assert_eq!(results.part2, 489);
         assert!(results.time < MAX_TIME);
@@ -92,7 +92,7 @@ mod tests {
 
     #[test]
     fn test_03() {
-        let results = day03::run();
+        let results = day03::run(false);
         assert_eq!(results.part1, 176);
         assert_eq!(results.part2, 5872458240);
         assert!(results.time < MAX_TIME);
