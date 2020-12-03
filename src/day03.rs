@@ -86,8 +86,8 @@ pub(crate) fn run(print_summary: bool) -> Results {
     // Return
     // -------------------------------------------------------------------------
     return Results {
-        part1: count_1 as i64,
-        part2: product_2 as i64,
+        part_1: count_1 as i64,
+        part_2: product_2 as i64,
         time: time.as_nanos(),
     };
 }
