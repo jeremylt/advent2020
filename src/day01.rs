@@ -60,10 +60,10 @@ pub(crate) fn run(print_summary: bool) -> Results {
     let buffer = file::load_file("data/day01part01.txt");
 
     // Read to vector
-    let mut values: Vec<usize> = Vec::new();
-    for line in buffer.lines() {
-        values.push(line.unwrap().parse().unwrap());
-    }
+    let values: Vec<usize> = buffer
+        .lines()
+        .map(|line| line.unwrap().parse().unwrap())
+        .collect();
 
     // Mask array
     let mut mask = [false; YEAR + 1];
