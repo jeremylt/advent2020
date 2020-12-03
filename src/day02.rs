@@ -81,8 +81,9 @@ pub(crate) fn run() -> Results {
     // -------------------------------------------------------------------------
     // Find matching passwords
     let start_part_1 = Instant::now();
-    let (bool_1, bool_2): (Vec<_>, Vec<_>) = data.map(|d| (part01(&d), part02(&d))).unzip();
-    let count_1 = bool_1.into_iter().filter(|&x| x).count();
+    let (count_1, count_2) = data.fold((0, 0), |(c1, c2), d| {
+        (c1 + part01(&d) as usize, c2 + part02(&d) as usize)
+    });
     let time_part_1 = start_part_1.elapsed();
 
     // -------------------------------------------------------------------------
@@ -90,7 +91,7 @@ pub(crate) fn run() -> Results {
     // -------------------------------------------------------------------------
     // Find matching passwords
     let start_part_2 = Instant::now();
-    let count_2 = bool_2.into_iter().filter(|&x| x).count();
+    // nothing to do
     let time_part_2 = start_part_2.elapsed();
 
     // -------------------------------------------------------------------------
