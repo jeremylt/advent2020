@@ -55,13 +55,7 @@ pub(crate) fn run() -> Results {
     // Setup
     // -------------------------------------------------------------------------
     // Open file
-    let path = "data/day01part01.txt";
-    let input: File;
-    match File::open(path) {
-        Ok(file) => input = file,
-        Err(_error) => panic!("Unable to open input file"),
-    }
-    let buffer = BufReader::new(input);
+    let buffer = file::load_file("data/day01part01.txt");
 
     // Read to vector
     let mut values: Vec<usize> = Vec::new();
@@ -104,36 +98,24 @@ pub(crate) fn run() -> Results {
     // -------------------------------------------------------------------------
     // Report
     // -------------------------------------------------------------------------
-    // Setup
-    println!("    {}:", "Setup".cyan().bold());
-    println!("      Time     : {:?}", time_setup);
-    // Part 1
-    println!("    {}:", "Part 1".yellow().bold());
-    println!("      Values   : {}, {}", tuple.0, tuple.1);
-    println!("      Product  : {}", product_1);
-    println!("      Time     : {:?}", time_part_1);
-    // Part 2
-    println!("    {}:", "Part 2".blue().bold());
-    println!("      Values   : {}, {}, {}", triple.0, triple.1, triple.2);
-    println!("      Product  : {}", product_2);
-    println!("      Time     : {:?}", time_part_2);
-    // Timing
-    println!("    {} : {:?}", "Total Time".purple().bold(), time);
-    let part_1_portion = std::cmp::max(
+    output::print_setup(time_setup);
+    output::print_part(
         1,
-        (NUMBER_DASHES as f64 * (time_part_1.as_nanos() as f64 / time.as_nanos() as f64)) as usize,
+        "Values",
+        &format!("{:?}", tuple),
+        "Product",
+        &format!("{}", product_1),
+        time_part_1,
     );
-    let part_2_portion = std::cmp::max(
-        1,
-        (NUMBER_DASHES as f64 * (time_part_2.as_nanos() as f64 / time.as_nanos() as f64)) as usize,
+    output::print_part(
+        2,
+        "Values",
+        &format!("{:?}", triple),
+        "Product",
+        &format!("{}", product_2),
+        time_part_2,
     );
-    let setup_portion = NUMBER_DASHES - part_1_portion - part_2_portion;
-    println!(
-        "{}{}{}",
-        "-".repeat(setup_portion).cyan().bold(),
-        "-".repeat(part_1_portion).yellow().bold(),
-        "-".repeat(part_2_portion).blue().bold()
-    );
+    output::print_timing(time, time_part_1, time_part_2);
 
     // -------------------------------------------------------------------------
     // Return

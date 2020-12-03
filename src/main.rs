@@ -6,6 +6,8 @@ const NUMBER_DASHES: usize = 80;
 // -----------------------------------------------------------------------------
 mod day01;
 mod day02;
+mod file;
+mod output;
 
 // -----------------------------------------------------------------------------
 // Results struct
@@ -22,8 +24,7 @@ pub(crate) struct Results {
 // -----------------------------------------------------------------------------
 use crate::prelude::*;
 pub(crate) mod prelude {
-    pub(crate) use crate::Results;
-    pub(crate) use crate::NUMBER_DASHES;
+    pub(crate) use crate::{file, output, Results, NUMBER_DASHES};
     pub(crate) use colored::*;
     pub(crate) use std::fs::File;
     pub(crate) use std::io::{BufRead, BufReader};
@@ -31,31 +32,17 @@ pub(crate) mod prelude {
 }
 
 // -----------------------------------------------------------------------------
-// Print header
-// -----------------------------------------------------------------------------
-fn header() {
-    println!("{}", "-".repeat(NUMBER_DASHES).green().bold());
-    println!(
-        "{} {} {}",
-        "-".repeat(NUMBER_DASHES / 2 - 10).red().bold(),
-        "Advent of Code 2020".bold(),
-        "-".repeat(NUMBER_DASHES / 2 - 11).red().bold()
-    );
-    println!("{}", "-".repeat(NUMBER_DASHES).green().bold());
-}
-
-// -----------------------------------------------------------------------------
 // Main Driver
 // -----------------------------------------------------------------------------
 fn main() {
     // Each day
-    header();
+    output::print_header();
     let mut times: Vec<u128> = Vec::with_capacity(25);
     times.push(day01::run().time);
     times.push(day02::run().time);
 
     // Day comparison
-    header();
+    output::print_header();
     println!("- {}", "Timing Comparison".bold());
     let longest: f64 = (*times.iter().max().unwrap()) as f64;
     for (i, &time) in times.iter().enumerate() {
@@ -74,8 +61,7 @@ fn main() {
             }
         );
     }
-
-    header();
+    output::print_header();
 }
 
 // -----------------------------------------------------------------------------

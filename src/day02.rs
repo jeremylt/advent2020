@@ -32,7 +32,7 @@ impl std::str::FromStr for PasswordData {
 // -----------------------------------------------------------------------------
 // Part 1
 // -----------------------------------------------------------------------------
-fn part01(data: &PasswordData) -> bool {
+fn part_1(data: &PasswordData) -> bool {
     let number_matches = data.password.matches(data.required).count();
     (number_matches >= data.lower) && (number_matches <= data.upper)
 }
@@ -40,7 +40,7 @@ fn part01(data: &PasswordData) -> bool {
 // -----------------------------------------------------------------------------
 // Part 2
 // -----------------------------------------------------------------------------
-fn part02(data: &PasswordData) -> bool {
+fn part_2(data: &PasswordData) -> bool {
     let mut chars = data.password.chars();
     let first = chars.nth(data.lower - 1).unwrap();
     let second = chars.nth(data.upper - data.lower - 1).unwrap();
@@ -58,13 +58,7 @@ pub(crate) fn run() -> Results {
     // Data
     // -------------------------------------------------------------------------
     // Open file
-    let path = "data/day02part01.txt";
-    let input: File;
-    match File::open(path) {
-        Ok(file) => input = file,
-        Err(_error) => panic!("Unable to open input file"),
-    }
-    let buffer = BufReader::new(input);
+    let buffer = file::load_file("data/day02part01.txt");
 
     // Read to object iterator
     let data = buffer.lines().map(|line| {
@@ -73,7 +67,8 @@ pub(crate) fn run() -> Results {
             .expect("Could not parse line")
     });
 
-    // Collect as a Vec so we can traverse multiple times (skip if only one traversal is needed)
+    // Collect as a Vec so we can traverse multiple times
+    //   (skip if only one traversal is needed)
     let data: Vec<_> = data.collect();
 
     // Timing
@@ -84,7 +79,7 @@ pub(crate) fn run() -> Results {
     // -------------------------------------------------------------------------
     // Find matching passwords
     let start_part_1 = Instant::now();
-    let count_1 = data.iter().filter(|&d| part01(d)).count();
+    let count_1 = data.iter().filter(|&d| part_1(d)).count();
     let time_part_1 = start_part_1.elapsed();
 
     // -------------------------------------------------------------------------
@@ -92,7 +87,7 @@ pub(crate) fn run() -> Results {
     // -------------------------------------------------------------------------
     // Find matching passwords
     let start_part_2 = Instant::now();
-    let count_2 = data.iter().filter(|&d| part02(d)).count();
+    let count_2 = data.iter().filter(|&d| part_2(d)).count();
     let time_part_2 = start_part_2.elapsed();
 
     // -------------------------------------------------------------------------
@@ -103,36 +98,24 @@ pub(crate) fn run() -> Results {
     // -------------------------------------------------------------------------
     // Report
     // -------------------------------------------------------------------------
-    // Setup
-    println!("    {}:", "Setup".cyan().bold());
-    println!("      Time     : {:?}", time_setup);
-    // Part 1
-    println!("    {}:", "Part 1".yellow().bold());
-    println!("      Rule     : required number");
-    println!("      Valid    : {}", count_1);
-    println!("      Time     : {:?}", time_part_1);
-    // Part 2
-    println!("    {}:", "Part 2".blue().bold());
-    println!("      Rule     : only one of two");
-    println!("      Valid    : {}", count_2);
-    println!("      Time     : {:?}", time_part_2);
-    // Timing
-    println!("    {} : {:?}", "Total Time".purple().bold(), time);
-    let part_1_portion = std::cmp::max(
+    output::print_setup(time_setup);
+    output::print_part(
         1,
-        (NUMBER_DASHES as f64 * (time_part_1.as_nanos() as f64 / time.as_nanos() as f64)) as usize,
+        "Rule",
+        "required number",
+        "Valid",
+        &format!("{}", count_1),
+        time_part_1,
     );
-    let part_2_portion = std::cmp::max(
-        1,
-        (NUMBER_DASHES as f64 * (time_part_2.as_nanos() as f64 / time.as_nanos() as f64)) as usize,
+    output::print_part(
+        2,
+        "Rule",
+        "only one of two",
+        "Valid",
+        &format!("{}", count_2),
+        time_part_2,
     );
-    let setup_portion = NUMBER_DASHES - part_1_portion - part_2_portion;
-    println!(
-        "{}{}{}",
-        "-".repeat(setup_portion).cyan().bold(),
-        "-".repeat(part_1_portion).yellow().bold(),
-        "-".repeat(part_2_portion).blue().bold()
-    );
+    output::print_timing(time, time_part_1, time_part_2);
 
     // -------------------------------------------------------------------------
     // Return
