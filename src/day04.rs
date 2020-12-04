@@ -25,7 +25,7 @@ macro_rules! copy_five {
 impl std::str::FromStr for PassportData {
     type Err = std::num::ParseIntError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let line: Vec<&str> = s.trim().split(|c| " ".contains(c)).collect();
+        let line: Vec<&str> = s.trim().split(|c| "\n ".contains(c)).collect();
         let (mut byr, mut iyr, mut eyr): (i32, i32, i32) = (0, 0, 0);
         let (mut hgt, mut hcl, mut ecl, mut pid, mut cid): (
             String,
@@ -112,29 +112,14 @@ pub(crate) fn run(print_summary: bool) -> Results {
     // Data
     // -------------------------------------------------------------------------
     // Open file
-    let buffer = file::load_file("data/day04.txt");
+    let buffer = std::fs::read_to_string("data/day04.txt").unwrap();
 
     // Read to object iterator
-    let mut data: Vec<PassportData> = Vec::new();
-    let mut entry = "".to_string();
-    for line in buffer.lines() {
-        let unwrapped = line.unwrap();
-        if unwrapped == "" {
-            data.push(
-                entry
-                    .parse::<PassportData>()
-                    .expect("Could not parse entry"),
-            );
-            entry = "".to_string();
-        } else {
-            entry = format!("{} {}", entry, unwrapped);
-        }
-    }
-    data.push(
-        entry
-            .parse::<PassportData>()
-            .expect("Could not parse entry"),
-    );
+    let data: Vec<PassportData> = buffer
+        .trim()
+        .split("\n\n")
+        .map(|line| line.parse::<PassportData>().expect("Could not parse line"))
+        .collect();
 
     // Timing
     let time_setup = start_all.elapsed();

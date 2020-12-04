@@ -57,12 +57,13 @@ pub(crate) fn run(print_summary: bool) -> Results {
     // Setup
     // -------------------------------------------------------------------------
     // Open file
-    let buffer = file::load_file("data/day01.txt");
+    let buffer = std::fs::read_to_string("data/day01.txt").unwrap();
 
     // Read to vector
     let values: Vec<usize> = buffer
-        .lines()
-        .map(|line| line.unwrap().parse().unwrap())
+        .trim()
+        .split("\n")
+        .map(|line| line.parse().unwrap())
         .collect();
 
     // Mask array

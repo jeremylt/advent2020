@@ -60,16 +60,13 @@ pub(crate) fn run(print_summary: bool) -> Results {
     // Data
     // -------------------------------------------------------------------------
     // Open file
-    let buffer = file::load_file("data/day02.txt");
+    let buffer = std::fs::read_to_string("data/day02.txt").unwrap();
 
     // Read to object iterator
     let data: Vec<PasswordData> = buffer
-        .lines()
-        .map(|line| {
-            line.unwrap()
-                .parse::<PasswordData>()
-                .expect("Could not parse line")
-        })
+        .trim()
+        .split("\n")
+        .map(|line| line.parse::<PasswordData>().expect("Could not parse line"))
         .collect();
 
     // Timing

@@ -5,7 +5,6 @@ mod day01;
 mod day02;
 mod day03;
 mod day04;
-mod file;
 mod output;
 
 // -----------------------------------------------------------------------------
@@ -22,10 +21,8 @@ pub(crate) struct Results {
 // Prelude
 // -----------------------------------------------------------------------------
 pub(crate) mod prelude {
-    pub(crate) use crate::{file, output, Results};
+    pub(crate) use crate::{output, Results};
     pub(crate) use colored::*;
-    pub(crate) use std::fs::File;
-    pub(crate) use std::io::{BufRead, BufReader};
     pub(crate) use std::time::Instant;
 }
 
