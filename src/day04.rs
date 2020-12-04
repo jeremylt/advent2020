@@ -25,19 +25,20 @@ macro_rules! copy_five {
 impl std::str::FromStr for PassportData {
     type Err = std::num::ParseIntError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let line: Vec<&str> = s.trim().split(|c| "\n ".contains(c)).collect();
+        let line = s.trim().split(&['\n', ' '][..]);
         let [mut byr, mut iyr, mut eyr]: [i32; 3] = [0; 3];
         let [mut hgt, mut hcl, mut ecl, mut pid, mut cid]: [String; 5] =
             copy_five!("invalid".to_string());
-        let len: usize = line.len();
+        let mut len: usize = 0;
         for field in line {
+            len += 1;
             let mut entry = field.splitn(2, ':');
             let name = entry.next().unwrap();
             let data = entry.next().unwrap().to_string();
             match name {
-                "byr" => byr = data.parse().unwrap(),
-                "iyr" => iyr = data.parse().unwrap(),
-                "eyr" => eyr = data.parse().unwrap(),
+                "byr" => byr = data.parse()?,
+                "iyr" => iyr = data.parse()?,
+                "eyr" => eyr = data.parse()?,
                 "hgt" => hgt = data,
                 "hcl" => hcl = data,
                 "ecl" => ecl = data,
@@ -116,9 +117,8 @@ pub(crate) fn run(print_summary: bool) -> Results {
 
     // Read to object iterator
     let data: Vec<PassportData> = buffer
-        .trim()
         .split("\n\n")
-        .map(|line| line.parse::<PassportData>().expect("Could not parse line"))
+        .filter_map(|line| line.parse::<PassportData>().ok())
         .collect();
 
     // Timing

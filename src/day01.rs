@@ -61,9 +61,8 @@ pub(crate) fn run(print_summary: bool) -> Results {
 
     // Read to vector
     let values: Vec<usize> = buffer
-        .trim()
         .split("\n")
-        .map(|line| line.parse().unwrap())
+        .filter_map(|line| line.parse().ok())
         .collect();
 
     // Mask array

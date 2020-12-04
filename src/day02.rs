@@ -14,12 +14,12 @@ pub struct PasswordData {
 impl std::str::FromStr for PasswordData {
     type Err = std::num::ParseIntError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let mut m = s.split(|c| "- :".contains(c));
-        let lower = m.next().unwrap().parse()?;
-        let upper = m.next().unwrap().parse()?;
-        let required = m.next().unwrap().chars().next().unwrap();
-        assert_eq!(m.next(), Some(""));
-        let password = m.next().unwrap().to_string();
+        let mut line = s.split(&['-', ' ', ':'][..]);
+        let lower = line.next().unwrap().parse()?;
+        let upper = line.next().unwrap().parse()?;
+        let required = line.next().unwrap().chars().nth(0).unwrap();
+        assert_eq!(line.next(), Some(""));
+        let password = line.next().unwrap().to_string();
         Ok(Self {
             lower,
             upper,
@@ -33,8 +33,12 @@ impl std::str::FromStr for PasswordData {
 // Part 1
 // -----------------------------------------------------------------------------
 fn part_1(data: &PasswordData) -> bool {
-    let number_matches = data.password.matches(data.required).count();
-    (number_matches >= data.lower) && (number_matches <= data.upper)
+    let number_matches = data
+        .password
+        .chars()
+        .filter(|&x| x == data.required)
+        .count();
+    (data.lower..=data.upper).contains(&number_matches)
 }
 
 // -----------------------------------------------------------------------------
@@ -64,9 +68,8 @@ pub(crate) fn run(print_summary: bool) -> Results {
 
     // Read to object iterator
     let data: Vec<PasswordData> = buffer
-        .trim()
         .split("\n")
-        .map(|line| line.parse::<PasswordData>().expect("Could not parse line"))
+        .filter_map(|line| line.parse::<PasswordData>().ok())
         .collect();
 
     // Timing
