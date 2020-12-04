@@ -64,11 +64,11 @@ pub(crate) fn run(print_summary: bool) -> Results {
     // Data
     // -------------------------------------------------------------------------
     // Open file
-    let buffer = std::fs::read_to_string("data/day02.txt").unwrap();
+    let buffer: String = std::fs::read_to_string("data/day02.txt").unwrap();
 
     // Read to object iterator
     let data: Vec<PasswordData> = buffer
-        .split("\n")
+        .lines()
         .filter_map(|line| line.parse::<PasswordData>().ok())
         .collect();
 

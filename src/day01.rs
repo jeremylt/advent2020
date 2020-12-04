@@ -57,11 +57,11 @@ pub(crate) fn run(print_summary: bool) -> Results {
     // Setup
     // -------------------------------------------------------------------------
     // Open file
-    let buffer = std::fs::read_to_string("data/day01.txt").unwrap();
+    let buffer: String = std::fs::read_to_string("data/day01.txt").unwrap();
 
     // Read to vector
     let values: Vec<usize> = buffer
-        .split("\n")
+        .lines()
         .filter_map(|line| line.parse().ok())
         .collect();
 

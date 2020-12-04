@@ -25,14 +25,10 @@ pub(crate) fn run(print_summary: bool) -> Results {
     // Data
     // -------------------------------------------------------------------------
     // Open file
-    let buffer = std::fs::read_to_string("data/day03.txt").unwrap();
+    let buffer: String = std::fs::read_to_string("data/day03.txt").unwrap();
 
     // Read to object iterator
-    let data: Vec<String> = buffer
-        .trim()
-        .split("\n")
-        .map(|line| line.to_string())
-        .collect();
+    let data: Vec<String> = buffer.lines().map(|line| line.to_string()).collect();
 
     // Timing
     let time_setup = start_all.elapsed();
