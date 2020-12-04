@@ -98,16 +98,16 @@ pub(crate) fn print_days_timing(times: &Vec<u128>) {
     for (i, &time) in times.iter().enumerate() {
         let part_length = std::cmp::max(
             1,
-            ((NUMBER_DASHES - 7) as f64 * (time as f64 / longest)) as usize,
+            ((NUMBER_DASHES - 2) as f64 * (time as f64 / longest)) as usize,
         );
         let dashes = "-".repeat(part_length);
+        println!("  Dec {:02}: {:?}ns", i + 1, time);
         println!(
-            "Dec {:02} {}",
-            i + 1,
+            "  {}",
             if i % 2 == 0 {
-                dashes.red()
+                dashes.red().bold()
             } else {
-                dashes.green()
+                dashes.green().bold()
             }
         );
     }
