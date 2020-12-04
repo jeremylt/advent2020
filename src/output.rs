@@ -94,6 +94,7 @@ pub(crate) fn print_timing(
 // -----------------------------------------------------------------------------
 pub(crate) fn print_days_timing(times: &Vec<u128>) {
     println!("- {}", "Timing Comparison".bold());
+    let total: u128 = times.iter().sum::<u128>();
     let longest: f64 = (*times.iter().max().unwrap()) as f64;
     for (i, &time) in times.iter().enumerate() {
         let part_length = std::cmp::max(
@@ -101,7 +102,7 @@ pub(crate) fn print_days_timing(times: &Vec<u128>) {
             ((NUMBER_DASHES - 2) as f64 * (time as f64 / longest)) as usize,
         );
         let dashes = "-".repeat(part_length);
-        println!("  Dec {:02}: {:?}ns", i + 1, time);
+        println!("  Dec {:02}: {:?}ms", i + 1, time as f64 / 1000000.0);
         println!(
             "  {}",
             if i % 2 == 0 {
@@ -111,6 +112,11 @@ pub(crate) fn print_days_timing(times: &Vec<u128>) {
             }
         );
     }
+    println!(
+        "  {}: {:?}ms",
+        "Total".purple().bold(),
+        total as f64 / 1000000.0
+    );
 }
 
 // -----------------------------------------------------------------------------
