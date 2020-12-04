@@ -75,19 +75,15 @@ fn part_1(data: &PassportData) -> bool {
 // -----------------------------------------------------------------------------
 // Part 2
 // -----------------------------------------------------------------------------
-fn is_between(value: i32, min: i32, max: i32) -> bool {
-    (value >= min) && (value <= max)
-}
-
 fn part_2(data: &PassportData) -> bool {
     // Number of fields
     (data.len >= 7)
         // Birth year
-        && is_between(data.byr, 1920, 2002)
+        && (1920..=2002).contains(&data.byr)
         // Issue year
-        && is_between(data.iyr, 2010, 2020)
+        && (2010..=2020).contains(&data.iyr)
         // Expire year
-        && is_between(data.eyr, 2020, 2030)
+        && (2020..=2030).contains(&data.eyr)
         // Eye color
         && ["amb", "blu", "brn", "gry", "grn", "hzl", "oth"].contains(&data.ecl.as_str())
         // Hair color
@@ -103,9 +99,9 @@ fn part_2(data: &PassportData) -> bool {
         && (data.pid.parse::<i32>().is_ok())
         // Height
         && ((data.hgt.chars().last().unwrap() == 'm'
-            && is_between(data.hgt.replace("cm", "").parse::<i32>().unwrap(), 150, 193))
+            && (150..=193).contains(&data.hgt.replace("cm", "").parse::<i32>().unwrap()))
             || (data.hgt.chars().last().unwrap() == 'n'
-                && is_between(data.hgt.replace("in", "").parse::<i32>().unwrap(), 59, 76)))
+                && (59..=76).contains(&data.hgt.replace("in", "").parse::<i32>().unwrap())))
 }
 
 // -----------------------------------------------------------------------------
