@@ -18,7 +18,7 @@ pub struct PassportData {
 
 macro_rules! copy_five {
     ($e:expr) => {
-        ($e, $e, $e, $e, $e)
+        [$e, $e, $e, $e, $e]
     };
 }
 
@@ -26,17 +26,12 @@ impl std::str::FromStr for PassportData {
     type Err = std::num::ParseIntError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let line: Vec<&str> = s.trim().split(|c| "\n ".contains(c)).collect();
-        let (mut byr, mut iyr, mut eyr): (i32, i32, i32) = (0, 0, 0);
-        let (mut hgt, mut hcl, mut ecl, mut pid, mut cid): (
-            String,
-            String,
-            String,
-            String,
-            String,
-        ) = copy_five!("invalid".to_string());
+        let [mut byr, mut iyr, mut eyr]: [i32; 3] = [0; 3];
+        let [mut hgt, mut hcl, mut ecl, mut pid, mut cid]: [String; 5] =
+            copy_five!("invalid".to_string());
         let len: usize = line.len();
         for field in line {
-            let mut entry = field.split(|c| ":".contains(c));
+            let mut entry = field.splitn(2, ':');
             let name = entry.next().unwrap();
             let data = entry.next().unwrap().to_string();
             match name {
@@ -93,10 +88,10 @@ fn part_2(data: &PassportData) -> bool {
             .hcl
             .chars()
             .skip(1)
-            .all(|x| x.is_numeric() || ['a', 'b', 'c', 'd', 'e', 'f'].contains(&x)))
+            .all(|x| x.is_digit(16)))
         // Passport ID
         && (data.pid.len() == 9)
-        && (data.pid.parse::<i32>().is_ok())
+        && (data.pid.chars().all(char::is_numeric))
         // Height
         && ((data.hgt.chars().last().unwrap() == 'm'
             && (150..=193).contains(&data.hgt.replace("cm", "").parse::<i32>().unwrap()))
