@@ -49,7 +49,7 @@ fn part_2(values: &[usize], mask: &[bool]) -> (i32, i32, i32) {
 // -----------------------------------------------------------------------------
 pub(crate) fn run(print_summary: bool) -> Results {
     if print_summary {
-        println!("- {}", "Day 01".bold());
+        output::print_day(1);
     }
     let start_all = Instant::now();
 
@@ -106,7 +106,7 @@ pub(crate) fn run(print_summary: bool) -> Results {
             1,
             "Values",
             &format!("{:?}", tuple),
-            "Product",
+            "📄 Product",
             &format!("{}", product_1),
             time_part_1,
         );
@@ -114,7 +114,7 @@ pub(crate) fn run(print_summary: bool) -> Results {
             2,
             "Values",
             &format!("{:?}", triple),
-            "Product",
+            "📄 Product",
             &format!("{}", product_2),
             time_part_2,
         );

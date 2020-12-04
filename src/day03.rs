@@ -17,7 +17,7 @@ fn count_trees(data: &Vec<String>, right: usize, down: usize, line_length: usize
 // -----------------------------------------------------------------------------
 pub(crate) fn run(print_summary: bool) -> Results {
     if print_summary {
-        println!("- {}", "Day 03".bold());
+        output::print_day(3);
     }
     let start_all = Instant::now();
 
@@ -67,7 +67,7 @@ pub(crate) fn run(print_summary: bool) -> Results {
             1,
             "Path",
             "(right, down) -> (3, 1)",
-            "Count",
+            "🌲 Count",
             &format!("{}", count_1),
             time_part_1,
         );
@@ -75,7 +75,7 @@ pub(crate) fn run(print_summary: bool) -> Results {
             2,
             "Paths",
             "(right, down) -> (1, 1), (3, 1), (5, 1), (7, 1), (1, 2)",
-            "Product",
+            "🌲 Product",
             &format!("{}", product_2),
             time_part_2,
         );

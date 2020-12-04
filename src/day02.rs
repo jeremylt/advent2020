@@ -52,7 +52,7 @@ fn part_2(data: &PasswordData) -> bool {
 // -----------------------------------------------------------------------------
 pub(crate) fn run(print_summary: bool) -> Results {
     if print_summary {
-        println!("- {}", "Day 02".bold());
+        output::print_day(2);
     }
     let start_all = Instant::now();
 
@@ -105,7 +105,7 @@ pub(crate) fn run(print_summary: bool) -> Results {
             1,
             "Rule",
             "required number",
-            "Valid",
+            "🔑 Valid",
             &format!("{}", count_1),
             time_part_1,
         );
@@ -113,7 +113,7 @@ pub(crate) fn run(print_summary: bool) -> Results {
             2,
             "Rule",
             "only one of two",
-            "Valid",
+            "🔑 Valid",
             &format!("{}", count_2),
             time_part_2,
         );
