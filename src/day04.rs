@@ -78,11 +78,19 @@ fn part_1(data: &PassportData) -> bool {
 fn is_between(value: i32, min: i32, max: i32) -> bool {
     (value >= min) && (value <= max)
 }
+
 fn part_2(data: &PassportData) -> bool {
+    // Number of fields
     (data.len >= 7)
+        // Birth year
         && is_between(data.byr, 1920, 2002)
+        // Issue year
         && is_between(data.iyr, 2010, 2020)
+        // Expire year
         && is_between(data.eyr, 2020, 2030)
+        // Eye color
+        && ["amb", "blu", "brn", "gry", "grn", "hzl", "oth"].contains(&data.ecl.as_str())
+        // Hair color
         && (data.hcl.chars().nth(0).unwrap() == '#')
         && (data.hcl.len() == 7)
         && (data
@@ -90,9 +98,10 @@ fn part_2(data: &PassportData) -> bool {
             .chars()
             .skip(1)
             .all(|x| x.is_numeric() || ['a', 'b', 'c', 'd', 'e', 'f'].contains(&x)))
-        && ["amb", "blu", "brn", "gry", "grn", "hzl", "oth"].contains(&data.ecl.as_str())
+        // Passport ID
         && (data.pid.len() == 9)
         && (data.pid.parse::<i32>().is_ok())
+        // Height
         && ((data.hgt.chars().last().unwrap() == 'm'
             && is_between(data.hgt.replace("cm", "").parse::<i32>().unwrap(), 150, 193))
             || (data.hgt.chars().last().unwrap() == 'n'
@@ -179,21 +188,4 @@ pub(crate) fn run(print_summary: bool) -> Results {
     };
 }
 
-// -----------------------------------------------------------------------------
-// Line parsing regex
-// -----------------------------------------------------------------------------
-//lazy_static! {
-//    static ref RE_LINE: Regex = Regex::new(
-//        r"(?x)
-//            (?P<lower>\d+) # lower requirement
-//            -
-//            (?P<upper>\d+) # upper requirement
-//            \s
-//            (?P<required>\w) # required character
-//            :\s
-//            (?P<password>\w+) # password to check
-//            ",
-//    )
-//    .unwrap();
-//}
 // -----------------------------------------------------------------------------
