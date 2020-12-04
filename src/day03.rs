@@ -25,7 +25,7 @@ pub(crate) fn run(print_summary: bool) -> Results {
     // Data
     // -------------------------------------------------------------------------
     // Open file
-    let buffer = file::load_file("data/day03part01.txt");
+    let buffer = file::load_file("data/day03.txt");
 
     // Read to object iterator
     let data: Vec<String> = buffer.lines().map(|line| line.unwrap()).collect();

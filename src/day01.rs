@@ -57,7 +57,7 @@ pub(crate) fn run(print_summary: bool) -> Results {
     // Setup
     // -------------------------------------------------------------------------
     // Open file
-    let buffer = file::load_file("data/day01part01.txt");
+    let buffer = file::load_file("data/day01.txt");
 
     // Read to vector
     let values: Vec<usize> = buffer

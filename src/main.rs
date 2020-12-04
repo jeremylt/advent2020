@@ -4,6 +4,7 @@
 mod day01;
 mod day02;
 mod day03;
+mod day04;
 mod file;
 mod output;
 
@@ -35,7 +36,7 @@ fn main() {
     // Setup
     const PRINT_OUTPUT: bool = true;
     let mut times: Vec<u128> = Vec::with_capacity(25);
-    let days = [day01::run, day02::run, day03::run];
+    let days = [day01::run, day02::run, day03::run, day04::run];
 
     // Each day
     output::print_header();
@@ -78,6 +79,11 @@ mod tests {
     #[test]
     fn test_03() {
         test_day!(day03::run(NO_OUTPUT), 176, 5872458240);
+    }
+
+    #[test]
+    fn test_04() {
+        test_day!(day04::run(NO_OUTPUT), 182, 109);
     }
 }
 

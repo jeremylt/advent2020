@@ -1,30 +1,66 @@
 use crate::prelude::*;
 
 // -----------------------------------------------------------------------------
-// Password data struct
+// Passport data struct
 // -----------------------------------------------------------------------------
 #[derive(Debug)]
-pub struct PasswordData {
-    lower: usize,
-    upper: usize,
-    required: char,
-    password: String,
+pub struct PassportData {
+    byr: i32,
+    iyr: i32,
+    eyr: i32,
+    hgt: String,
+    hcl: String,
+    ecl: String,
+    pid: String,
+    cid: String,
+    len: usize,
 }
 
-impl std::str::FromStr for PasswordData {
+macro_rules! copy_five {
+    ($e:expr) => {
+        ($e, $e, $e, $e, $e)
+    };
+}
+
+impl std::str::FromStr for PassportData {
     type Err = std::num::ParseIntError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let mut m = s.split(|c| "- :".contains(c));
-        let lower = m.next().unwrap().parse()?;
-        let upper = m.next().unwrap().parse()?;
-        let required = m.next().unwrap().chars().next().unwrap();
-        assert_eq!(m.next(), Some(""));
-        let password = m.next().unwrap().to_string();
+        let line: Vec<&str> = s.trim().split(|c| " ".contains(c)).collect();
+        let (mut byr, mut iyr, mut eyr): (i32, i32, i32) = (0, 0, 0);
+        let (mut hgt, mut hcl, mut ecl, mut pid, mut cid): (
+            String,
+            String,
+            String,
+            String,
+            String,
+        ) = copy_five!("invalid".to_string());
+        let len: usize = line.len();
+        for field in line {
+            let mut entry = field.split(|c| ":".contains(c));
+            let name = entry.next().unwrap();
+            let data = entry.next().unwrap().to_string();
+            match name {
+                "byr" => byr = data.parse().unwrap(),
+                "iyr" => iyr = data.parse().unwrap(),
+                "eyr" => eyr = data.parse().unwrap(),
+                "hgt" => hgt = data,
+                "hcl" => hcl = data,
+                "ecl" => ecl = data,
+                "pid" => pid = data,
+                "cid" => cid = data,
+                _ => panic!("Unknown field"),
+            }
+        }
         Ok(Self {
-            lower,
-            upper,
-            required,
-            password,
+            byr,
+            iyr,
+            eyr,
+            hgt,
+            hcl,
+            ecl,
+            pid,
+            cid,
+            len,
         })
     }
 }
@@ -32,19 +68,35 @@ impl std::str::FromStr for PasswordData {
 // -----------------------------------------------------------------------------
 // Part 1
 // -----------------------------------------------------------------------------
-fn part_1(data: &PasswordData) -> bool {
-    let number_matches = data.password.matches(data.required).count();
-    (number_matches >= data.lower) && (number_matches <= data.upper)
+fn part_1(data: &PassportData) -> bool {
+    (data.len == 8) || (data.len == 7 && data.cid == "invalid")
 }
 
 // -----------------------------------------------------------------------------
 // Part 2
 // -----------------------------------------------------------------------------
-fn part_2(data: &PasswordData) -> bool {
-    let mut chars = data.password.chars();
-    let first = chars.nth(data.lower - 1).unwrap();
-    let second = chars.nth(data.upper - data.lower - 1).unwrap();
-    (first == data.required) != (second == data.required)
+fn is_between(value: i32, min: i32, max: i32) -> bool {
+    (value >= min) && (value <= max)
+}
+fn part_2(data: &PassportData) -> bool {
+    (data.len >= 7)
+        && is_between(data.byr, 1920, 2002)
+        && is_between(data.iyr, 2010, 2020)
+        && is_between(data.eyr, 2020, 2030)
+        && (data.hcl.chars().nth(0).unwrap() == '#')
+        && (data.hcl.len() == 7)
+        && (data
+            .hcl
+            .chars()
+            .skip(1)
+            .all(|x| x.is_numeric() || ['a', 'b', 'c', 'd', 'e', 'f'].contains(&x)))
+        && ["amb", "blu", "brn", "gry", "grn", "hzl", "oth"].contains(&data.ecl.as_str())
+        && (data.pid.len() == 9)
+        && (data.pid.parse::<i32>().is_ok())
+        && ((data.hgt.chars().last().unwrap() == 'm'
+            && is_between(data.hgt.replace("cm", "").parse::<i32>().unwrap(), 150, 193))
+            || (data.hgt.chars().last().unwrap() == 'n'
+                && is_between(data.hgt.replace("in", "").parse::<i32>().unwrap(), 59, 76)))
 }
 
 // -----------------------------------------------------------------------------
@@ -52,7 +104,7 @@ fn part_2(data: &PasswordData) -> bool {
 // -----------------------------------------------------------------------------
 pub(crate) fn run(print_summary: bool) -> Results {
     if print_summary {
-        output::print_day(2);
+        output::print_day(4);
     }
     let start_all = Instant::now();
 
@@ -60,17 +112,29 @@ pub(crate) fn run(print_summary: bool) -> Results {
     // Data
     // -------------------------------------------------------------------------
     // Open file
-    let buffer = file::load_file("data/day02.txt");
+    let buffer = file::load_file("data/day04.txt");
 
     // Read to object iterator
-    let data: Vec<PasswordData> = buffer
-        .lines()
-        .map(|line| {
-            line.unwrap()
-                .parse::<PasswordData>()
-                .expect("Could not parse line")
-        })
-        .collect();
+    let mut data: Vec<PassportData> = Vec::new();
+    let mut entry = "".to_string();
+    for line in buffer.lines() {
+        let unwrapped = line.unwrap();
+        if unwrapped == "" {
+            data.push(
+                entry
+                    .parse::<PassportData>()
+                    .expect("Could not parse entry"),
+            );
+            entry = "".to_string();
+        } else {
+            entry = format!("{} {}", entry, unwrapped);
+        }
+    }
+    data.push(
+        entry
+            .parse::<PassportData>()
+            .expect("Could not parse entry"),
+    );
 
     // Timing
     let time_setup = start_all.elapsed();
@@ -78,7 +142,7 @@ pub(crate) fn run(print_summary: bool) -> Results {
     // -------------------------------------------------------------------------
     // Part 1
     // -------------------------------------------------------------------------
-    // Find matching passwords
+    // Find matching passports
     let start_part_1 = Instant::now();
     let count_1 = data.iter().filter(|&d| part_1(d)).count();
     let time_part_1 = start_part_1.elapsed();
@@ -86,7 +150,7 @@ pub(crate) fn run(print_summary: bool) -> Results {
     // -------------------------------------------------------------------------
     // Part 2
     // -------------------------------------------------------------------------
-    // Find matching passwords
+    // Find matching passports
     let start_part_2 = Instant::now();
     let count_2 = data.iter().filter(|&d| part_2(d)).count();
     let time_part_2 = start_part_2.elapsed();
@@ -104,16 +168,16 @@ pub(crate) fn run(print_summary: bool) -> Results {
         output::print_part(
             1,
             "Rule",
-            "required number",
-            "🔑 Valid",
+            "cid optional",
+            "📘 Valid",
             &format!("{}", count_1),
             time_part_1,
         );
         output::print_part(
             2,
             "Rule",
-            "only one of two",
-            "🔑 Valid",
+            "validated entries",
+            "📘 Valid",
             &format!("{}", count_2),
             time_part_2,
         );
