@@ -4,7 +4,7 @@ use crate::prelude::*;
 // Passport data struct
 // -----------------------------------------------------------------------------
 #[derive(Debug)]
-pub struct PassportData {
+struct PassportData {
     byr: i32,
     iyr: i32,
     eyr: i32,

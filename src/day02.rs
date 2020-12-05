@@ -4,7 +4,7 @@ use crate::prelude::*;
 // Password data struct
 // -----------------------------------------------------------------------------
 #[derive(Debug)]
-pub struct PasswordData {
+struct PasswordData {
     lower: usize,
     upper: usize,
     required: char,
