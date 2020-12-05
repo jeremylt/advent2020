@@ -77,7 +77,7 @@ pub(crate) fn run(print_summary: bool) -> Results {
         output::print_setup(time_setup);
         output::print_part(
             1,
-            "Rule",
+            "Goal",
             "find largest seat",
             "💺 Largest",
             &format!("{}", max_1),
@@ -85,9 +85,9 @@ pub(crate) fn run(print_summary: bool) -> Results {
         );
         output::print_part(
             2,
-            "Rule",
-            "find emply seat",
-            "💺 Avaliable",
+            "Goal",
+            "find empty seat",
+            "💺 Available",
             &format!("{}", seat_2),
             time_part_2,
         );
