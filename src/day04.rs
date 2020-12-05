@@ -25,12 +25,11 @@ macro_rules! copy_five {
 impl std::str::FromStr for PassportData {
     type Err = std::num::ParseIntError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let line = s.trim().split(&['\n', ' '][..]);
         let [mut byr, mut iyr, mut eyr]: [i32; 3] = [0; 3];
         let [mut hgt, mut hcl, mut ecl, mut pid, mut cid]: [String; 5] =
             copy_five!("invalid".to_string());
         let mut len: usize = 0;
-        for field in line {
+        for field in s.trim().split(&['\n', ' '][..]) {
             len += 1;
             let mut entry = field.splitn(2, ':');
             let name = entry.next().unwrap();
