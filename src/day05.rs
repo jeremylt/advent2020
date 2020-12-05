@@ -91,7 +91,7 @@ pub(crate) fn run(print_summary: bool) -> Results {
             &format!("{}", seat_2),
             time_part_2,
         );
-        output::print_timing(time, time_part_1, time_part_2);
+        output::print_timing(time, time_part_1, time_part_2, time);
     }
 
     // -------------------------------------------------------------------------

@@ -148,6 +148,24 @@ pub(crate) fn run(print_summary: bool) -> Results {
     let time = start_all.elapsed();
 
     // -------------------------------------------------------------------------
+    // Combined
+    // -------------------------------------------------------------------------
+    let start_combined = Instant::now();
+    let (combined_1, combined_2) = buffer
+        .split("\n\n")
+        .map(|line| {
+            line.parse::<PassportData>()
+                .expect("failed to parse passport")
+        })
+        .map(|passport| (part_1(&passport), part_2(&passport)))
+        .fold((0, 0), |acc, entry| {
+            (acc.0 + entry.0 as usize, acc.1 + entry.1 as usize)
+        });
+    let time_combined = start_combined.elapsed();
+    assert_eq!(combined_1, count_1);
+    assert_eq!(combined_2, count_2);
+
+    // -------------------------------------------------------------------------
     // Report
     // -------------------------------------------------------------------------
     if print_summary {
@@ -168,7 +186,7 @@ pub(crate) fn run(print_summary: bool) -> Results {
             &format!("{}", count_2),
             time_part_2,
         );
-        output::print_timing(time, time_part_1, time_part_2);
+        output::print_timing(time, time_part_1, time_part_2, time_combined);
     }
 
     // -------------------------------------------------------------------------
@@ -177,7 +195,7 @@ pub(crate) fn run(print_summary: bool) -> Results {
     return Results {
         part_1: count_1 as i64,
         part_2: count_2 as i64,
-        time: time.as_nanos(),
+        time: time_combined.as_nanos(),
     };
 }
 

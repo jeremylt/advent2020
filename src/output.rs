@@ -61,6 +61,7 @@ pub(crate) fn print_timing(
     time_total: std::time::Duration,
     time_part_1: std::time::Duration,
     time_part_2: std::time::Duration,
+    time_combined: std::time::Duration,
 ) {
     println!("    {}:", "Timing".purple().bold());
     let part_1_percent = time_part_1.as_nanos() as f64 / time_total.as_nanos() as f64;
@@ -81,6 +82,18 @@ pub(crate) fn print_timing(
         format!("{:02.1}%", 100.0 * part_2_percent).green(),
     );
     println!("      Total: {:?}", time_total,);
+    println!(
+        "      Combined Time: {}",
+        if time_total != time_combined {
+            format!(
+                "{:?} ({:2.1}%)",
+                time_combined,
+                time_combined.as_nanos() as f64 / time_total.as_nanos() as f64 * 100.0
+            )
+        } else {
+            "N/A".to_string()
+        }
+    );
     println!(
         "{}{}{}",
         "-".repeat(setup_portion).red().bold(),
