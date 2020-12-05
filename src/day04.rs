@@ -82,7 +82,7 @@ fn part_2(data: &PassportData) -> bool {
         // Eye color
         && ["amb", "blu", "brn", "gry", "grn", "hzl", "oth"].contains(&data.ecl.as_str())
         // Hair color
-        && (data.hcl.chars().nth(0).unwrap() == '#')
+        && (data.hcl.as_bytes()[0] == b'#')
         && (data.hcl.len() == 7)
         && (data
             .hcl

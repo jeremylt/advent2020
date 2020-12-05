@@ -45,9 +45,9 @@ fn part_1(data: &PasswordData) -> bool {
 // Part 2
 // -----------------------------------------------------------------------------
 fn part_2(data: &PasswordData) -> bool {
-    let mut chars = data.password.chars();
-    let first = chars.nth(data.lower - 1).unwrap();
-    let second = chars.nth(data.upper - data.lower - 1).unwrap();
+    let chars = data.password.as_bytes();
+    let first = chars[data.lower - 1] as char;
+    let second = chars[data.upper - 1] as char;
     (first == data.required) != (second == data.required)
 }
 

@@ -3,12 +3,14 @@ use crate::prelude::*;
 // -----------------------------------------------------------------------------
 // Count trees
 // -----------------------------------------------------------------------------
+fn hit_tree(line: &String, i: &usize, right: usize, down: usize, line_length: usize) -> bool {
+    (i % down == 0) && (line.as_bytes()[right * i / down % line_length] == b'#')
+}
+
 fn count_trees(data: &Vec<String>, right: usize, down: usize, line_length: usize) -> usize {
     data.iter()
         .enumerate()
-        .filter(|(i, line)| {
-            (i % down == 0) && (line.as_bytes()[right * i / down % line_length] == b'#')
-        })
+        .filter(|(i, line)| hit_tree(*line, i, right, down, line_length))
         .count()
 }
 
@@ -59,6 +61,29 @@ pub(crate) fn run(print_summary: bool) -> Results {
     let time = start_all.elapsed();
 
     // -------------------------------------------------------------------------
+    // Combined
+    // -------------------------------------------------------------------------
+    let start_combined = Instant::now();
+    let slopes = [(3, 1), (1, 1), (5, 1), (7, 1), (1, 2)];
+    let hit_per_slope: Vec<usize> = buffer
+        .lines()
+        .map(|line| line.to_string())
+        .enumerate()
+        .fold(vec![0 as usize; 5], |mut acc, (i, line)| {
+            acc.iter_mut()
+                .zip(&slopes)
+                .map(|(&mut curr, &(right, down))| {
+                    curr + hit_tree(&line, &i, right, down, line_length) as usize
+                })
+                .collect()
+        });
+    let combined_1 = hit_per_slope[0];
+    let combined_2 = hit_per_slope.iter().fold(1, |acc, val| acc * val);
+    let time_combined = start_combined.elapsed();
+    assert_eq!(combined_1, count_1);
+    assert_eq!(combined_2, product_2);
+
+    // -------------------------------------------------------------------------
     // Report
     // -------------------------------------------------------------------------
     if print_summary {
@@ -79,7 +104,7 @@ pub(crate) fn run(print_summary: bool) -> Results {
             &format!("{}", product_2),
             time_part_2,
         );
-        output::print_timing(time, time_part_1, time_part_2, time);
+        output::print_timing(time, time_part_1, time_part_2, time_combined);
     }
 
     // -------------------------------------------------------------------------
