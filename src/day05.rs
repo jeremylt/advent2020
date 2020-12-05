@@ -4,14 +4,10 @@ use itertools::Itertools;
 // -----------------------------------------------------------------------------
 // Parse FBLR encoded binary
 // -----------------------------------------------------------------------------
-fn parse_fblr_binary(s: &str) -> Result<usize, std::num::ParseIntError> {
-    usize::from_str_radix(
-        s.chars()
-            .map(|c| if ['B', 'R'].contains(&c) { '1' } else { '0' })
-            .collect::<String>()
-            .as_str(),
-        2,
-    )
+fn parse_fblr_binary(s: &str) -> usize {
+    s.chars().fold(0, |id, c| {
+        id * 2 + if ['B', 'R'].contains(&c) { 1 } else { 0 }
+    })
 }
 
 // -----------------------------------------------------------------------------
@@ -39,7 +35,7 @@ pub(crate) fn run(print_summary: bool) -> Results {
     // Read to object iterator
     let data: Vec<usize> = buffer
         .lines()
-        .map(|line| parse_fblr_binary(&line).expect("failed to parse seat binary"))
+        .map(|line| parse_fblr_binary(&line))
         .collect();
 
     // Timing
