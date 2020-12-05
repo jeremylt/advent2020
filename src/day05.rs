@@ -84,7 +84,7 @@ pub(crate) fn run(print_summary: bool) -> Results {
             1,
             "Rule",
             "find largest seat",
-            "🎫 Largest",
+            "💺 Largest",
             &format!("{}", max_1),
             time_part_1,
         );
@@ -92,7 +92,7 @@ pub(crate) fn run(print_summary: bool) -> Results {
             2,
             "Rule",
             "find emply seat",
-            "🎫 Avaliable",
+            "💺 Avaliable",
             &format!("{}", seat_2),
             time_part_2,
         );
