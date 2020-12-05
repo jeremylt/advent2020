@@ -109,9 +109,11 @@ pub(crate) fn run(print_summary: bool) -> Results {
             line.parse::<PasswordData>()
                 .expect("failed to parse password")
         })
-        .map(|password| (part_1(&password), part_2(&password)))
-        .fold((0, 0), |acc, entry| {
-            (acc.0 + entry.0 as usize, acc.1 + entry.1 as usize)
+        .fold((0, 0), |acc, password| {
+            (
+                acc.0 + part_1(&password) as usize,
+                acc.1 + part_2(&password) as usize,
+            )
         });
     let time_combined = start_combined.elapsed();
     assert_eq!(combined_1, count_1);

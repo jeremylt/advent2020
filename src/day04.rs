@@ -157,9 +157,11 @@ pub(crate) fn run(print_summary: bool) -> Results {
             line.parse::<PassportData>()
                 .expect("failed to parse passport")
         })
-        .map(|passport| (part_1(&passport), part_2(&passport)))
-        .fold((0, 0), |acc, entry| {
-            (acc.0 + entry.0 as usize, acc.1 + entry.1 as usize)
+        .fold((0, 0), |acc, passport| {
+            (
+                acc.0 + part_1(&passport) as usize,
+                acc.1 + part_2(&passport) as usize,
+            )
         });
     let time_combined = start_combined.elapsed();
     assert_eq!(combined_1, count_1);
