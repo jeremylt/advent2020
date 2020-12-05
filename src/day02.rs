@@ -69,7 +69,10 @@ pub(crate) fn run(print_summary: bool) -> Results {
     // Read to object iterator
     let data: Vec<PasswordData> = buffer
         .lines()
-        .filter_map(|line| line.parse::<PasswordData>().ok())
+        .map(|line| {
+            line.parse::<PasswordData>()
+                .expect("failed to parse password")
+        })
         .collect();
 
     // Timing

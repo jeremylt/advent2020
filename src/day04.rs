@@ -118,7 +118,10 @@ pub(crate) fn run(print_summary: bool) -> Results {
     // Read to object iterator
     let data: Vec<PassportData> = buffer
         .split("\n\n")
-        .filter_map(|line| line.parse::<PassportData>().ok())
+        .map(|line| {
+            line.parse::<PassportData>()
+                .expect("failed to parse passport")
+        })
         .collect();
 
     // Timing
