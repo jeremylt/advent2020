@@ -19,14 +19,14 @@ fn to_array(responses: &str) -> [usize; 27] {
 // Part 1
 // -----------------------------------------------------------------------------
 fn part_1(responses: &[usize; 27]) -> usize {
-    responses.iter().filter(|&c| *c > 0).count() - 1
+    responses[0..26].iter().filter(|&c| *c > 0).count()
 }
 
 // -----------------------------------------------------------------------------
 // Part 2
 // -----------------------------------------------------------------------------
 fn part_2(responses: &[usize; 27]) -> usize {
-    responses.iter().filter(|&c| *c == responses[26]).count() - 1
+    responses[0..26].iter().filter(|&c| *c == responses[26]).count()
 }
 
 // -----------------------------------------------------------------------------
