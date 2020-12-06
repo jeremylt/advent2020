@@ -5,9 +5,9 @@ use itertools::Itertools;
 // Parse FBLR encoded binary
 // -----------------------------------------------------------------------------
 fn parse_fblr_binary(s: &str) -> usize {
-    s.as_bytes().iter().fold(0, |id, c| {
-        id * 2 + if [b'B', b'R'].contains(&c) { 1 } else { 0 }
-    })
+    s.as_bytes()
+        .iter()
+        .fold(0, |id, c| id * 2 + (*c as usize % 7) % 2) // B, R -> 1; F, L -> 0
 }
 
 // -----------------------------------------------------------------------------
