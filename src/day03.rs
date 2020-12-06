@@ -65,20 +65,21 @@ pub(crate) fn run(print_summary: bool) -> Results {
     // -------------------------------------------------------------------------
     let start_combined = Instant::now();
     let slopes = [(3, 1), (1, 1), (5, 1), (7, 1), (1, 2)];
-    let hit_per_slope: Vec<usize> = buffer
+    let mut trees_hit = [0; 5];
+    buffer
         .lines()
         .map(|line| line.to_string())
         .enumerate()
-        .fold(vec![0 as usize; 5], |mut acc, (i, line)| {
-            acc.iter_mut()
+        .for_each(|(i, line)| {
+            trees_hit
+                .iter_mut()
                 .zip(&slopes)
-                .map(|(&mut curr, &(right, down))| {
-                    curr + hit_tree(&line, &i, right, down, line_length) as usize
-                })
-                .collect()
+                .for_each(|(curr, &(right, down))| {
+                    *curr += hit_tree(&line, &i, right, down, line_length) as usize
+                });
         });
-    let combined_1 = hit_per_slope[0];
-    let combined_2 = hit_per_slope.iter().fold(1, |acc, val| acc * val);
+    let combined_1 = trees_hit[0];
+    let combined_2: usize = trees_hit.iter().product();
     let time_combined = start_combined.elapsed();
     assert_eq!(combined_1, count_1);
     assert_eq!(combined_2, product_2);

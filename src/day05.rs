@@ -71,6 +71,30 @@ pub(crate) fn run(print_summary: bool) -> Results {
     let time = start_all.elapsed();
 
     // -------------------------------------------------------------------------
+    // Combined
+    // -------------------------------------------------------------------------
+    let start_combined = Instant::now();
+    let mut combined_mask = [false; 2 << 9];
+    let mut combined_1 = 0;
+    buffer
+        .lines()
+        .map(|line| parse_fblr_binary(&line))
+        .for_each(|s| {
+            combined_mask[s] = true;
+            combined_1 = std::cmp::max(combined_1, s)
+        });
+    let combined_2 = mask
+        .iter()
+        .tuple_windows::<(_, _, _)>()
+        .enumerate()
+        .find_map(|(i, t)| if part_2(t) { Some(i as i32) } else { None })
+        .unwrap()
+        + 1;
+    let time_combined = start_combined.elapsed();
+    assert_eq!(combined_1, max_1);
+    assert_eq!(combined_2, seat_2);
+
+    // -------------------------------------------------------------------------
     // Report
     // -------------------------------------------------------------------------
     if print_summary {
@@ -91,7 +115,7 @@ pub(crate) fn run(print_summary: bool) -> Results {
             &format!("{}", seat_2),
             time_part_2,
         );
-        output::print_timing(time, time_part_1, time_part_2, time);
+        output::print_timing(time, time_part_1, time_part_2, time_combined);
     }
 
     // -------------------------------------------------------------------------

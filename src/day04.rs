@@ -64,7 +64,7 @@ impl std::str::FromStr for PassportData {
 // Part 1
 // -----------------------------------------------------------------------------
 fn part_1(data: &PassportData) -> bool {
-    (data.len == 8) || (data.len == 7 && data.cid == "invalid")
+    (data.len == 8) ^ (data.len == 7 && data.cid == "invalid")
 }
 
 // -----------------------------------------------------------------------------

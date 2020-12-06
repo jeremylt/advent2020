@@ -35,8 +35,9 @@ impl std::str::FromStr for PasswordData {
 fn part_1(data: &PasswordData) -> bool {
     let number_matches = data
         .password
-        .chars()
-        .filter(|&x| x == data.required)
+        .as_bytes()
+        .iter()
+        .filter(|&x| *x == data.required as u8)
         .count();
     (data.lower..=data.upper).contains(&number_matches)
 }
@@ -46,9 +47,9 @@ fn part_1(data: &PasswordData) -> bool {
 // -----------------------------------------------------------------------------
 fn part_2(data: &PasswordData) -> bool {
     let chars = data.password.as_bytes();
-    let first = chars[data.lower - 1] as char;
-    let second = chars[data.upper - 1] as char;
-    (first == data.required) != (second == data.required)
+    let first = chars[data.lower - 1] == data.required as u8;
+    let second = chars[data.upper - 1] == data.required as u8;
+    first ^ second
 }
 
 // -----------------------------------------------------------------------------
