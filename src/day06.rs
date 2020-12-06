@@ -5,7 +5,7 @@ use crate::prelude::*;
 // -----------------------------------------------------------------------------
 fn to_array(responses: &str) -> [usize; 27] {
     let mut array = [0; 27];
-    responses.split("\n").for_each(|person| {
+    responses.trim().split("\n").for_each(|person| {
         person
             .as_bytes()
             .iter()
@@ -19,7 +19,7 @@ fn to_array(responses: &str) -> [usize; 27] {
 // Part 1
 // -----------------------------------------------------------------------------
 fn part_1(responses: &[usize; 27]) -> usize {
-    responses.iter().filter(|&c| *c > 0).count()
+    responses.iter().filter(|&c| *c > 0).count() - 1
 }
 
 // -----------------------------------------------------------------------------
