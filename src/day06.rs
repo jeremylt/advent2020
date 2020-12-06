@@ -1,28 +1,32 @@
 use crate::prelude::*;
-use std::collections::HashSet;
+
+// -----------------------------------------------------------------------------
+// Parse line to array
+// -----------------------------------------------------------------------------
+fn to_array(responses: &str) -> [usize; 27] {
+    let mut array = [0; 27];
+    responses.split("\n").for_each(|person| {
+        person
+            .as_bytes()
+            .iter()
+            .for_each(|answer| array[(answer - b'a') as usize] += 1);
+        array[26] += 1
+    });
+    array
+}
 
 // -----------------------------------------------------------------------------
 // Part 1
 // -----------------------------------------------------------------------------
-fn part_1(responses: &str) -> usize {
-    let mut uniques = HashSet::new();
-    responses
-        .as_bytes()
-        .iter()
-        .filter(|&c| *c != b'\n' && uniques.insert(*c))
-        .count()
+fn part_1(responses: &[usize; 27]) -> usize {
+    responses.iter().filter(|&c| *c > 0).count()
 }
 
 // -----------------------------------------------------------------------------
 // Part 2
 // -----------------------------------------------------------------------------
-fn part_2(responses: &str) -> usize {
-    let mut people = responses.trim().split("\n").collect::<Vec<_>>();
-    people
-        .remove(0)
-        .chars()
-        .filter(|c| people.iter().all(|response| response.contains(*c)))
-        .count()
+fn part_2(responses: &[usize; 27]) -> usize {
+    responses.iter().filter(|&c| *c == responses[26]).count() - 1
 }
 
 // -----------------------------------------------------------------------------
@@ -41,7 +45,7 @@ pub(crate) fn run(print_summary: bool) -> Results {
     let buffer: String = std::fs::read_to_string("data/day06.txt").unwrap();
 
     // Read to object iterator
-    let data: Vec<String> = buffer.split("\n\n").map(|line| line.to_string()).collect();
+    let data: Vec<[usize; 27]> = buffer.split("\n\n").map(|line| to_array(line)).collect();
 
     // Timing
     let time_setup = start_all.elapsed();
@@ -73,7 +77,7 @@ pub(crate) fn run(print_summary: bool) -> Results {
     let start_combined = Instant::now();
     let (combined_1, combined_2) = buffer
         .split("\n\n")
-        .map(|line| line.to_string())
+        .map(|line| to_array(line))
         .fold((0, 0), |acc, responses| {
             (acc.0 + part_1(&responses), acc.1 + part_2(&responses))
         });
