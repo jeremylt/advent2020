@@ -26,7 +26,10 @@ fn part_1(responses: &[usize; 27]) -> usize {
 // Part 2
 // -----------------------------------------------------------------------------
 fn part_2(responses: &[usize; 27]) -> usize {
-    responses[0..26].iter().filter(|&c| *c == responses[26]).count()
+    responses[0..26]
+        .iter()
+        .filter(|&c| *c == responses[26])
+        .count()
 }
 
 // -----------------------------------------------------------------------------
