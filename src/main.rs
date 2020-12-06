@@ -16,7 +16,7 @@ mod output;
 pub(crate) struct Results {
     part_1: i64,
     part_2: i64,
-    time: u128,
+    time: std::time::Duration,
 }
 
 // -----------------------------------------------------------------------------
@@ -34,7 +34,7 @@ pub(crate) mod prelude {
 fn main() {
     // Setup
     const PRINT_OUTPUT: bool = true;
-    let mut times: Vec<u128> = Vec::with_capacity(25);
+    let mut times: Vec<std::time::Duration> = Vec::with_capacity(25);
     let days = [
         day01::run,
         day02::run,
