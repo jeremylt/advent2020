@@ -1,20 +1,28 @@
 use crate::prelude::*;
-use itertools::Itertools;
+use std::collections::HashSet;
 
 // -----------------------------------------------------------------------------
-// Parse FBLR encoded binary
+// Part 1
 // -----------------------------------------------------------------------------
-fn parse_fblr_binary(s: &str) -> usize {
-    s.as_bytes()
-        .iter()
-        .fold(0, |id, c| id * 2 + (*c as usize % 7) % 2) // B, R -> 1; F, L -> 0
+fn part_1(responses: &str) -> usize {
+    let mut uniques = HashSet::new();
+    let mut count = 0;
+    responses.as_bytes().iter().for_each(|&c| {
+        if c != b'\n' {
+            count += uniques.insert(c.clone()) as usize;
+        }
+    });
+    count
 }
 
 // -----------------------------------------------------------------------------
 // Part 2
 // -----------------------------------------------------------------------------
-fn part_2(triple: (&bool, &bool, &bool)) -> bool {
-    *triple.0 && !*triple.1 && *triple.2
+fn part_2(responses: &str) -> usize {
+    let mut people = responses.trim().split("\n");
+    let mut first = people.next().unwrap().chars().collect::<Vec<char>>();
+    people.for_each(|other| first.retain(|&c| other.contains(c)));
+    first.len()
 }
 
 // -----------------------------------------------------------------------------
@@ -22,7 +30,7 @@ fn part_2(triple: (&bool, &bool, &bool)) -> bool {
 // -----------------------------------------------------------------------------
 pub(crate) fn run(print_summary: bool) -> Results {
     if print_summary {
-        output::print_day(5);
+        output::print_day(6);
     }
     let start_all = Instant::now();
 
@@ -30,13 +38,10 @@ pub(crate) fn run(print_summary: bool) -> Results {
     // Data
     // -------------------------------------------------------------------------
     // Open file
-    let buffer = std::fs::read_to_string("data/day05.txt").unwrap();
+    let buffer: String = std::fs::read_to_string("data/day06.txt").unwrap();
 
     // Read to object iterator
-    let data: Vec<usize> = buffer
-        .lines()
-        .map(|line| parse_fblr_binary(&line))
-        .collect();
+    let data: Vec<String> = buffer.split("\n\n").map(|line| line.to_string()).collect();
 
     // Timing
     let time_setup = start_all.elapsed();
@@ -44,25 +49,17 @@ pub(crate) fn run(print_summary: bool) -> Results {
     // -------------------------------------------------------------------------
     // Part 1
     // -------------------------------------------------------------------------
-    // Find matching passports
+    // Find matching passwords
     let start_part_1 = Instant::now();
-    let max_1 = *data.iter().max().unwrap();
+    let count_1: usize = data.iter().map(|d| part_1(&d)).sum();
     let time_part_1 = start_part_1.elapsed();
 
     // -------------------------------------------------------------------------
     // Part 2
     // -------------------------------------------------------------------------
-    // Find matching passports
+    // Find matching passwords
     let start_part_2 = Instant::now();
-    let mut mask = [false; 2 << 9];
-    data.iter().for_each(|&s| mask[s] = true);
-    let seat_2 = mask
-        .iter()
-        .tuple_windows::<(_, _, _)>()
-        .enumerate()
-        .find_map(|(i, t)| if part_2(t) { Some(i as i32) } else { None })
-        .unwrap()
-        + 1;
+    let count_2: usize = data.iter().map(|d| part_2(&d)).sum();
     let time_part_2 = start_part_2.elapsed();
 
     // -------------------------------------------------------------------------
@@ -74,25 +71,15 @@ pub(crate) fn run(print_summary: bool) -> Results {
     // Combined
     // -------------------------------------------------------------------------
     let start_combined = Instant::now();
-    let mut combined_mask = [false; 2 << 9];
-    let mut combined_1 = 0;
-    buffer
-        .lines()
-        .map(|line| parse_fblr_binary(&line))
-        .for_each(|s| {
-            combined_mask[s] = true;
-            combined_1 = std::cmp::max(combined_1, s)
+    let (combined_1, combined_2) = buffer
+        .split("\n\n")
+        .map(|line| line.to_string())
+        .fold((0, 0), |acc, responses| {
+            (acc.0 + part_1(&responses), acc.1 + part_2(&responses))
         });
-    let combined_2 = mask
-        .iter()
-        .tuple_windows::<(_, _, _)>()
-        .enumerate()
-        .find_map(|(i, t)| if part_2(t) { Some(i as i32) } else { None })
-        .unwrap()
-        + 1;
     let time_combined = start_combined.elapsed();
-    assert_eq!(combined_1, max_1);
-    assert_eq!(combined_2, seat_2);
+    assert_eq!(combined_1, count_1);
+    assert_eq!(combined_2, count_2);
 
     // -------------------------------------------------------------------------
     // Report
@@ -101,18 +88,18 @@ pub(crate) fn run(print_summary: bool) -> Results {
         output::print_setup(time_setup);
         output::print_part(
             1,
-            "Goal",
-            "find largest seat",
-            "💺 Largest",
-            &format!("{}", max_1),
+            "Count",
+            "total yes",
+            "✅ Count",
+            &format!("{}", count_1),
             time_part_1,
         );
         output::print_part(
             2,
-            "Goal",
-            "find empty seat",
-            "💺 Available",
-            &format!("{}", seat_2),
+            "Rule",
+            "only one of two",
+            "✅ Valid",
+            &format!("{}", count_2),
             time_part_2,
         );
         output::print_timing(time, time_part_1, time_part_2, time_combined);
@@ -122,10 +109,27 @@ pub(crate) fn run(print_summary: bool) -> Results {
     // Return
     // -------------------------------------------------------------------------
     return Results {
-        part_1: max_1 as i64,
-        part_2: seat_2 as i64,
+        part_1: count_1 as i64,
+        part_2: count_2 as i64,
         time: time_combined.as_nanos(),
     };
 }
 
+// -----------------------------------------------------------------------------
+// Line parsing regex
+// -----------------------------------------------------------------------------
+//lazy_static! {
+//    static ref RE_LINE: Regex = Regex::new(
+//        r"(?x)
+//            (?P<lower>\d+) # lower requirement
+//            -
+//            (?P<upper>\d+) # upper requirement
+//            \s
+//            (?P<required>\w) # required character
+//            :\s
+//            (?P<password>\w+) # password to check
+//            ",
+//    )
+//    .unwrap();
+//}
 // -----------------------------------------------------------------------------
