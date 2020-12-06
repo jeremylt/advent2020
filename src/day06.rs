@@ -6,23 +6,23 @@ use std::collections::HashSet;
 // -----------------------------------------------------------------------------
 fn part_1(responses: &str) -> usize {
     let mut uniques = HashSet::new();
-    let mut count = 0;
-    responses.as_bytes().iter().for_each(|&c| {
-        if c != b'\n' {
-            count += uniques.insert(c.clone()) as usize;
-        }
-    });
-    count
+    responses
+        .as_bytes()
+        .iter()
+        .filter(|&c| *c != b'\n' && uniques.insert(*c))
+        .count()
 }
 
 // -----------------------------------------------------------------------------
 // Part 2
 // -----------------------------------------------------------------------------
 fn part_2(responses: &str) -> usize {
-    let mut people = responses.trim().split("\n");
-    let mut first = people.next().unwrap().chars().collect::<Vec<char>>();
-    people.for_each(|other| first.retain(|&c| other.contains(c)));
-    first.len()
+    let mut people = responses.trim().split("\n").collect::<Vec<_>>();
+    people
+        .remove(0)
+        .chars()
+        .filter(|c| people.iter().all(|response| response.contains(*c)))
+        .count()
 }
 
 // -----------------------------------------------------------------------------
