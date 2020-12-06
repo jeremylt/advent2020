@@ -120,20 +120,3 @@ pub(crate) fn run(print_summary: bool) -> Results {
 }
 
 // -----------------------------------------------------------------------------
-// Line parsing regex
-// -----------------------------------------------------------------------------
-//lazy_static! {
-//    static ref RE_LINE: Regex = Regex::new(
-//        r"(?x)
-//            (?P<lower>\d+) # lower requirement
-//            -
-//            (?P<upper>\d+) # upper requirement
-//            \s
-//            (?P<required>\w) # required character
-//            :\s
-//            (?P<password>\w+) # password to check
-//            ",
-//    )
-//    .unwrap();
-//}
-// -----------------------------------------------------------------------------
