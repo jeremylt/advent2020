@@ -33,13 +33,14 @@ impl std::str::FromStr for PasswordData {
 // Part 1
 // -----------------------------------------------------------------------------
 fn part_1(data: &PasswordData) -> bool {
-    let number_matches = data
-        .password
-        .as_bytes()
-        .iter()
-        .filter(|&x| *x == data.required as u8)
-        .count();
-    (data.lower..=data.upper).contains(&number_matches)
+    (data.lower..=data.upper).contains(
+        &data
+            .password
+            .as_bytes()
+            .iter()
+            .filter(|&c| *c == data.required as u8)
+            .count(),
+    )
 }
 
 // -----------------------------------------------------------------------------
@@ -50,6 +51,37 @@ fn part_2(data: &PasswordData) -> bool {
     let first = chars[data.lower - 1] == data.required as u8;
     let second = chars[data.upper - 1] == data.required as u8;
     first ^ second
+}
+
+// -----------------------------------------------------------------------------
+// Combined
+// -----------------------------------------------------------------------------
+#[derive(Debug)]
+struct PasswordValidityData {
+    part_1: bool,
+    part_2: bool,
+}
+
+impl std::str::FromStr for PasswordValidityData {
+    type Err = std::num::ParseIntError;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let mut line = s.split(&['-', ' ', ':'][..]);
+        let lower = line.next().unwrap().parse()?;
+        let upper = line.next().unwrap().parse()?;
+        let required = line.next().unwrap().chars().nth(0).unwrap();
+        assert_eq!(line.next(), Some(""));
+        let password = line.next().unwrap().to_string();
+        // Part 1
+        let chars = password.as_bytes();
+        let part_1 =
+            (lower..=upper).contains(&chars.iter().filter(|&c| *c == required as u8).count());
+        // Part 2
+        let first = chars[lower - 1] == required as u8;
+        let second = chars[upper - 1] == required as u8;
+        let part_2 = first ^ second;
+        // Return
+        Ok(Self { part_1, part_2 })
+    }
 }
 
 // -----------------------------------------------------------------------------
@@ -107,14 +139,11 @@ pub(crate) fn run(print_summary: bool) -> Results {
     let (combined_1, combined_2) = buffer
         .lines()
         .map(|line| {
-            line.parse::<PasswordData>()
+            line.parse::<PasswordValidityData>()
                 .expect("failed to parse password")
         })
-        .fold((0, 0), |acc, password| {
-            (
-                acc.0 + part_1(&password) as usize,
-                acc.1 + part_2(&password) as usize,
-            )
+        .fold((0, 0), |acc, data| {
+            (acc.0 + data.part_1 as usize, acc.1 + data.part_2 as usize)
         });
     let time_combined = start_combined.elapsed();
     assert_eq!(combined_1, count_1);

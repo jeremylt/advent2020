@@ -70,33 +70,91 @@ fn part_1(data: &PassportData) -> bool {
 // -----------------------------------------------------------------------------
 // Part 2
 // -----------------------------------------------------------------------------
+// Birth year
+fn byr_valid(byr: i32) -> bool {
+    (1920..=2002).contains(&byr)
+}
+
+// Issue year
+fn iyr_valid(iyr: i32) -> bool {
+    (2010..=2020).contains(&iyr)
+}
+
+// Expire year
+fn eyr_valid(eyr: i32) -> bool {
+    (2020..=2030).contains(&eyr)
+}
+
+// Eye color
+fn ecl_valid(ecl: &String) -> bool {
+    ["amb", "blu", "brn", "gry", "grn", "hzl", "oth"].contains(&ecl.as_str())
+}
+
+// Hair color
+fn hcl_valid(hcl: &String) -> bool {
+    (hcl.as_bytes()[0] == b'#') && (hcl.len() == 7) && (hcl.chars().skip(1).all(|x| x.is_digit(16)))
+}
+
+// Passport ID
+fn pid_valid(pid: &String) -> bool {
+    (pid.len() == 9) && (pid.chars().all(char::is_numeric))
+}
+
+// Passport ID
+fn hgt_valid(hgt: &String) -> bool {
+    (hgt.chars().last().unwrap() == 'm'
+        && (150..=193).contains(&hgt.replace("cm", "").parse::<i32>().unwrap()))
+        || (hgt.chars().last().unwrap() == 'n'
+            && (59..=76).contains(&hgt.replace("in", "").parse::<i32>().unwrap()))
+}
+
 fn part_2(data: &PassportData) -> bool {
-    // Number of fields
     (data.len >= 7)
-        // Birth year
-        && (1920..=2002).contains(&data.byr)
-        // Issue year
-        && (2010..=2020).contains(&data.iyr)
-        // Expire year
-        && (2020..=2030).contains(&data.eyr)
-        // Eye color
-        && ["amb", "blu", "brn", "gry", "grn", "hzl", "oth"].contains(&data.ecl.as_str())
-        // Hair color
-        && (data.hcl.as_bytes()[0] == b'#')
-        && (data.hcl.len() == 7)
-        && (data
-            .hcl
-            .chars()
-            .skip(1)
-            .all(|x| x.is_digit(16)))
-        // Passport ID
-        && (data.pid.len() == 9)
-        && (data.pid.chars().all(char::is_numeric))
-        // Height
-        && ((data.hgt.chars().last().unwrap() == 'm'
-            && (150..=193).contains(&data.hgt.replace("cm", "").parse::<i32>().unwrap()))
-            || (data.hgt.chars().last().unwrap() == 'n'
-                && (59..=76).contains(&data.hgt.replace("in", "").parse::<i32>().unwrap())))
+        && byr_valid(data.byr)
+        && iyr_valid(data.iyr)
+        && eyr_valid(data.eyr)
+        && ecl_valid(&data.ecl)
+        && hcl_valid(&data.hcl)
+        && pid_valid(&data.pid)
+        && hgt_valid(&data.hgt)
+}
+
+// -----------------------------------------------------------------------------
+// Combined
+// -----------------------------------------------------------------------------
+#[derive(Debug)]
+struct PassportValidityData {
+    part_1: bool,
+    part_2: bool,
+}
+
+impl std::str::FromStr for PassportValidityData {
+    type Err = std::num::ParseIntError;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let mut fields = 0;
+        let mut valid_fields = 0;
+        let mut cid = false;
+        for field in s.trim().split(&['\n', ' '][..]) {
+            fields += 1;
+            let mut entry = field.splitn(2, ':');
+            let name = entry.next().unwrap();
+            let data = entry.next().unwrap().to_string();
+            match name {
+                "byr" => valid_fields += byr_valid(data.parse().unwrap()) as usize,
+                "iyr" => valid_fields += iyr_valid(data.parse().unwrap()) as usize,
+                "eyr" => valid_fields += eyr_valid(data.parse().unwrap()) as usize,
+                "hgt" => valid_fields += hgt_valid(&data) as usize,
+                "hcl" => valid_fields += hcl_valid(&data) as usize,
+                "ecl" => valid_fields += ecl_valid(&data) as usize,
+                "pid" => valid_fields += pid_valid(&data) as usize,
+                "cid" => cid = true,
+                _ => panic!("Unknown field"),
+            }
+        }
+        let part_1 = (fields == 8) || (fields == 7 && !cid);
+        let part_2 = valid_fields == 7;
+        Ok(Self { part_1, part_2 })
+    }
 }
 
 // -----------------------------------------------------------------------------
@@ -154,13 +212,13 @@ pub(crate) fn run(print_summary: bool) -> Results {
     let (combined_1, combined_2) = buffer
         .split("\n\n")
         .map(|line| {
-            line.parse::<PassportData>()
+            line.parse::<PassportValidityData>()
                 .expect("failed to parse passport")
         })
         .fold((0, 0), |acc, passport| {
             (
-                acc.0 + part_1(&passport) as usize,
-                acc.1 + part_2(&passport) as usize,
+                acc.0 + passport.part_1 as usize,
+                acc.1 + passport.part_2 as usize,
             )
         });
     let time_combined = start_combined.elapsed();
