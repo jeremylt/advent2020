@@ -101,8 +101,8 @@ pub(crate) fn run(print_summary: bool) -> Results {
         output::print_part(
             2,
             "Rule",
-            "only one of two",
-            "✅ Valid",
+            "everyone yes",
+            "✅ Shared",
             &format!("{}", count_2),
             time_part_2,
         );
