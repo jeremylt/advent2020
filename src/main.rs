@@ -70,15 +70,13 @@ fn main() {
     output::print_header();
     for (day, report) in runs.iter().zip(&reports) {
         let result = day();
-        report(&result);
-
         let mut times = Timing {
             setup: result.times.setup / REPETITIONS,
             part_1: result.times.part_1 / REPETITIONS,
             part_2: result.times.part_2 / REPETITIONS,
             combined: result.times.combined / REPETITIONS,
         };
-        for _ in 0..REPETITIONS {
+        for _ in 0..REPETITIONS - 1 {
             let result = day();
             times = Timing {
                 setup: times.setup + result.times.setup / REPETITIONS,
@@ -87,6 +85,16 @@ fn main() {
                 combined: times.combined + result.times.combined / REPETITIONS,
             }
         }
+        report(&Results {
+            part_1: result.part_1,
+            part_2: result.part_2,
+            times: Timing {
+                setup: times.setup,
+                part_1: times.part_1,
+                part_2: times.part_2,
+                combined: times.combined,
+            },
+        });
         summary.push(times.combined);
     }
 
