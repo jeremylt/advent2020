@@ -21,37 +21,20 @@ pub(crate) fn print_header() {
 // Output day information
 // -----------------------------------------------------------------------------
 pub(crate) fn print_day(day: usize) {
-    println!("- {}", format!("Day {:02}", day).bold());
-}
-
-// -----------------------------------------------------------------------------
-// Output setup summary
-// -----------------------------------------------------------------------------
-pub(crate) fn print_setup(time: std::time::Duration) {
-    println!("    {}:", "Setup".red().bold());
-    println!("      Time: {:?}", time);
+    println!("- {}", format!("Day {:02}", day).blue().bold());
 }
 
 // -----------------------------------------------------------------------------
 // Output part summary
 // -----------------------------------------------------------------------------
-pub(crate) fn print_part(
-    part: usize,
-    property: &str,
-    property_value: &str,
-    output: &str,
-    output_value: &str,
-    time: std::time::Duration,
-) {
+pub(crate) fn print_part(part: usize, output: &str, output_value: &str) {
     let part_string = if part == 1 {
-        "Part 1".blue().bold()
+        "Part 1".red().bold()
     } else {
         "Part 2".green().bold()
     };
     println!("    {}:", part_string);
-    println!("      {}: {}", property, property_value);
     println!("      {}: {}", output, output_value);
-    println!("      Time: {:?}", time);
 }
 
 // -----------------------------------------------------------------------------
@@ -67,11 +50,11 @@ pub(crate) fn print_timing(times: Timing) {
     let setup_portion = NUMBER_DASHES - part_1_portion - part_2_portion;
     println!(
         "      Setup: {}",
-        format!("{:02.1}%", 100.0 * (1.0 - part_1_percent - part_2_percent)).red(),
+        format!("{:02.1}%", 100.0 * (1.0 - part_1_percent - part_2_percent)).blue(),
     );
     println!(
         "      Part 1: {}",
-        format!("{:02.1}%", 100.0 * part_1_percent).blue(),
+        format!("{:02.1}%", 100.0 * part_1_percent).red(),
     );
     println!(
         "      Part 2: {}",

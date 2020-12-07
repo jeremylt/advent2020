@@ -48,9 +48,6 @@ fn part_2(values: &[usize], mask: &[bool]) -> (i32, i32, i32) {
 // Day 1
 // -----------------------------------------------------------------------------
 pub(crate) fn run(print_summary: bool) -> Results {
-    if print_summary {
-        output::print_day(1);
-    }
     let start_all = Instant::now();
 
     // -------------------------------------------------------------------------
@@ -99,23 +96,9 @@ pub(crate) fn run(print_summary: bool) -> Results {
     // Report
     // -------------------------------------------------------------------------
     if print_summary {
-        output::print_setup(time_setup);
-        output::print_part(
-            1,
-            "Values",
-            &format!("{:?}", tuple),
-            "📄 Product",
-            &format!("{}", product_1),
-            time_part_1,
-        );
-        output::print_part(
-            2,
-            "Values",
-            &format!("{:?}", triple),
-            "📄 Product",
-            &format!("{}", product_2),
-            time_part_2,
-        );
+        output::print_day(1);
+        output::print_part(1, "📄 Product", &format!("{}", product_1));
+        output::print_part(2, "📄 Product", &format!("{}", product_2));
         output::print_timing(Timing {
             setup: time_setup,
             part_1: time_part_1,

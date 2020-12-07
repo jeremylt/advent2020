@@ -161,10 +161,6 @@ impl std::str::FromStr for PassportValidityData {
 // Day 4
 // -----------------------------------------------------------------------------
 pub(crate) fn run(print_summary: bool) -> Results {
-    if print_summary {
-        output::print_day(4);
-    }
-
     // -------------------------------------------------------------------------
     // Setup
     // -------------------------------------------------------------------------
@@ -222,23 +218,9 @@ pub(crate) fn run(print_summary: bool) -> Results {
     // Report
     // -------------------------------------------------------------------------
     if print_summary {
-        output::print_setup(time_setup);
-        output::print_part(
-            1,
-            "Rule",
-            "cid optional",
-            "📘 Valid",
-            &format!("{}", count_1),
-            time_part_1,
-        );
-        output::print_part(
-            2,
-            "Rule",
-            "validated entries",
-            "📘 Valid",
-            &format!("{}", count_2),
-            time_part_2,
-        );
+        output::print_day(4);
+        output::print_part(1, "📘 Valid", &format!("{}", count_1));
+        output::print_part(2, "📘 Valid", &format!("{}", count_2));
         output::print_timing(Timing {
             setup: time_setup,
             part_1: time_part_1,
