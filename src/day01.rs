@@ -116,7 +116,12 @@ pub(crate) fn run(print_summary: bool) -> Results {
             &format!("{}", product_2),
             time_part_2,
         );
-        output::print_timing(time, time_part_1, time_part_2, time);
+        output::print_timing(Timing {
+            setup: time_setup,
+            part_1: time_part_1,
+            part_2: time_part_2,
+            combined: time,
+        });
     }
 
     // -------------------------------------------------------------------------

@@ -20,10 +20,21 @@ pub(crate) struct Results {
 }
 
 // -----------------------------------------------------------------------------
+// Results struct
+// -----------------------------------------------------------------------------
+#[derive(Debug)]
+pub(crate) struct Timing {
+    setup: std::time::Duration,
+    part_1: std::time::Duration,
+    part_2: std::time::Duration,
+    combined: std::time::Duration,
+}
+
+// -----------------------------------------------------------------------------
 // Prelude
 // -----------------------------------------------------------------------------
 pub(crate) mod prelude {
-    pub(crate) use crate::{output, Results};
+    pub(crate) use crate::{output, Results, Timing};
     pub(crate) use colored::*;
     pub(crate) use std::time::Instant;
 }
@@ -63,12 +74,12 @@ fn main() {
 mod tests {
     use super::*;
     const NO_OUTPUT: bool = false;
-    const MAX_TIME: u128 = 250000000;
+    const MAX_TIME: u128 = 250;
     macro_rules! test_day {
         ($results:expr, $part_1:expr, $part_2:expr) => {
             assert_eq!($results.part_1, $part_1);
             assert_eq!($results.part_2, $part_2);
-            assert!($results.time < MAX_TIME);
+            assert!($results.time.as_millis() < MAX_TIME);
         };
     }
 

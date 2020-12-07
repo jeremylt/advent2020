@@ -57,16 +57,12 @@ pub(crate) fn print_part(
 // -----------------------------------------------------------------------------
 // Output timing summary
 // -----------------------------------------------------------------------------
-pub(crate) fn print_timing(
-    time_total: std::time::Duration,
-    time_part_1: std::time::Duration,
-    time_part_2: std::time::Duration,
-    time_combined: std::time::Duration,
-) {
+pub(crate) fn print_timing(times: Timing) {
     println!("    {}:", "Timing".purple().bold());
-    let part_1_percent = time_part_1.as_nanos() as f64 / time_total.as_nanos() as f64;
+    let times_total = times.setup + times.part_1 + times.part_2;
+    let part_1_percent = times.part_1.as_nanos() as f64 / times_total.as_nanos() as f64;
     let part_1_portion = std::cmp::max(1, (NUMBER_DASHES as f64 * part_1_percent) as usize);
-    let part_2_percent = time_part_2.as_nanos() as f64 / time_total.as_nanos() as f64;
+    let part_2_percent = times.part_2.as_nanos() as f64 / times_total.as_nanos() as f64;
     let part_2_portion = std::cmp::max(1, (NUMBER_DASHES as f64 * part_2_percent) as usize);
     let setup_portion = NUMBER_DASHES - part_1_portion - part_2_portion;
     println!(
@@ -81,14 +77,14 @@ pub(crate) fn print_timing(
         "      Part 2: {}",
         format!("{:02.1}%", 100.0 * part_2_percent).green(),
     );
-    println!("      Total: {:?}", time_total,);
+    println!("      Total: {:?}", times_total,);
     println!(
         "      Combined Time: {}",
-        if time_total != time_combined {
+        if (times_total.as_nanos() as f64 - times.combined.as_nanos() as f64).abs() > 10.0 {
             format!(
                 "{:?} ({:2.1}%)",
-                time_combined,
-                time_combined.as_nanos() as f64 / time_total.as_nanos() as f64 * 100.0
+                times.combined,
+                times.combined.as_nanos() as f64 / times_total.as_nanos() as f64 * 100.0
             )
         } else {
             "N/A".to_string()

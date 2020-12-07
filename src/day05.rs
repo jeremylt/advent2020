@@ -24,12 +24,12 @@ pub(crate) fn run(print_summary: bool) -> Results {
     if print_summary {
         output::print_day(5);
     }
-    let start_all = Instant::now();
 
     // -------------------------------------------------------------------------
-    // Data
+    // Setup
     // -------------------------------------------------------------------------
     // Open file
+    let start_setup = Instant::now();
     let buffer = std::fs::read_to_string("data/day05.txt").unwrap();
 
     // Read to object iterator
@@ -37,9 +37,7 @@ pub(crate) fn run(print_summary: bool) -> Results {
         .lines()
         .map(|line| parse_fblr_binary(&line))
         .collect();
-
-    // Timing
-    let time_setup = start_all.elapsed();
+    let time_setup = start_setup.elapsed();
 
     // -------------------------------------------------------------------------
     // Part 1
@@ -64,11 +62,6 @@ pub(crate) fn run(print_summary: bool) -> Results {
         .unwrap()
         + 1;
     let time_part_2 = start_part_2.elapsed();
-
-    // -------------------------------------------------------------------------
-    // Timing
-    // -------------------------------------------------------------------------
-    let time = start_all.elapsed();
 
     // -------------------------------------------------------------------------
     // Combined
@@ -115,7 +108,12 @@ pub(crate) fn run(print_summary: bool) -> Results {
             &format!("{}", seat_2),
             time_part_2,
         );
-        output::print_timing(time, time_part_1, time_part_2, time_combined);
+        output::print_timing(Timing {
+            setup: time_setup,
+            part_1: time_part_1,
+            part_2: time_part_2,
+            combined: time_combined,
+        });
     }
 
     // -------------------------------------------------------------------------

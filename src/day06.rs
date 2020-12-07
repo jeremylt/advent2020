@@ -39,19 +39,17 @@ pub(crate) fn run(print_summary: bool) -> Results {
     if print_summary {
         output::print_day(6);
     }
-    let start_all = Instant::now();
 
     // -------------------------------------------------------------------------
-    // Data
+    // Setup
     // -------------------------------------------------------------------------
     // Open file
+    let start_setup = Instant::now();
     let buffer: String = std::fs::read_to_string("data/day06.txt").unwrap();
 
     // Read to object iterator
     let data: Vec<[usize; 27]> = buffer.split("\n\n").map(|line| to_array(line)).collect();
-
-    // Timing
-    let time_setup = start_all.elapsed();
+    let time_setup = start_setup.elapsed();
 
     // -------------------------------------------------------------------------
     // Part 1
@@ -68,11 +66,6 @@ pub(crate) fn run(print_summary: bool) -> Results {
     let start_part_2 = Instant::now();
     let count_2: usize = data.iter().map(|d| part_2(&d)).sum();
     let time_part_2 = start_part_2.elapsed();
-
-    // -------------------------------------------------------------------------
-    // Timing
-    // -------------------------------------------------------------------------
-    let time = start_all.elapsed();
 
     // -------------------------------------------------------------------------
     // Combined
@@ -109,7 +102,12 @@ pub(crate) fn run(print_summary: bool) -> Results {
             &format!("{}", count_2),
             time_part_2,
         );
-        output::print_timing(time, time_part_1, time_part_2, time_combined);
+        output::print_timing(Timing {
+            setup: time_setup,
+            part_1: time_part_1,
+            part_2: time_part_2,
+            combined: time_combined,
+        });
     }
 
     // -------------------------------------------------------------------------
