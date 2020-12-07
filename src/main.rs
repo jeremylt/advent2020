@@ -7,6 +7,7 @@ mod day03;
 mod day04;
 mod day05;
 mod day06;
+mod day07;
 mod output;
 
 // -----------------------------------------------------------------------------
@@ -44,7 +45,7 @@ pub(crate) mod prelude {
 // -----------------------------------------------------------------------------
 fn main() {
     // Setup
-    const REPETITIONS: u32 = 50;
+    const REPETITIONS: u32 = 1;
     let mut summary: Vec<std::time::Duration> = Vec::with_capacity(25);
     let runs = [
         day01::run,
@@ -53,6 +54,7 @@ fn main() {
         day04::run,
         day05::run,
         day06::run,
+        day07::run,
     ];
     let reports = [
         day01::report,
@@ -61,6 +63,7 @@ fn main() {
         day04::report,
         day05::report,
         day06::report,
+        day07::report,
     ];
 
     // Each day
@@ -136,6 +139,11 @@ mod tests {
     #[test]
     fn test_06() {
         test_day!(day06::run(), 6249, 3103);
+    }
+
+    #[test]
+    fn test_07() {
+        test_day!(day07::run(), 332, 10875);
     }
 }
 
