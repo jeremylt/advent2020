@@ -45,7 +45,7 @@ pub(crate) mod prelude {
 // -----------------------------------------------------------------------------
 fn main() {
     // Setup
-    const REPETITIONS: u32 = 1;
+    const REPETITIONS: u32 = 20;
     let mut summary: Vec<std::time::Duration> = Vec::with_capacity(25);
     let runs = [
         day01::run,
