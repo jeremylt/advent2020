@@ -7,4 +7,3 @@ edition = "2018"
 [dependencies]
 colored = "2"
 itertools = "0.9"
-lazy_static = "1.4.0"
