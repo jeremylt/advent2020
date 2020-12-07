@@ -1,7 +1,5 @@
 use crate::prelude::*;
-use std::collections::hash_map::DefaultHasher;
 use std::collections::{HashMap, HashSet};
-use std::hash::{Hash, Hasher};
 
 // -----------------------------------------------------------------------------
 // Bag graph
@@ -18,29 +16,30 @@ struct Node {
     contains: Vec<Holding>,
 }
 
-fn calculate_hash(t: &str) -> u32 {
-    let mut s = DefaultHasher::new();
-    t.hash(&mut s);
-    s.finish() as u32
+fn to_int(t: &str) -> u32 {
+    t.as_bytes()
+        .iter()
+        .fold(1 as u32, |acc, c| acc * 2 + *c as u32)
 }
 
 fn add_to_graph(s: &str, bag_graph: &mut HashMap<u32, Node>) {
     let mut input = s.split(" bags contain ");
-    let container_key = calculate_hash(input.next().unwrap());
-    let mut contains = Vec::<Holding>::new();
+    let container_key = to_int(input.next().unwrap());
+    let mut contains = vec![];
     // Containing bags
     for line in input.next().unwrap().split(", ") {
-        if line.as_bytes()[0] == b'n' {
-            break;
-        }
         let mut line = line.splitn(2, " ");
-        let number: usize = line.next().unwrap().parse().unwrap();
-        let contained_key = calculate_hash(line.next().unwrap().split(" bag").next().unwrap());
+        let number: usize;
+        match line.next().unwrap().parse() {
+            Ok(val) => number = val,
+            Err(_) => break,
+        }
+        let contained_key = to_int(line.next().unwrap().split(" bag").next().unwrap());
         bag_graph
             .entry(contained_key)
             .or_insert(Node {
-                contained_by: Vec::<u32>::new(),
-                contains: Vec::<Holding>::new(),
+                contained_by: vec![],
+                contains: vec![],
             })
             .contained_by
             .push(container_key);
@@ -53,8 +52,8 @@ fn add_to_graph(s: &str, bag_graph: &mut HashMap<u32, Node>) {
     bag_graph
         .entry(container_key)
         .or_insert(Node {
-            contained_by: Vec::<u32>::new(),
-            contains: Vec::<Holding>::new(),
+            contained_by: vec![],
+            contains: vec![],
         })
         .contains
         .append(&mut contains);
@@ -107,7 +106,7 @@ pub(crate) fn run() -> Results {
     let buffer: String = std::fs::read_to_string("data/day07.txt").unwrap();
 
     // Read to graph
-    let mut bag_graph = HashMap::<u32, Node>::new();
+    let mut bag_graph = HashMap::<u32, Node>::with_capacity(524);
     buffer
         .lines()
         .for_each(|line| add_to_graph(line, &mut bag_graph));
@@ -118,8 +117,8 @@ pub(crate) fn run() -> Results {
     // -------------------------------------------------------------------------
     // Find matching passwords
     let start_part_1 = Instant::now();
-    let mut uniques = HashSet::<u32>::new();
-    let count_1 = part_1(calculate_hash("shiny gold"), &bag_graph, &mut uniques) - 1;
+    let mut uniques = HashSet::<u32>::with_capacity(524);
+    let count_1 = part_1(to_int("shiny gold"), &bag_graph, &mut uniques) - 1;
     let time_part_1 = start_part_1.elapsed();
 
     // -------------------------------------------------------------------------
@@ -127,7 +126,7 @@ pub(crate) fn run() -> Results {
     // -------------------------------------------------------------------------
     // Find matching passwords
     let start_part_2 = Instant::now();
-    let count_2 = part_2(calculate_hash("shiny gold"), &bag_graph) - 1;
+    let count_2 = part_2(to_int("shiny gold"), &bag_graph) - 1;
     let time_part_2 = start_part_2.elapsed();
 
     // -------------------------------------------------------------------------
