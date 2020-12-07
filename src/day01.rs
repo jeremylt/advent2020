@@ -87,16 +87,16 @@ pub(crate) fn run() -> Results {
     // -------------------------------------------------------------------------
     // Return
     // -------------------------------------------------------------------------
-    return Results {
-        part_1: product_1 as i64,
-        part_2: product_2 as i64,
-        times: Timing {
-            setup: time_setup,
-            part_1: time_part_1,
-            part_2: time_part_2,
-            combined: time_setup + time_part_1 + time_part_2,
-        },
-    };
+    Results::new(
+        product_1 as i64,
+        product_2 as i64,
+        Timing::new(
+            time_setup,
+            time_part_1,
+            time_part_2,
+            time_setup + time_part_1 + time_part_2,
+        ),
+    )
 }
 
 // -----------------------------------------------------------------------------

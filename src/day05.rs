@@ -86,16 +86,11 @@ pub(crate) fn run() -> Results {
     // -------------------------------------------------------------------------
     // Return
     // -------------------------------------------------------------------------
-    return Results {
-        part_1: max_1 as i64,
-        part_2: seat_2 as i64,
-        times: Timing {
-            setup: time_setup,
-            part_1: time_part_1,
-            part_2: time_part_2,
-            combined: time_combined,
-        },
-    };
+    Results::new(
+        max_1 as i64,
+        seat_2 as i64,
+        Timing::new(time_setup, time_part_1, time_part_2, time_combined),
+    )
 }
 
 // -----------------------------------------------------------------------------

@@ -17,6 +17,15 @@ struct Node {
     contains: Vec<Holding>,
 }
 
+impl Node {
+    fn new() -> Self {
+        Self {
+            contained_by: vec![],
+            contains: vec![],
+        }
+    }
+}
+
 fn to_int(t: &str) -> u32 {
     t.as_bytes()
         .iter()
@@ -35,13 +44,10 @@ fn add_to_graph(s: &str, bag_graph: &mut HashMap<u32, Node>) {
             Ok(val) => number = val,
             Err(_) => break,
         }
-        let contained_key = to_int(line.next().unwrap().split(" bag").next().unwrap());
+        let contained_key = to_int(line.next().unwrap().splitn(2, " bag").next().unwrap());
         bag_graph
             .entry(contained_key)
-            .or_insert(Node {
-                contained_by: vec![],
-                contains: vec![],
-            })
+            .or_insert(Node::new())
             .contained_by
             .push(container_key);
         contains.push(Holding {
@@ -52,10 +58,7 @@ fn add_to_graph(s: &str, bag_graph: &mut HashMap<u32, Node>) {
     // Contained bags
     bag_graph
         .entry(container_key)
-        .or_insert(Node {
-            contained_by: vec![],
-            contains: vec![],
-        })
+        .or_insert(Node::new())
         .contains
         .append(&mut contains);
 }
@@ -136,16 +139,16 @@ pub(crate) fn run() -> Results {
     // -------------------------------------------------------------------------
     // Return
     // -------------------------------------------------------------------------
-    return Results {
-        part_1: count_1 as i64,
-        part_2: count_2 as i64,
-        times: Timing {
-            setup: time_setup,
-            part_1: time_part_1,
-            part_2: time_part_2,
-            combined: time_setup + time_part_1 + time_part_2,
-        },
-    };
+    Results::new(
+        count_1 as i64,
+        count_2 as i64,
+        Timing::new(
+            time_setup,
+            time_part_1,
+            time_part_2,
+            time_setup + time_part_1 + time_part_2,
+        ),
+    )
 }
 
 // -----------------------------------------------------------------------------

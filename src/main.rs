@@ -23,6 +23,16 @@ pub(crate) struct Results {
     times: Timing,
 }
 
+impl Results {
+    fn new(part_1: i64, part_2: i64, times: Timing) -> Self {
+        Self {
+            part_1,
+            part_2,
+            times,
+        }
+    }
+}
+
 // -----------------------------------------------------------------------------
 // Timing struct
 // -----------------------------------------------------------------------------
@@ -32,6 +42,22 @@ pub(crate) struct Timing {
     part_1: std::time::Duration,
     part_2: std::time::Duration,
     combined: std::time::Duration,
+}
+
+impl Timing {
+    fn new(
+        setup: std::time::Duration,
+        part_1: std::time::Duration,
+        part_2: std::time::Duration,
+        combined: std::time::Duration,
+    ) -> Self {
+        Self {
+            setup,
+            part_1,
+            part_2,
+            combined,
+        }
+    }
 }
 
 // -----------------------------------------------------------------------------
@@ -73,31 +99,24 @@ fn main() {
     output::print_header();
     for (day, report) in runs.iter().zip(&reports) {
         let result = day();
-        let mut times = Timing {
-            setup: result.times.setup / REPETITIONS,
-            part_1: result.times.part_1 / REPETITIONS,
-            part_2: result.times.part_2 / REPETITIONS,
-            combined: result.times.combined / REPETITIONS,
-        };
+        let mut times = Timing::new(
+            result.times.setup / REPETITIONS,
+            result.times.part_1 / REPETITIONS,
+            result.times.part_2 / REPETITIONS,
+            result.times.combined / REPETITIONS,
+        );
         for _ in 0..REPETITIONS - 1 {
             let result = day();
-            times = Timing {
-                setup: times.setup + result.times.setup / REPETITIONS,
-                part_1: times.part_1 + result.times.part_1 / REPETITIONS,
-                part_2: times.part_2 + result.times.part_2 / REPETITIONS,
-                combined: times.combined + result.times.combined / REPETITIONS,
-            }
+            times.setup += result.times.setup / REPETITIONS;
+            times.part_1 += result.times.part_1 / REPETITIONS;
+            times.part_2 += result.times.part_2 / REPETITIONS;
+            times.combined += result.times.combined / REPETITIONS;
         }
-        report(&Results {
-            part_1: result.part_1,
-            part_2: result.part_2,
-            times: Timing {
-                setup: times.setup,
-                part_1: times.part_1,
-                part_2: times.part_2,
-                combined: times.combined,
-            },
-        });
+        report(&Results::new(
+            result.part_1,
+            result.part_2,
+            Timing::new(times.setup, times.part_1, times.part_2, times.combined),
+        ));
         summary.push(times.combined);
     }
 
@@ -124,37 +143,44 @@ mod tests {
 
     #[test]
     fn test_01() {
-        test_day!(day01::run(), 326211, 131347190);
+        let results = day01::run();
+        test_day!(results, 326211, 131347190);
     }
 
     #[test]
     fn test_02() {
-        test_day!(day02::run(), 538, 489);
+        let results = day02::run();
+        test_day!(results, 538, 489);
     }
 
     #[test]
     fn test_03() {
-        test_day!(day03::run(), 176, 5872458240);
+        let results = day03::run();
+        test_day!(results, 176, 5872458240);
     }
 
     #[test]
     fn test_04() {
-        test_day!(day04::run(), 182, 109);
+        let results = day04::run();
+        test_day!(results, 182, 109);
     }
 
     #[test]
     fn test_05() {
-        test_day!(day05::run(), 892, 625);
+        let results = day05::run();
+        test_day!(results, 892, 625);
     }
 
     #[test]
     fn test_06() {
-        test_day!(day06::run(), 6249, 3103);
+        let results = day06::run();
+        test_day!(results, 6249, 3103);
     }
 
     #[test]
     fn test_07() {
-        test_day!(day07::run(), 332, 10875);
+        let results = day07::run();
+        test_day!(results, 332, 10875);
     }
 }
 
