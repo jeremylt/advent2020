@@ -45,9 +45,9 @@ fn part_2(values: &[usize], mask: &[bool]) -> (i32, i32, i32) {
 }
 
 // -----------------------------------------------------------------------------
-// Day 1
+// Run
 // -----------------------------------------------------------------------------
-pub(crate) fn run(print_summary: bool) -> Results {
+pub(crate) fn run() -> Results {
     // -------------------------------------------------------------------------
     // Setup
     // -------------------------------------------------------------------------
@@ -85,29 +85,28 @@ pub(crate) fn run(print_summary: bool) -> Results {
     let time_part_2 = start_part_2.elapsed();
 
     // -------------------------------------------------------------------------
-    // Report
-    // -------------------------------------------------------------------------
-    let times = Timing {
-        setup: time_setup,
-        part_1: time_part_1,
-        part_2: time_part_2,
-        combined: time_setup + time_part_1 + time_part_2,
-    };
-    if print_summary {
-        output::print_day(1);
-        output::print_part(1, "📄 Product", &format!("{}", product_1));
-        output::print_part(2, "📄 Product", &format!("{}", product_2));
-        output::print_timing(&times);
-    }
-
-    // -------------------------------------------------------------------------
     // Return
     // -------------------------------------------------------------------------
     return Results {
         part_1: product_1 as i64,
         part_2: product_2 as i64,
-        times: times,
+        times: Timing {
+            setup: time_setup,
+            part_1: time_part_1,
+            part_2: time_part_2,
+            combined: time_setup + time_part_1 + time_part_2,
+        },
     };
+}
+
+// -----------------------------------------------------------------------------
+// Report
+// -----------------------------------------------------------------------------
+pub(crate) fn report(results: &Results) {
+    output::print_day(1);
+    output::print_part(1, "📄 Product", &format!("{}", results.part_1));
+    output::print_part(2, "📄 Product", &format!("{}", results.part_2));
+    output::print_timing(&results.times);
 }
 
 // -----------------------------------------------------------------------------

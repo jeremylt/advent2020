@@ -69,7 +69,7 @@ pub(crate) fn print_timing(times: &Timing) {
     println!("      Total: {:?}", times_total,);
     println!(
         "      Combined Time: {}",
-        if (times_total.as_nanos() as f64 - times.combined.as_nanos() as f64).abs() > 500.0 {
+        if (times_total.as_nanos() as f64 - times.combined.as_nanos() as f64).abs() > 0.0 {
             format!(
                 "{:?} ({:2.1}%)",
                 times.combined,

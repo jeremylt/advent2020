@@ -15,9 +15,9 @@ fn count_trees(data: &Vec<String>, right: usize, down: usize, line_length: usize
 }
 
 // -----------------------------------------------------------------------------
-// Day 3
+// Run
 // -----------------------------------------------------------------------------
-pub(crate) fn run(print_summary: bool) -> Results {
+pub(crate) fn run() -> Results {
     // -------------------------------------------------------------------------
     // Setup
     // -------------------------------------------------------------------------
@@ -74,29 +74,28 @@ pub(crate) fn run(print_summary: bool) -> Results {
     assert_eq!(combined_2, product_2);
 
     // -------------------------------------------------------------------------
-    // Report
-    // -------------------------------------------------------------------------
-    let times = Timing {
-        setup: time_setup,
-        part_1: time_part_1,
-        part_2: time_part_2,
-        combined: time_combined,
-    };
-    if print_summary {
-        output::print_day(3);
-        output::print_part(1, "🌲 Count", &format!("{}", count_1));
-        output::print_part(2, "🌲 Product", &format!("{}", product_2));
-        output::print_timing(&times);
-    }
-
-    // -------------------------------------------------------------------------
     // Return
     // -------------------------------------------------------------------------
     return Results {
         part_1: count_1 as i64,
         part_2: product_2 as i64,
-        times: times,
+        times: Timing {
+            setup: time_setup,
+            part_1: time_part_1,
+            part_2: time_part_2,
+            combined: time_combined,
+        },
     };
+}
+
+// -----------------------------------------------------------------------------
+// Report
+// -----------------------------------------------------------------------------
+pub(crate) fn report(results: &Results) {
+    output::print_day(3);
+    output::print_part(1, "🌲 Count", &format!("{}", results.part_1));
+    output::print_part(2, "🌲 Product", &format!("{}", results.part_2));
+    output::print_timing(&results.times);
 }
 
 // -----------------------------------------------------------------------------

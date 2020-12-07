@@ -20,7 +20,7 @@ pub(crate) struct Results {
 }
 
 // -----------------------------------------------------------------------------
-// Results struct
+// Timing struct
 // -----------------------------------------------------------------------------
 #[derive(Debug)]
 pub(crate) struct Timing {
@@ -44,9 +44,9 @@ pub(crate) mod prelude {
 // -----------------------------------------------------------------------------
 fn main() {
     // Setup
-    const PRINT_OUTPUT: bool = true;
-    let mut times: Vec<std::time::Duration> = Vec::with_capacity(25);
-    let days = [
+    const REPETITIONS: u32 = 50;
+    let mut summary: Vec<std::time::Duration> = Vec::with_capacity(25);
+    let runs = [
         day01::run,
         day02::run,
         day03::run,
@@ -54,16 +54,42 @@ fn main() {
         day05::run,
         day06::run,
     ];
+    let reports = [
+        day01::report,
+        day02::report,
+        day03::report,
+        day04::report,
+        day05::report,
+        day06::report,
+    ];
 
     // Each day
     output::print_header();
-    for day in &days {
-        times.push(day(PRINT_OUTPUT).times.combined);
+    for (day, report) in runs.iter().zip(&reports) {
+        let result = day();
+        report(&result);
+
+        let mut times = Timing {
+            setup: result.times.setup / REPETITIONS,
+            part_1: result.times.part_1 / REPETITIONS,
+            part_2: result.times.part_2 / REPETITIONS,
+            combined: result.times.combined / REPETITIONS,
+        };
+        for _ in 0..REPETITIONS {
+            let result = day();
+            times = Timing {
+                setup: times.setup + result.times.setup / REPETITIONS,
+                part_1: times.part_1 + result.times.part_1 / REPETITIONS,
+                part_2: times.part_2 + result.times.part_2 / REPETITIONS,
+                combined: times.combined + result.times.combined / REPETITIONS,
+            }
+        }
+        summary.push(times.combined);
     }
 
     // Day comparison
     output::print_header();
-    output::print_days_timing(&times);
+    output::print_days_timing(&summary);
     output::print_header();
 }
 
@@ -73,7 +99,6 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
-    const NO_OUTPUT: bool = false;
     const MAX_TIME: u128 = 250;
     macro_rules! test_day {
         ($results:expr, $part_1:expr, $part_2:expr) => {
@@ -85,32 +110,32 @@ mod tests {
 
     #[test]
     fn test_01() {
-        test_day!(day01::run(NO_OUTPUT), 326211, 131347190);
+        test_day!(day01::run(), 326211, 131347190);
     }
 
     #[test]
     fn test_02() {
-        test_day!(day02::run(NO_OUTPUT), 538, 489);
+        test_day!(day02::run(), 538, 489);
     }
 
     #[test]
     fn test_03() {
-        test_day!(day03::run(NO_OUTPUT), 176, 5872458240);
+        test_day!(day03::run(), 176, 5872458240);
     }
 
     #[test]
     fn test_04() {
-        test_day!(day04::run(NO_OUTPUT), 182, 109);
+        test_day!(day04::run(), 182, 109);
     }
 
     #[test]
     fn test_05() {
-        test_day!(day05::run(NO_OUTPUT), 892, 625);
+        test_day!(day05::run(), 892, 625);
     }
 
     #[test]
     fn test_06() {
-        test_day!(day06::run(NO_OUTPUT), 6249, 3103);
+        test_day!(day06::run(), 6249, 3103);
     }
 }
 
