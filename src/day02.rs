@@ -141,16 +141,17 @@ pub(crate) fn run(print_summary: bool) -> Results {
     // -------------------------------------------------------------------------
     // Report
     // -------------------------------------------------------------------------
+    let times = Timing {
+        setup: time_setup,
+        part_1: time_part_1,
+        part_2: time_part_2,
+        combined: time_combined,
+    };
     if print_summary {
         output::print_day(2);
         output::print_part(1, "🔑 Valid", &format!("{}", count_1));
         output::print_part(2, "🔑 Valid", &format!("{}", count_2));
-        output::print_timing(Timing {
-            setup: time_setup,
-            part_1: time_part_1,
-            part_2: time_part_2,
-            combined: time_combined,
-        });
+        output::print_timing(&times);
     }
 
     // -------------------------------------------------------------------------
@@ -159,7 +160,7 @@ pub(crate) fn run(print_summary: bool) -> Results {
     return Results {
         part_1: count_1 as i64,
         part_2: count_2 as i64,
-        time: time_combined,
+        times: times,
     };
 }
 

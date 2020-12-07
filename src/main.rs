@@ -16,7 +16,7 @@ mod output;
 pub(crate) struct Results {
     part_1: i64,
     part_2: i64,
-    time: std::time::Duration,
+    times: Timing,
 }
 
 // -----------------------------------------------------------------------------
@@ -58,7 +58,7 @@ fn main() {
     // Each day
     output::print_header();
     for day in &days {
-        times.push(day(PRINT_OUTPUT).time);
+        times.push(day(PRINT_OUTPUT).times.combined);
     }
 
     // Day comparison
@@ -79,7 +79,7 @@ mod tests {
         ($results:expr, $part_1:expr, $part_2:expr) => {
             assert_eq!($results.part_1, $part_1);
             assert_eq!($results.part_2, $part_2);
-            assert!($results.time.as_millis() < MAX_TIME);
+            assert!($results.times.combined.as_millis() < MAX_TIME);
         };
     }
 

@@ -21,7 +21,7 @@ pub(crate) fn print_header() {
 // Output day information
 // -----------------------------------------------------------------------------
 pub(crate) fn print_day(day: usize) {
-    println!("- {}", format!("Day {:02}", day).blue().bold());
+    println!("- {}", format!("Day {:02}", day).bold());
 }
 
 // -----------------------------------------------------------------------------
@@ -40,7 +40,7 @@ pub(crate) fn print_part(part: usize, output: &str, output_value: &str) {
 // -----------------------------------------------------------------------------
 // Output timing summary
 // -----------------------------------------------------------------------------
-pub(crate) fn print_timing(times: Timing) {
+pub(crate) fn print_timing(times: &Timing) {
     println!("    {}:", "Timing".purple().bold());
     let times_total = times.setup + times.part_1 + times.part_2;
     let part_1_percent = times.part_1.as_nanos() as f64 / times_total.as_nanos() as f64;
@@ -49,21 +49,27 @@ pub(crate) fn print_timing(times: Timing) {
     let part_2_portion = std::cmp::max(1, (NUMBER_DASHES as f64 * part_2_percent) as usize);
     let setup_portion = NUMBER_DASHES - part_1_portion - part_2_portion;
     println!(
-        "      Setup: {}",
-        format!("{:02.1}%", 100.0 * (1.0 - part_1_percent - part_2_percent)).blue(),
+        "      {}: {:?} ({:02.1}%)",
+        "Setup".blue(),
+        times.setup,
+        100.0 * (1.0 - part_1_percent - part_2_percent),
     );
     println!(
-        "      Part 1: {}",
-        format!("{:02.1}%", 100.0 * part_1_percent).red(),
+        "      {}: {:?} ({:02.1}%)",
+        "Part 1".red(),
+        times.part_1,
+        100.0 * part_1_percent,
     );
     println!(
-        "      Part 2: {}",
-        format!("{:02.1}%", 100.0 * part_2_percent).green(),
+        "      {}: {:?} ({:02.1}%)",
+        "Part 2".green(),
+        times.part_2,
+        100.0 * part_2_percent,
     );
     println!("      Total: {:?}", times_total,);
     println!(
         "      Combined Time: {}",
-        if (times_total.as_nanos() as f64 - times.combined.as_nanos() as f64).abs() > 10.0 {
+        if (times_total.as_nanos() as f64 - times.combined.as_nanos() as f64).abs() > 500.0 {
             format!(
                 "{:?} ({:2.1}%)",
                 times.combined,
@@ -75,8 +81,8 @@ pub(crate) fn print_timing(times: Timing) {
     );
     println!(
         "{}{}{}",
-        "-".repeat(setup_portion).red().bold(),
-        "-".repeat(part_1_portion).blue().bold(),
+        "-".repeat(setup_portion).blue().bold(),
+        "-".repeat(part_1_portion).red().bold(),
         "-".repeat(part_2_portion).green().bold()
     );
 }

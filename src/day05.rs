@@ -86,16 +86,17 @@ pub(crate) fn run(print_summary: bool) -> Results {
     // -------------------------------------------------------------------------
     // Report
     // -------------------------------------------------------------------------
+    let times = Timing {
+        setup: time_setup,
+        part_1: time_part_1,
+        part_2: time_part_2,
+        combined: time_combined,
+    };
     if print_summary {
         output::print_day(5);
         output::print_part(1, "💺 Largest", &format!("{}", max_1));
         output::print_part(2, "💺 Available", &format!("{}", seat_2));
-        output::print_timing(Timing {
-            setup: time_setup,
-            part_1: time_part_1,
-            part_2: time_part_2,
-            combined: time_combined,
-        });
+        output::print_timing(&times);
     }
 
     // -------------------------------------------------------------------------
@@ -104,7 +105,7 @@ pub(crate) fn run(print_summary: bool) -> Results {
     return Results {
         part_1: max_1 as i64,
         part_2: seat_2 as i64,
-        time: time_combined,
+        times: times,
     };
 }
 
