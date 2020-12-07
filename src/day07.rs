@@ -11,6 +11,12 @@ struct Holding {
     number: usize,
 }
 
+impl Holding {
+    fn new(key: u32, number: usize) -> Self {
+        Self { key, number }
+    }
+}
+
 #[derive(Debug)]
 struct Node {
     contained_by: Vec<u32>,
@@ -26,15 +32,15 @@ impl Node {
     }
 }
 
-fn to_int(t: &str) -> u32 {
+fn str_to_key(t: &str) -> u32 {
     t.as_bytes()
         .iter()
         .fold(1 as u32, |acc, c| acc * 2 + *c as u32)
 }
 
 fn add_to_graph(s: &str, bag_graph: &mut HashMap<u32, Node>) {
-    let mut input = s.split(" bags contain ");
-    let container_key = to_int(input.next().unwrap());
+    let mut input = s.splitn(2, " bags contain ");
+    let container_key = str_to_key(input.next().unwrap());
     let mut contains = vec![];
     // Containing bags
     for line in input.next().unwrap().split(", ") {
@@ -44,23 +50,19 @@ fn add_to_graph(s: &str, bag_graph: &mut HashMap<u32, Node>) {
             Ok(val) => number = val,
             Err(_) => break,
         }
-        let contained_key = to_int(line.next().unwrap().splitn(2, " bag").next().unwrap());
+        let contained_key = str_to_key(line.next().unwrap().splitn(2, " bag").next().unwrap());
         bag_graph
             .entry(contained_key)
             .or_insert(Node::new())
             .contained_by
             .push(container_key);
-        contains.push(Holding {
-            key: contained_key,
-            number: number,
-        });
+        contains.push(Holding::new(contained_key, number));
     }
     // Contained bags
     bag_graph
         .entry(container_key)
         .or_insert(Node::new())
-        .contains
-        .append(&mut contains);
+        .contains = contains;
 }
 
 // -----------------------------------------------------------------------------
@@ -75,13 +77,10 @@ fn part_1(key: u32, bag_graph: &HashMap<u32, Node>) -> usize {
         return 0;
     };
     match bag_graph.get(&key) {
-        Some(node) => {
-            1 + node
-                .contained_by
-                .iter()
-                .map(|container| part_1(*container, &bag_graph))
-                .sum::<usize>()
-        }
+        Some(node) => node
+            .contained_by
+            .iter()
+            .fold(1, |acc, container| acc + part_1(*container, &bag_graph)),
         None => 1,
     }
 }
@@ -91,13 +90,10 @@ fn part_1(key: u32, bag_graph: &HashMap<u32, Node>) -> usize {
 // -----------------------------------------------------------------------------
 fn part_2(key: u32, bag_graph: &HashMap<u32, Node>) -> usize {
     match bag_graph.get(&key) {
-        Some(node) => {
-            1 + node
-                .contains
-                .iter()
-                .map(|bag| bag.number * part_2(bag.key, &bag_graph))
-                .sum::<usize>()
-        }
+        Some(node) => node
+            .contains
+            .iter()
+            .fold(1, |acc, bag| acc + bag.number * part_2(bag.key, &bag_graph)),
         None => 1,
     }
 }
@@ -125,7 +121,7 @@ pub(crate) fn run() -> Results {
     // -------------------------------------------------------------------------
     // Find matching passwords
     let start_part_1 = Instant::now();
-    let count_1 = part_1(to_int("shiny gold"), &bag_graph) as i64 - 1;
+    let count_1 = part_1(str_to_key("shiny gold"), &bag_graph) as i64 - 1;
     let time_part_1 = start_part_1.elapsed();
 
     // -------------------------------------------------------------------------
@@ -133,7 +129,7 @@ pub(crate) fn run() -> Results {
     // -------------------------------------------------------------------------
     // Find matching passwords
     let start_part_2 = Instant::now();
-    let count_2 = part_2(to_int("shiny gold"), &bag_graph) - 1;
+    let count_2 = part_2(str_to_key("shiny gold"), &bag_graph) - 1;
     let time_part_2 = start_part_2.elapsed();
 
     // -------------------------------------------------------------------------
