@@ -1,5 +1,6 @@
 use crate::prelude::*;
 use std::collections::{HashMap, HashSet};
+use std::sync::RwLock;
 
 // -----------------------------------------------------------------------------
 // Bag graph
@@ -62,8 +63,12 @@ fn add_to_graph(s: &str, bag_graph: &mut HashMap<u32, Node>) {
 // -----------------------------------------------------------------------------
 // Part 1
 // -----------------------------------------------------------------------------
-fn part_1(key: u32, bag_graph: &HashMap<u32, Node>, mut uniques: &mut HashSet<u32>) -> usize {
-    if !uniques.insert(key.clone()) {
+lazy_static! {
+    static ref UNIQUES: RwLock<HashSet<u32>> = RwLock::new(HashSet::<u32>::with_capacity(524));
+}
+
+fn part_1(key: u32, bag_graph: &HashMap<u32, Node>) -> usize {
+    if !UNIQUES.write().unwrap().insert(key.clone()) {
         return 0;
     };
     match bag_graph.get(&key) {
@@ -71,7 +76,7 @@ fn part_1(key: u32, bag_graph: &HashMap<u32, Node>, mut uniques: &mut HashSet<u3
             1 + node
                 .contained_by
                 .iter()
-                .map(|container| part_1(*container, &bag_graph, &mut uniques))
+                .map(|container| part_1(*container, &bag_graph))
                 .sum::<usize>()
         }
         None => 1,
@@ -117,8 +122,7 @@ pub(crate) fn run() -> Results {
     // -------------------------------------------------------------------------
     // Find matching passwords
     let start_part_1 = Instant::now();
-    let mut uniques = HashSet::<u32>::with_capacity(524);
-    let count_1 = part_1(to_int("shiny gold"), &bag_graph, &mut uniques) - 1;
+    let count_1 = part_1(to_int("shiny gold"), &bag_graph) as i64 - 1;
     let time_part_1 = start_part_1.elapsed();
 
     // -------------------------------------------------------------------------
