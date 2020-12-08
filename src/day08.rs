@@ -23,9 +23,12 @@ struct Node {
 
 impl Node {
     fn new(s: &str, i: i32) -> Self {
-        let mut input = s.splitn(2, " ");
-        let instruction_char = input.next().unwrap().as_bytes()[0];
-        let value = input.next().unwrap().parse().unwrap();
+        // Instructions of the form
+        //   acc value
+        //   jmp value
+        //   nop value
+        let instruction_char = s.as_bytes()[0];
+        let value = s[4..].parse::<i32>().unwrap();
         match instruction_char {
             b'a' => Self {
                 instruction: Instruction::Acc,
@@ -71,7 +74,8 @@ fn part_1(
     let mut executed = previous_executed.clone();
     let mut count = 0;
     let mut current = start;
-    while executed.insert(current) && current < number_instructions {
+    // Iterate until repeat or out of bounds
+    while executed.insert(current) && (current < number_instructions) {
         let node = instructions.get(&current).unwrap();
         current = node.next;
         count += node.increment;
@@ -97,7 +101,6 @@ fn part_2(number_instructions: i32, instructions: &HashMap<i32, Node>) -> i32 {
         .iter()
         .rev()
         .find_map(|state| {
-            executed.remove(&state.current);
             let node = instructions.get(&state.current).unwrap();
             match node.instruction {
                 Instruction::Acc => None,
@@ -151,7 +154,6 @@ fn combined(number_instructions: i32, instructions: &HashMap<i32, Node>) -> (i32
         .iter()
         .rev()
         .find_map(|state| {
-            executed.remove(&state.current);
             let node = instructions.get(&state.current).unwrap();
             match node.instruction {
                 Instruction::Acc => None,
