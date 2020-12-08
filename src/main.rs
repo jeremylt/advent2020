@@ -11,6 +11,7 @@ mod day04;
 mod day05;
 mod day06;
 mod day07;
+mod day08;
 mod output;
 
 // -----------------------------------------------------------------------------
@@ -76,7 +77,7 @@ pub(crate) mod prelude {
 // -----------------------------------------------------------------------------
 fn main() {
     // Setup
-    const DAYS: usize = 7;
+    const DAYS: usize = 8;
     let runs = [
         day01::run,
         day02::run,
@@ -85,6 +86,7 @@ fn main() {
         day05::run,
         day06::run,
         day07::run,
+        day08::run,
     ];
     let reports = [
         day01::report,
@@ -94,12 +96,21 @@ fn main() {
         day05::report,
         day06::report,
         day07::report,
+        day08::report,
     ];
 
     // Each day
     output::print_header();
-    let mut day_results: [Vec<Results>; DAYS] =
-        [vec![], vec![], vec![], vec![], vec![], vec![], vec![]];
+    let mut day_results: [Vec<Results>; DAYS] = [
+        vec![],
+        vec![],
+        vec![],
+        vec![],
+        vec![],
+        vec![],
+        vec![],
+        vec![],
+    ];
     for _ in 0..REPETITIONS {
         for (i, day) in runs.iter().enumerate() {
             day_results[i].push(day());
@@ -212,6 +223,12 @@ mod tests {
     fn test_07() {
         let results = day07::run();
         test_day!(results, 332, 10875);
+    }
+
+    #[test]
+    fn test_08() {
+        let results = day08::run();
+        test_day!(results, 1594, 758);
     }
 }
 

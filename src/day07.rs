@@ -69,7 +69,7 @@ fn add_to_graph(s: &str, bag_graph: &mut HashMap<u32, Node>) {
 // Part 1
 // -----------------------------------------------------------------------------
 lazy_static! {
-    static ref UNIQUES: RwLock<HashSet<u32>> = RwLock::new(HashSet::<u32>::with_capacity(524));
+    static ref UNIQUES: RwLock<HashSet<u32>> = RwLock::new(HashSet::<u32>::with_capacity(512));
 }
 
 fn part_1(key: u32, bag_graph: &HashMap<u32, Node>) -> usize {
@@ -110,7 +110,7 @@ pub(crate) fn run() -> Results {
     let buffer: String = std::fs::read_to_string("data/day07.txt").unwrap();
 
     // Read to graph
-    let mut bag_graph = HashMap::<u32, Node>::with_capacity(524);
+    let mut bag_graph = HashMap::<u32, Node>::with_capacity(512);
     buffer
         .lines()
         .for_each(|line| add_to_graph(line, &mut bag_graph));
@@ -119,7 +119,7 @@ pub(crate) fn run() -> Results {
     // -------------------------------------------------------------------------
     // Part 1
     // -------------------------------------------------------------------------
-    // Find matching passwords
+    // Find number of containing bags
     let start_part_1 = Instant::now();
     let count_1 = part_1(str_to_key("shiny gold"), &bag_graph) as i64 - 1;
     let time_part_1 = start_part_1.elapsed();
@@ -127,7 +127,7 @@ pub(crate) fn run() -> Results {
     // -------------------------------------------------------------------------
     // Part 2
     // -------------------------------------------------------------------------
-    // Find matching passwords
+    // Find number of contained bags
     let start_part_2 = Instant::now();
     let count_2 = part_2(str_to_key("shiny gold"), &bag_graph) - 1;
     let time_part_2 = start_part_2.elapsed();

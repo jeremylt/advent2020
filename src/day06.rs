@@ -50,7 +50,7 @@ pub(crate) fn run() -> Results {
     // -------------------------------------------------------------------------
     // Part 1
     // -------------------------------------------------------------------------
-    // Find matching passwords
+    // Find any response
     let start_part_1 = Instant::now();
     let count_1: usize = data.iter().map(|d| part_1(&d)).sum();
     let time_part_1 = start_part_1.elapsed();
@@ -58,7 +58,7 @@ pub(crate) fn run() -> Results {
     // -------------------------------------------------------------------------
     // Part 2
     // -------------------------------------------------------------------------
-    // Find matching passwords
+    // Find matching responses
     let start_part_2 = Instant::now();
     let count_2: usize = data.iter().map(|d| part_2(&d)).sum();
     let time_part_2 = start_part_2.elapsed();
