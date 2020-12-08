@@ -63,7 +63,9 @@ impl Timing {
 // -----------------------------------------------------------------------------
 // Prelude
 // -----------------------------------------------------------------------------
+const REPETITIONS: u32 = 250;
 pub(crate) mod prelude {
+    pub(crate) use crate::REPETITIONS;
     pub(crate) use crate::{output, Results, Timing};
     pub(crate) use colored::*;
     pub(crate) use std::time::Instant;
@@ -74,7 +76,6 @@ pub(crate) mod prelude {
 // -----------------------------------------------------------------------------
 fn main() {
     // Setup
-    const REPETITIONS: u32 = 200;
     const DAYS: usize = 7;
     let runs = [
         day01::run,
@@ -137,8 +138,22 @@ fn main() {
 
     // Day comparison
     output::print_header();
-    let summary = average_times.iter().map(|day| day.combined).collect();
-    output::print_days_timing(&summary);
+    let time_averages = average_times.iter().map(|day| day.combined).collect();
+    let time_std_devs: Vec<f64> = average_times
+        .iter()
+        .zip(day_results.iter())
+        .map(|(averages, day)| {
+            (day.iter().fold(0.0, |acc, repetition| {
+                acc + ((averages.combined.as_nanos() as f64
+                    - repetition.times.combined.as_nanos() as f64)
+                    / 1000.0)
+                    .powf(2.0)
+                    / ((REPETITIONS - 1) as f64)
+            }))
+            .powf(0.5)
+        })
+        .collect();
+    output::print_days_timing(&time_averages, &time_std_devs);
     output::print_header();
 }
 
