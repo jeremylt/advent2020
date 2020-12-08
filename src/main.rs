@@ -74,9 +74,8 @@ pub(crate) mod prelude {
 // -----------------------------------------------------------------------------
 fn main() {
     // Setup
-    const REPETITIONS: u32 = 20;
-    const DAYS: usize = 25;
-    let mut summary: Vec<std::time::Duration> = Vec::with_capacity(DAYS);
+    const REPETITIONS: u32 = 200;
+    const DAYS: usize = 7;
     let runs = [
         day01::run,
         day02::run,
@@ -98,31 +97,47 @@ fn main() {
 
     // Each day
     output::print_header();
-    for (day, report) in runs.iter().zip(&reports) {
-        let result = day();
-        let mut times = Timing::new(
-            result.times.setup / REPETITIONS,
-            result.times.part_1 / REPETITIONS,
-            result.times.part_2 / REPETITIONS,
-            result.times.combined / REPETITIONS,
-        );
-        for _ in 0..REPETITIONS - 1 {
-            let result = day();
-            times.setup += result.times.setup / REPETITIONS;
-            times.part_1 += result.times.part_1 / REPETITIONS;
-            times.part_2 += result.times.part_2 / REPETITIONS;
-            times.combined += result.times.combined / REPETITIONS;
+    let mut day_results: [Vec<Results>; DAYS] =
+        [vec![], vec![], vec![], vec![], vec![], vec![], vec![]];
+    for _ in 0..REPETITIONS {
+        for (i, day) in runs.iter().enumerate() {
+            day_results[i].push(day());
         }
-        report(&Results::new(
+    }
+    let average_times: Vec<Timing> = day_results
+        .iter()
+        .map(|day| {
+            day.iter().fold(
+                Timing::new(
+                    std::time::Duration::new(0, 0),
+                    std::time::Duration::new(0, 0),
+                    std::time::Duration::new(0, 0),
+                    std::time::Duration::new(0, 0),
+                ),
+                |acc, result| {
+                    Timing::new(
+                        acc.setup + result.times.setup / REPETITIONS,
+                        acc.part_1 + result.times.part_1 / REPETITIONS,
+                        acc.part_2 + result.times.part_2 / REPETITIONS,
+                        acc.combined + result.times.combined / REPETITIONS,
+                    )
+                },
+            )
+        })
+        .collect();
+    for i in 0..DAYS {
+        let result = day_results[i].first().unwrap();
+        let timing = &average_times[i];
+        reports[i](&Results::new(
             result.part_1,
             result.part_2,
-            Timing::new(times.setup, times.part_1, times.part_2, times.combined),
+            Timing::new(timing.setup, timing.part_1, timing.part_2, timing.combined),
         ));
-        summary.push(times.combined);
     }
 
     // Day comparison
     output::print_header();
+    let summary = average_times.iter().map(|day| day.combined).collect();
     output::print_days_timing(&summary);
     output::print_header();
 }
