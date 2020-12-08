@@ -2,6 +2,8 @@ use crate::prelude::*;
 use std::collections::{HashMap, HashSet};
 use std::sync::RwLock;
 
+const CAPACITY: usize = 512;
+
 // -----------------------------------------------------------------------------
 // Bag graph
 // -----------------------------------------------------------------------------
@@ -69,7 +71,7 @@ fn add_to_graph(s: &str, bag_graph: &mut HashMap<u32, Node>) {
 // Part 1
 // -----------------------------------------------------------------------------
 lazy_static! {
-    static ref UNIQUES: RwLock<HashSet<u32>> = RwLock::new(HashSet::<u32>::with_capacity(512));
+    static ref UNIQUES: RwLock<HashSet<u32>> = RwLock::new(HashSet::<u32>::with_capacity(CAPACITY));
 }
 
 fn part_1(key: u32, bag_graph: &HashMap<u32, Node>) -> usize {
@@ -110,7 +112,7 @@ pub(crate) fn run() -> Results {
     let buffer: String = std::fs::read_to_string("data/day07.txt").unwrap();
 
     // Read to graph
-    let mut bag_graph = HashMap::<u32, Node>::with_capacity(512);
+    let mut bag_graph = HashMap::<u32, Node>::with_capacity(CAPACITY);
     buffer
         .lines()
         .for_each(|line| add_to_graph(line, &mut bag_graph));

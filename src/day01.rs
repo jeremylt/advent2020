@@ -4,7 +4,7 @@ use crate::prelude::*;
 const YEAR: usize = 2020;
 
 // -----------------------------------------------------------------------------
-// Find pair of flaged indices that sum to length of mask array
+// Find pair of flagged indices that sum to length of mask array
 // -----------------------------------------------------------------------------
 fn find_two(array: &[bool]) -> Option<i32> {
     let value = array

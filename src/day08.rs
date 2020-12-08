@@ -1,6 +1,8 @@
 use crate::prelude::*;
 use std::collections::{HashMap, HashSet};
 
+const CAPACITY: usize = 512;
+
 // -----------------------------------------------------------------------------
 // Instructions
 // -----------------------------------------------------------------------------
@@ -81,8 +83,8 @@ fn part_1(
 // Part 2
 // -----------------------------------------------------------------------------
 fn part_2(number_instructions: i32, instructions: &HashMap<i32, Node>) -> i32 {
-    let mut machine = Vec::<State>::with_capacity(256);
-    let mut executed = HashSet::<i32>::with_capacity(256);
+    let mut machine = Vec::<State>::with_capacity(CAPACITY);
+    let mut executed = HashSet::<i32>::with_capacity(CAPACITY);
     let mut count = 0;
     let mut current = 0;
     while executed.insert(current) {
@@ -134,8 +136,8 @@ fn part_2(number_instructions: i32, instructions: &HashMap<i32, Node>) -> i32 {
 // Combined
 // -----------------------------------------------------------------------------
 fn combined(number_instructions: i32, instructions: &HashMap<i32, Node>) -> (i32, i32) {
-    let mut machine = Vec::<State>::with_capacity(256);
-    let mut executed = HashSet::<i32>::with_capacity(256);
+    let mut machine = Vec::<State>::with_capacity(CAPACITY);
+    let mut executed = HashSet::<i32>::with_capacity(CAPACITY);
     let mut count = 0;
     let mut current = 0;
     while executed.insert(current) {
