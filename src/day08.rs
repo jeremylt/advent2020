@@ -22,34 +22,28 @@ struct Node {
 impl Node {
     fn new(s: &str, i: i32) -> Self {
         let mut input = s.splitn(2, " ");
-        let instruction_char = input.next().unwrap().chars().next().unwrap();
+        let instruction_char = input.next().unwrap().as_bytes()[0];
         let value = input.next().unwrap().parse().unwrap();
-        let instruction: Instruction;
-        let increment: i32;
-        let next: i32;
         match instruction_char {
-            'a' => {
-                instruction = Instruction::Acc;
-                increment = value;
-                next = i + 1
-            }
-            'j' => {
-                instruction = Instruction::Jmp;
-                increment = 0;
-                next = i + value
-            }
-            'n' => {
-                instruction = Instruction::Nop;
-                increment = 0;
-                next = i + 1
-            }
+            b'a' => Self {
+                instruction: Instruction::Acc,
+                value: value,
+                increment: value,
+                next: i + 1,
+            },
+            b'j' => Self {
+                instruction: Instruction::Jmp,
+                value: value,
+                increment: 0,
+                next: i + value,
+            },
+            b'n' => Self {
+                instruction: Instruction::Nop,
+                value: value,
+                increment: 0,
+                next: i + 1,
+            },
             _ => panic!("Unknown instruction"),
-        }
-        Self {
-            instruction,
-            value,
-            increment,
-            next,
         }
     }
 }
@@ -75,15 +69,12 @@ fn part_1(
     let mut executed = previous_executed.clone();
     let mut count = 0;
     let mut current = start;
-    while executed.insert(current) {
+    while executed.insert(current) && current < number_instructions {
         let node = instructions.get(&current).unwrap();
         current = node.next;
         count += node.increment;
-        if current >= number_instructions {
-            return (true, count);
-        }
     }
-    (false, count)
+    (current >= number_instructions, count)
 }
 
 // -----------------------------------------------------------------------------
@@ -106,30 +97,34 @@ fn part_2(number_instructions: i32, instructions: &HashMap<i32, Node>) -> i32 {
         .find_map(|state| {
             executed.remove(&state.current);
             let node = instructions.get(&state.current).unwrap();
-            let mut terminated = (false, 0);
             match node.instruction {
-                Instruction::Acc => {}
+                Instruction::Acc => None,
                 Instruction::Jmp => {
-                    terminated = part_1(
+                    let (terminated, updated_count) = part_1(
                         state.current + 1,
                         number_instructions,
                         &instructions,
                         &executed,
                     );
+                    if terminated {
+                        Some(state.count + updated_count)
+                    } else {
+                        None
+                    }
                 }
                 Instruction::Nop => {
-                    terminated = part_1(
+                    let (terminated, updated_count) = part_1(
                         state.current + node.value,
                         number_instructions,
                         &instructions,
                         &executed,
                     );
+                    if terminated {
+                        Some(state.count + updated_count)
+                    } else {
+                        None
+                    }
                 }
-            }
-            if terminated.0 {
-                Some(state.count + terminated.1)
-            } else {
-                None
             }
         })
         .unwrap()
@@ -156,31 +151,34 @@ fn combined(number_instructions: i32, instructions: &HashMap<i32, Node>) -> (i32
         .find_map(|state| {
             executed.remove(&state.current);
             let node = instructions.get(&state.current).unwrap();
-            let mut terminated = (false, 0);
             match node.instruction {
-                Instruction::Acc => {}
+                Instruction::Acc => None,
                 Instruction::Jmp => {
-                    terminated = part_1(
+                    let (terminated, updated_count) = part_1(
                         state.current + 1,
                         number_instructions,
                         &instructions,
                         &executed,
                     );
+                    if terminated {
+                        Some(state.count + updated_count)
+                    } else {
+                        None
+                    }
                 }
                 Instruction::Nop => {
-                    terminated = part_1(
+                    let (terminated, updated_count) = part_1(
                         state.current + node.value,
                         number_instructions,
                         &instructions,
                         &executed,
                     );
+                    if terminated {
+                        Some(state.count + updated_count)
+                    } else {
+                        None
+                    }
                 }
-            }
-
-            if terminated.0 {
-                Some(state.count + terminated.1)
-            } else {
-                None
             }
         })
         .unwrap();
