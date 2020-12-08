@@ -72,10 +72,10 @@ fn part_1(
     instructions: &HashMap<i32, Node>,
     previous_executed: &HashSet<i32>,
 ) -> (bool, i32) {
-    let mut executed = HashSet::<i32>::with_capacity(256);
+    let mut executed = previous_executed.clone();
     let mut count = 0;
     let mut current = start;
-    while executed.insert(current) && !previous_executed.contains(&current) {
+    while executed.insert(current) {
         let node = instructions.get(&current).unwrap();
         current = node.next;
         count += node.increment;
@@ -106,37 +106,85 @@ fn part_2(number_instructions: i32, instructions: &HashMap<i32, Node>) -> i32 {
         .find_map(|state| {
             executed.remove(&state.current);
             let node = instructions.get(&state.current).unwrap();
+            let mut terminated = (false, 0);
             match node.instruction {
-                Instruction::Acc => None,
+                Instruction::Acc => {}
                 Instruction::Jmp => {
-                    let (terminated, updated_count) = part_1(
+                    terminated = part_1(
                         state.current + 1,
                         number_instructions,
                         &instructions,
                         &executed,
                     );
-                    if terminated {
-                        Some(state.count + updated_count)
-                    } else {
-                        None
-                    }
                 }
                 Instruction::Nop => {
-                    let (terminated, updated_count) = part_1(
+                    terminated = part_1(
                         state.current + node.value,
                         number_instructions,
                         &instructions,
                         &executed,
                     );
-                    if terminated {
-                        Some(state.count + updated_count)
-                    } else {
-                        None
-                    }
                 }
+            }
+            if terminated.0 {
+                Some(state.count + terminated.1)
+            } else {
+                None
             }
         })
         .unwrap()
+}
+
+// -----------------------------------------------------------------------------
+// Combined
+// -----------------------------------------------------------------------------
+fn combined(number_instructions: i32, instructions: &HashMap<i32, Node>) -> (i32, i32) {
+    let mut machine = Vec::<State>::with_capacity(256);
+    let mut executed = HashSet::<i32>::with_capacity(256);
+    let mut count = 0;
+    let mut current = 0;
+    while executed.insert(current) {
+        machine.push(State { count, current });
+        let node = instructions.get(&current).unwrap();
+        current = node.next;
+        count += node.increment;
+    }
+    let count_1 = count;
+    let count_2 = machine
+        .iter()
+        .rev()
+        .find_map(|state| {
+            executed.remove(&state.current);
+            let node = instructions.get(&state.current).unwrap();
+            let mut terminated = (false, 0);
+            match node.instruction {
+                Instruction::Acc => {}
+                Instruction::Jmp => {
+                    terminated = part_1(
+                        state.current + 1,
+                        number_instructions,
+                        &instructions,
+                        &executed,
+                    );
+                }
+                Instruction::Nop => {
+                    terminated = part_1(
+                        state.current + node.value,
+                        number_instructions,
+                        &instructions,
+                        &executed,
+                    );
+                }
+            }
+
+            if terminated.0 {
+                Some(state.count + terminated.1)
+            } else {
+                None
+            }
+        })
+        .unwrap();
+    (count_1, count_2)
 }
 
 // -----------------------------------------------------------------------------
@@ -181,17 +229,28 @@ pub(crate) fn run() -> Results {
     let time_part_2 = start_part_2.elapsed();
 
     // -------------------------------------------------------------------------
+    // Combined
+    // -------------------------------------------------------------------------
+    let start_combined = Instant::now();
+    let instructions: HashMap<i32, Node> = buffer
+        .lines()
+        .enumerate()
+        .map(|(i, line)| (i as i32, Node::new(line, i as i32)))
+        .collect();
+    let number_instructions = instructions.len() as i32;
+
+    let (combined_1, combined_2) = combined(number_instructions, &instructions);
+    let time_combined = start_combined.elapsed();
+    assert_eq!(combined_1, count_1);
+    assert_eq!(combined_2, count_2);
+
+    // -------------------------------------------------------------------------
     // Return
     // -------------------------------------------------------------------------
     Results::new(
         count_1 as i64,
         count_2 as i64,
-        Timing::new(
-            time_setup,
-            time_part_1,
-            time_part_2,
-            time_setup + time_part_1 + time_part_2,
-        ),
+        Timing::new(time_setup, time_part_1, time_part_2, time_combined),
     )
 }
 
