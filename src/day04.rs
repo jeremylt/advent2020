@@ -31,18 +31,16 @@ impl std::str::FromStr for PassportData {
         let mut len: usize = 0;
         for field in s.trim().split(&['\n', ' '][..]) {
             len += 1;
-            let mut entry = field.splitn(2, ':');
-            let name = entry.next().unwrap();
-            let data = entry.next().unwrap().to_string();
-            match name {
+            let data = &field[4..];
+            match &field[0..3] {
                 "byr" => byr = data.parse()?,
                 "iyr" => iyr = data.parse()?,
                 "eyr" => eyr = data.parse()?,
-                "hgt" => hgt = data,
-                "hcl" => hcl = data,
-                "ecl" => ecl = data,
-                "pid" => pid = data,
-                "cid" => cid = data,
+                "hgt" => hgt = data.to_string(),
+                "hcl" => hcl = data.to_string(),
+                "ecl" => ecl = data.to_string(),
+                "pid" => pid = data.to_string(),
+                "cid" => cid = data.to_string(),
                 _ => panic!("Unknown field"),
             }
         }
@@ -102,10 +100,10 @@ fn pid_valid(pid: &String) -> bool {
 
 // Passport ID
 fn hgt_valid(hgt: &String) -> bool {
-    (hgt.chars().last().unwrap() == 'm'
-        && (150..=193).contains(&hgt.replace("cm", "").parse::<i32>().unwrap()))
-        || (hgt.chars().last().unwrap() == 'n'
-            && (59..=76).contains(&hgt.replace("in", "").parse::<i32>().unwrap()))
+    let len = hgt.len();
+    (hgt.as_bytes()[len - 1] == b'm' && (150..=193).contains(&hgt[0..len - 2].parse().unwrap()))
+        || (hgt.as_bytes()[len - 1] == b'n'
+            && (59..=76).contains(&hgt[0..len - 2].parse().unwrap()))
 }
 
 fn part_2(data: &PassportData) -> bool {

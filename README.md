@@ -32,6 +32,10 @@ Note that this may be quite slow to download and install all of the packages.
 
 * The cost of File IO and string parsing can be somewhat mitigated by using high level functions to only pass over the data once. Chained high order functions can create accidental performance bombs and can be hard to read, so care is needed. The readability can be mitigated by separating the closures for filter/map functions and naming them well.
 
+* Comparison with chars is faster than with strings, when you can trust the input.
+
+* `splitn` is faster than `split`, and indexing into slices of chars is faster than using `split`, when you know about the input.
+
 ## Caveats
 
 * My timing is rather crude right now. I plan to add proper benchmarking if I get some time.
