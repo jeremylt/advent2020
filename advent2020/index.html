@@ -1,0 +1,48 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="API documentation for the Rust `advent2020` crate."><meta name="keywords" content="rust, rustlang, rust-lang, advent2020"><title>advent2020 - Rust</title><link rel="stylesheet" type="text/css" href="../normalize.css"><link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../ayu.css" disabled ><script src="../storage.js"></script><noscript><link rel="stylesheet" href="../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="alternate icon" type="image/png" href="../favicon-16x16.png">
+<link rel="alternate icon" type="image/png" href="../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../down-arrow.svg");}</style></head><body class="rustdoc mod"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../advent2020/index.html'><div class='logo-container rust-logo'><img src='../rust-logo.png' alt='logo'></div></a><p class='location'>Crate advent2020</p><div class='block version'><p>Version 0.1.0</p></div><div class="sidebar-elems"><a id='all-types' href='all.html'><p>See all advent2020's items</p></a><div class="block items"><ul><li><a href="#modules">Modules</a></li><li><a href="#structs">Structs</a></li><li><a href="#constants">Constants</a></li><li><a href="#functions">Functions</a></li></ul></div><p class='location'></p><script>window.sidebarCurrent = {name: 'advent2020', ty: 'mod', relpath: '../'};</script></div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><span class="help-button">?</span>
+                <a id="settings-menu" href="../settings.html"><img src="../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><h1 class='fqn'><span class='out-of-band'><span id='render-detail'><a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">[<span class='inner'>&#x2212;</span>]</a></span><a class='srclink' href='../src/advent2020/main.rs.html#1-244' title='goto source code'>[src]</a></span><span class='in-band'>Crate <a class="mod" href=''>advent2020</a></span></h1><h2 id='modules' class='section-header'><a href="#modules">Modules</a></h2>
+<table><tr class='module-item'><td><a class="mod" href="day01/index.html" title='advent2020::day01 mod'>day01</a></td><td class='docblock-short'><p>Day 1:
+This solution uses a binary mask arary that contains the values between 1 and 2020
+found in the challenge input. I read the values into a mask array and load the values
+into a vector at the same time to reduce the memory movement.</p>
+</td></tr><tr class='module-item'><td><a class="mod" href="day02/index.html" title='advent2020::day02 mod'>day02</a></td><td class='docblock-short'><p>Day 2:
+Regex can be expensive to create. I leveraged information about the structure of the
+input file to avoid using a regex. Note that <code>splitn</code> tends to be faster than <code>split</code>.
+Also, processing both parts in a single pass over the array saves roughly 20% time.</p>
+</td></tr><tr class='module-item'><td><a class="mod" href="day03/index.html" title='advent2020::day03 mod'>day03</a></td><td class='docblock-short'><p>Day 3:
+An important observation from today is that you get better performance from a combined
+map and fold/for_each that you get from chaining the two.</p>
+</td></tr><tr class='module-item'><td><a class="mod" href="day04/index.html" title='advent2020::day04 mod'>day04</a></td><td class='docblock-short'><p>Day 4:
+Interestingly, in contrast to Day 3, we achieve better performance by mapping before
+folding in this case. This is another good example of where <code>splitn</code> outperforms
+<code>split</code>, even if some strings have fewer than n chunks. It seems that parsing the
+passport is complex enough that combining is not as important.</p>
+</td></tr><tr class='module-item'><td><a class="mod" href="day05/index.html" title='advent2020::day05 mod'>day05</a></td><td class='docblock-short'><p>Day 5:
+Two separate passes are required over the data, one to convert from a string to a
+binary and one to find the valid seat. However, we can still save some time by
+locating the max seat while filling the binary seat array</p>
+</td></tr><tr class='module-item'><td><a class="mod" href="day06/index.html" title='advent2020::day06 mod'>day06</a></td><td class='docblock-short'><p>Day 6:
+This is a good example of how using the bytes array for each string can speed up
+comparisons and parsing.</p>
+</td></tr><tr class='module-item'><td><a class="mod" href="day07/index.html" title='advent2020::day07 mod'>day07</a></td><td class='docblock-short'><p>Day 7:
+A particularly slow day, the performance is dominated by adding each bag to a graph.
+Once the input has been parsed, traversing the graph to find the contained/containing
+bags is straightforward and fast.</p>
+</td></tr><tr class='module-item'><td><a class="mod" href="day08/index.html" title='advent2020::day08 mod'>day08</a></td><td class='docblock-short'><p>Day 8:
+This is a problem that is not actually dominated by the cost of parsing the input.
+The problem is best solved by working from the last instruction before the infinite
+loop and working backwards. Any visit of previous nodes in the loop will signal
+entering the loop again, so we can reuse the same hash set when we combine the parts.
+Note that this is very messy code that should be cleaned up.</p>
+</td></tr><tr class='module-item'><td><a class="mod" href="day09/index.html" title='advent2020::day09 mod'>day09</a></td><td class='docblock-short'><p>Day 9:
+The parts are difficult (or impossible) to combine in this problem. Some approaches,
+such as using hash sets, offer better theoretical accuracy, but in practice I am
+seeing that using fixed sized arrays is offering the compiler plenty of chances to
+produce fast code.</p>
+</td></tr><tr class='module-item'><td><a class="mod" href="output/index.html" title='advent2020::output mod'>output</a></td><td class='docblock-short'><p>Output:
+This module collects some of my <code>println!</code> boilerplate between the days.</p>
+</td></tr><tr class='module-item'><td><a class="mod" href="prelude/index.html" title='advent2020::prelude mod'>prelude</a></td><td class='docblock-short'></td></tr></table><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
+<table><tr class='module-item'><td><a class="struct" href="struct.Results.html" title='advent2020::Results struct'>Results</a></td><td class='docblock-short'></td></tr><tr class='module-item'><td><a class="struct" href="struct.Timing.html" title='advent2020::Timing struct'>Timing</a></td><td class='docblock-short'></td></tr></table><h2 id='constants' class='section-header'><a href="#constants">Constants</a></h2>
+<table><tr class='module-item'><td><a class="constant" href="constant.REPETITIONS.html" title='advent2020::REPETITIONS constant'>REPETITIONS</a></td><td class='docblock-short'></td></tr></table><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
+<table><tr class='module-item'><td><a class="fn" href="fn.main.html" title='advent2020::main fn'>main</a></td><td class='docblock-short'></td></tr></table></section><section id="search" class="content hidden"></section><section class="footer"></section><script>window.rootPath = "../";window.currentCrate = "advent2020";</script><script src="../main.js"></script><script defer src="../search-index.js"></script></body></html>

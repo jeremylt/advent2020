@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["byr_valid",""],["ecl_valid",""],["eyr_valid",""],["hcl_valid",""],["hgt_valid",""],["iyr_valid",""],["part_1",""],["part_2",""],["pid_valid",""],["report",""],["run",""]],"struct":[["PassportData",""],["PassportValidityData",""]]});
