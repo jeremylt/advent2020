@@ -65,7 +65,7 @@ impl Timing {
 // -----------------------------------------------------------------------------
 // Prelude
 // -----------------------------------------------------------------------------
-const REPETITIONS: u32 = 1;
+const REPETITIONS: u32 = 250;
 pub(crate) mod prelude {
     pub(crate) use crate::REPETITIONS;
     pub(crate) use crate::{output, Results, Timing};
@@ -234,6 +234,12 @@ mod tests {
     fn test_08() {
         let results = day08::run();
         test_day!(results, 1594, 758);
+    }
+
+    #[test]
+    fn test_09() {
+        let results = day09::run();
+        test_day!(results, 756008079, 93727241);
     }
 }
 
