@@ -97,7 +97,7 @@ pub(crate) fn run() -> Results {
 // Report
 // -----------------------------------------------------------------------------
 pub(crate) fn report(results: &Results) {
-    output::print_day(5);
+    output::print_day(5, "Binary Boarding");
     output::print_part(1, "💺 Largest", &format!("{}", results.part_1));
     output::print_part(2, "💺 Available", &format!("{}", results.part_2));
     output::print_timing(&results.times);

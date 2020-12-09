@@ -87,7 +87,7 @@ pub(crate) fn run() -> Results {
 // Report
 // -----------------------------------------------------------------------------
 pub(crate) fn report(results: &Results) {
-    output::print_day(3);
+    output::print_day(3, "Toboggan Trajectory");
     output::print_part(1, "🌲 Count", &format!("{}", results.part_1));
     output::print_part(2, "🌲 Product", &format!("{}", results.part_2));
     output::print_timing(&results.times);

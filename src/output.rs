@@ -20,8 +20,8 @@ pub(crate) fn print_header() {
 // -----------------------------------------------------------------------------
 // Output day information
 // -----------------------------------------------------------------------------
-pub(crate) fn print_day(day: usize) {
-    println!("- {}", format!("Day {:02}", day).bold());
+pub(crate) fn print_day(day: usize, name: &str) {
+    println!("- {}", format!("Day {:02} --- {} ---", day, name).bold());
 }
 
 // -----------------------------------------------------------------------------

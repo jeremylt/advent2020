@@ -276,7 +276,7 @@ pub(crate) fn run() -> Results {
 // Report
 // -----------------------------------------------------------------------------
 pub(crate) fn report(results: &Results) {
-    output::print_day(8);
+    output::print_day(8, "Handheld Halting");
     output::print_part(1, "🎮 Infinite", &format!("{}", results.part_1));
     output::print_part(2, "🎮 Corrected", &format!("{}", results.part_2));
     output::print_timing(&results.times);

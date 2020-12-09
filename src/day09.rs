@@ -7,19 +7,15 @@ const WINDOW: usize = 25;
 // Check for pair that sum to target in current range
 // -----------------------------------------------------------------------------
 fn find_two(target: &i64, values: &[i64; WINDOW]) -> Option<i64> {
-    values.iter().find_map(|value| {
+    values.iter().enumerate().find_map(|(i, value)| {
         let search = target - value;
-        if values.iter().any(|&second| second == search) {
+        if values.iter().skip(i + 1).any(|second| *second == search) {
             Some(*value)
         } else {
             None
         }
     })
 }
-
-// -----------------------------------------------------------------------------
-// Part 2
-// -----------------------------------------------------------------------------
 
 // -----------------------------------------------------------------------------
 // Run
@@ -54,12 +50,12 @@ pub(crate) fn run() -> Results {
         .iter()
         .skip(WINDOW)
         .enumerate()
-        .find_map(|(i, &value)| match find_two(&value, &current_values) {
+        .find_map(|(i, value)| match find_two(value, &current_values) {
             Some(_) => {
-                current_values[i % WINDOW] = value;
+                current_values[i % WINDOW] = *value;
                 None
             }
-            None => Some(value),
+            None => Some(*value),
         })
         .unwrap();
     let time_part_1 = start_part_1.elapsed();
@@ -75,7 +71,7 @@ pub(crate) fn run() -> Results {
         .enumerate()
         .find_map(|(i, value)| {
             let mut sum = *value;
-            let upper = values
+            let j = values
                 .iter()
                 .skip(i + WINDOW + 1)
                 .enumerate()
@@ -89,7 +85,7 @@ pub(crate) fn run() -> Results {
                 })
                 .unwrap();
             if sum == value_1 {
-                Some((i, upper))
+                Some((i, j))
             } else {
                 None
             }
@@ -99,8 +95,8 @@ pub(crate) fn run() -> Results {
         .iter()
         .skip(WINDOW + lower)
         .take(upper)
-        .fold((value_1, 0), |acc, &value| {
-            (std::cmp::min(acc.0, value), std::cmp::max(acc.1, value))
+        .fold((value_1, 0), |acc, value| {
+            (std::cmp::min(acc.0, *value), std::cmp::max(acc.1, *value))
         });
     let sum_2 = min + max;
     let time_part_2 = start_part_2.elapsed();
@@ -124,9 +120,9 @@ pub(crate) fn run() -> Results {
 // Report
 // -----------------------------------------------------------------------------
 pub(crate) fn report(results: &Results) {
-    output::print_day(9);
-    output::print_part(1, "📄 Invalid", &format!("{}", results.part_1));
-    output::print_part(2, "📄 Sum", &format!("{}", results.part_2));
+    output::print_day(9, "Encoding Error");
+    output::print_part(1, "💾 Invalid", &format!("{}", results.part_1));
+    output::print_part(2, "💾 Sum", &format!("{}", results.part_2));
     output::print_timing(&results.times);
 }
 

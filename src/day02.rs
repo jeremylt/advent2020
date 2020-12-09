@@ -152,7 +152,7 @@ pub(crate) fn run() -> Results {
 // Report
 // -----------------------------------------------------------------------------
 pub(crate) fn report(results: &Results) {
-    output::print_day(2);
+    output::print_day(2, "Password Philosophy");
     output::print_part(1, "🔑 Valid", &format!("{}", results.part_1));
     output::print_part(2, "🔑 Valid", &format!("{}", results.part_2));
     output::print_timing(&results.times);

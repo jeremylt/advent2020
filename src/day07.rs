@@ -152,7 +152,7 @@ pub(crate) fn run() -> Results {
 // Report
 // -----------------------------------------------------------------------------
 pub(crate) fn report(results: &Results) {
-    output::print_day(7);
+    output::print_day(7, "Handy Haversacks");
     output::print_part(1, "🧳 Containing", &format!("{}", results.part_1));
     output::print_part(2, "🧳 Contains", &format!("{}", results.part_2));
     output::print_timing(&results.times);
