@@ -1,47 +1,25 @@
 use crate::prelude::*;
 
 // Constant
-const YEAR: usize = 2020;
+const WINDOW: usize = 25;
 
 // -----------------------------------------------------------------------------
-// Find pair of flagged indices that sum to length of mask array
+// Check for pair that sum to target in current range
 // -----------------------------------------------------------------------------
-fn find_two(array: &[bool]) -> Option<i32> {
-    array
-        .iter()
-        .enumerate()
-        .zip(array.iter().rev())
-        .find_map(|((i, a), b)| if a & b { Some(i as i32) } else { None })
-}
-
-// -----------------------------------------------------------------------------
-// Part 1
-// -----------------------------------------------------------------------------
-fn part_1(mask: &[bool]) -> (i32, i32) {
-    match find_two(&mask) {
-        Some(index) => (index, YEAR as i32 - index),
-        None => panic!("No pair found"),
-    }
+fn find_two(target: &i64, values: &[i64; WINDOW]) -> Option<i64> {
+    values.iter().find_map(|value| {
+        let search = target - value;
+        if values.iter().any(|&second| second == search) {
+            Some(*value)
+        } else {
+            None
+        }
+    })
 }
 
 // -----------------------------------------------------------------------------
 // Part 2
 // -----------------------------------------------------------------------------
-fn part_2(values: &[usize], mask: &[bool]) -> (i32, i32, i32) {
-    for value in values {
-        let remainder = YEAR - *value;
-        let index = find_two(&mask[0..=remainder]);
-        if index != None {
-            let triple = (
-                *value as i32,
-                index.unwrap(),
-                YEAR as i32 - *value as i32 - index.unwrap(),
-            );
-            return triple;
-        }
-    }
-    panic!("No triple found");
-}
 
 // -----------------------------------------------------------------------------
 // Run
@@ -52,17 +30,19 @@ pub(crate) fn run() -> Results {
     // -------------------------------------------------------------------------
     // Open file
     let start_setup = Instant::now();
-    let buffer: String = std::fs::read_to_string("data/day01.txt").unwrap();
+    let buffer: String = std::fs::read_to_string("data/day09.txt").unwrap();
 
     // Read to vector
-    let values: Vec<usize> = buffer
+    let values: Vec<i64> = buffer
         .lines()
         .map(|line| line.parse().expect("failed to parse line"))
         .collect();
-
-    // Mask array
-    let mut mask = [false; YEAR + 1];
-    values.iter().for_each(|&value| mask[value] = true);
+    let mut current_values: [i64; WINDOW] = [0; WINDOW];
+    values
+        .iter()
+        .take(WINDOW)
+        .enumerate()
+        .for_each(|(i, &value)| current_values[i] = value);
     let time_setup = start_setup.elapsed();
 
     // -------------------------------------------------------------------------
@@ -70,25 +50,67 @@ pub(crate) fn run() -> Results {
     // -------------------------------------------------------------------------
     // Look for pair
     let start_part_1 = Instant::now();
-    let tuple = part_1(&mask);
-    let product_1 = tuple.0 * tuple.1;
+    let value_1 = values
+        .iter()
+        .skip(WINDOW)
+        .enumerate()
+        .find_map(|(i, &value)| match find_two(&value, &current_values) {
+            Some(_) => {
+                current_values[i % WINDOW] = value;
+                None
+            }
+            None => Some(value),
+        })
+        .unwrap();
     let time_part_1 = start_part_1.elapsed();
 
     // -------------------------------------------------------------------------
     // Part 2
     // -------------------------------------------------------------------------
-    // Look for triple
+    // Look for range
     let start_part_2 = Instant::now();
-    let triple = part_2(&values, &mask);
-    let product_2 = triple.0 * triple.1 * triple.2;
+    let (lower, upper) = values
+        .iter()
+        .skip(WINDOW)
+        .enumerate()
+        .find_map(|(i, value)| {
+            let mut sum = *value;
+            let upper = values
+                .iter()
+                .skip(i + WINDOW + 1)
+                .enumerate()
+                .find_map(|(j, next)| {
+                    sum += next;
+                    if sum >= value_1 {
+                        Some(j)
+                    } else {
+                        None
+                    }
+                })
+                .unwrap();
+            if sum == value_1 {
+                Some((i, upper))
+            } else {
+                None
+            }
+        })
+        .unwrap();
+    let (min, max) = values
+        .iter()
+        .skip(WINDOW + lower)
+        .take(upper)
+        .fold((value_1, 0), |acc, &value| {
+            (std::cmp::min(acc.0, value), std::cmp::max(acc.1, value))
+        });
+    let sum_2 = min + max;
     let time_part_2 = start_part_2.elapsed();
 
     // -------------------------------------------------------------------------
     // Return
     // -------------------------------------------------------------------------
     Results::new(
-        product_1 as i64,
-        product_2 as i64,
+        value_1 as i64,
+        sum_2 as i64,
         Timing::new(
             time_setup,
             time_part_1,
@@ -102,9 +124,9 @@ pub(crate) fn run() -> Results {
 // Report
 // -----------------------------------------------------------------------------
 pub(crate) fn report(results: &Results) {
-    output::print_day(1);
-    output::print_part(1, "📄 Product", &format!("{}", results.part_1));
-    output::print_part(2, "📄 Product", &format!("{}", results.part_2));
+    output::print_day(9);
+    output::print_part(1, "📄 Invalid", &format!("{}", results.part_1));
+    output::print_part(2, "📄 Sum", &format!("{}", results.part_2));
     output::print_timing(&results.times);
 }
 
