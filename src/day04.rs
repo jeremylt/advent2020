@@ -1,3 +1,9 @@
+//! Day 4:
+//! Interestingly, in contrast to Day 3, we achieve better performance by mapping before
+//! folding in this case. This is another good example of where `splitn` outperforms
+//! `split`, even if some strings have fewer than n chunks. It seems that parsing the
+//! passport is complex enough that combining is not as important.
+
 use crate::prelude::*;
 
 // -----------------------------------------------------------------------------
@@ -29,7 +35,7 @@ impl std::str::FromStr for PassportData {
         let [mut hgt, mut hcl, mut ecl, mut pid, mut cid]: [String; 5] =
             copy_five!("invalid".to_string());
         let mut len: usize = 0;
-        for field in s.trim().split(&['\n', ' '][..]) {
+        for field in s.trim().splitn(8, &['\n', ' '][..]) {
             len += 1;
             let data = &field[4..];
             match &field[0..3] {
@@ -132,7 +138,7 @@ impl std::str::FromStr for PassportValidityData {
         let mut fields = 0;
         let mut valid_fields = 0;
         let mut cid = false;
-        for field in s.trim().split(&['\n', ' '][..]) {
+        for field in s.trim().splitn(8, &['\n', ' '][..]) {
             fields += 1;
             let mut entry = field.splitn(2, ':');
             let name = entry.next().unwrap();
@@ -202,11 +208,10 @@ pub(crate) fn run() -> Results {
             line.parse::<PassportValidityData>()
                 .expect("failed to parse passport")
         })
-        .fold((0, 0), |acc, passport| {
-            (
-                acc.0 + passport.part_1 as usize,
-                acc.1 + passport.part_2 as usize,
-            )
+        .fold((0, 0), |mut acc, passport| {
+            acc.0 += passport.part_1 as usize;
+            acc.1 += passport.part_2 as usize;
+            acc
         });
     let time_combined = start_combined.elapsed();
     assert_eq!(combined_1, count_1);

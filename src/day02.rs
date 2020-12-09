@@ -1,3 +1,8 @@
+//! Day 2:
+//! Regex can be expensive to create. I leveraged information about the structure of the
+//! input file to avoid using a regex. Note that `splitn` tends to be faster than `split`.
+//! Also, processing both parts in a single pass over the array saves roughly 20% time.
+
 use crate::prelude::*;
 
 // -----------------------------------------------------------------------------
@@ -14,7 +19,7 @@ struct PasswordData {
 impl std::str::FromStr for PasswordData {
     type Err = std::num::ParseIntError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let mut line = s.split(&['-', ' ', ':'][..]);
+        let mut line = s.splitn(5, &['-', ' ', ':'][..]);
         let lower = line.next().unwrap().parse()?;
         let upper = line.next().unwrap().parse()?;
         let required = line.next().unwrap().chars().nth(0).unwrap();
@@ -65,7 +70,7 @@ struct PasswordValidityData {
 impl std::str::FromStr for PasswordValidityData {
     type Err = std::num::ParseIntError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let mut line = s.split(&['-', ' ', ':'][..]);
+        let mut line = s.splitn(5, &['-', ' ', ':'][..]);
         let lower = line.next().unwrap().parse()?;
         let upper = line.next().unwrap().parse()?;
         let required = line.next().unwrap().chars().nth(0).unwrap();
@@ -125,15 +130,12 @@ pub(crate) fn run() -> Results {
     // Combined
     // -------------------------------------------------------------------------
     let start_combined = Instant::now();
-    let (combined_1, combined_2) = buffer
-        .lines()
-        .map(|line| {
-            line.parse::<PasswordValidityData>()
-                .expect("failed to parse password")
-        })
-        .fold((0, 0), |acc, data| {
-            (acc.0 + data.part_1 as usize, acc.1 + data.part_2 as usize)
-        });
+    let (combined_1, combined_2) = buffer.lines().fold((0, 0), |acc, line| {
+        let data = line
+            .parse::<PasswordValidityData>()
+            .expect("failed to parse password");
+        (acc.0 + data.part_1 as usize, acc.1 + data.part_2 as usize)
+    });
     let time_combined = start_combined.elapsed();
     assert_eq!(combined_1, count_1);
     assert_eq!(combined_2, count_2);

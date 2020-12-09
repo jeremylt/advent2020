@@ -1,3 +1,7 @@
+//! Day 3:
+//! An important observation from today is that you get better performance from a combined
+//! map and fold/for_each that you get from chaining the two.
+
 use crate::prelude::*;
 
 // -----------------------------------------------------------------------------
@@ -54,19 +58,14 @@ pub(crate) fn run() -> Results {
     // -------------------------------------------------------------------------
     let start_combined = Instant::now();
     let slopes = [(3, 1), (1, 1), (5, 1), (7, 1), (1, 2)];
+    let line_length = buffer.lines().nth(0).unwrap().chars().count();
     let mut trees_hit = [0; 5];
-    buffer
-        .lines()
-        .map(|line| line.to_string())
-        .enumerate()
-        .for_each(|(i, line)| {
-            trees_hit
-                .iter_mut()
-                .zip(&slopes)
-                .for_each(|(curr, &(right, down))| {
-                    *curr += hit_tree(&line, &i, right, down, line_length) as usize
-                });
+    buffer.lines().enumerate().for_each(|(i, line)| {
+        let data = line.to_string();
+        slopes.iter().enumerate().for_each(|(j, &(right, down))| {
+            trees_hit[j] += hit_tree(&data, &i, right, down, line_length) as usize
         });
+    });
     let combined_1 = trees_hit[0];
     let combined_2: usize = trees_hit.iter().product();
     let time_combined = start_combined.elapsed();

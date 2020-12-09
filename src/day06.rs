@@ -1,3 +1,7 @@
+//! Day 6:
+//! This is a good example of how using the bytes array for each string can speed up
+//! comparisons and parsing.
+
 use crate::prelude::*;
 
 // -----------------------------------------------------------------------------

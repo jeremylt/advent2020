@@ -1,3 +1,9 @@
+//! Day 9:
+//! The parts are difficult (or impossible) to combine in this problem. Some approaches,
+//! such as using hash sets, offer better theoretical accuracy, but in practice I am
+//! seeing that using fixed sized arrays is offering the compiler plenty of chances to
+//! produce fast code.
+
 use crate::prelude::*;
 
 // Constant

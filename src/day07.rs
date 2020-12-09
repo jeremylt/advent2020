@@ -1,3 +1,8 @@
+//! Day 7:
+//! A particularly slow day, the performance is dominated by adding each bag to a graph.
+//! Once the input has been parsed, traversing the graph to find the contained/containing
+//! bags is straightforward and fast.
+
 use crate::prelude::*;
 use std::sync::RwLock;
 

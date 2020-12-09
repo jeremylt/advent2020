@@ -1,0 +1,28 @@
+name: Rust
+
+on:
+  push:
+
+jobs:
+  test:
+    name: Documentation
+    runs-on: ubuntu-latest
+    steps:
+    - name: Environment setup
+      uses: actions/checkout@v2
+    - name: Rust setup
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+    - name: Build documentation
+      run: |
+        cd rust
+        cargo doc --all --no-deps
+        touch ./target/doc/.nojekyll
+        echo "<meta http-equiv=refresh content=0;url=advent2020/index.html>" > ./target/doc/index.html
+        cd ..
+    - name: Deploy documentation
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./target/doc

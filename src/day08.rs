@@ -1,3 +1,10 @@
+//! Day 8:
+//! This is a problem that is not actually dominated by the cost of parsing the input.
+//! The problem is best solved by working from the last instruction before the infinite
+//! loop and working backwards. Any visit of previous nodes in the loop will signal
+//! entering the loop again, so we can reuse the same hash set when we combine the parts.
+//! Note that this is very messy code that should be cleaned up.
+
 use crate::prelude::*;
 
 const CAPACITY: usize = 512;

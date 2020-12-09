@@ -1,3 +1,6 @@
+//! Output:
+//! This module collects some of my `println!` boilerplate between the days.
+
 use crate::prelude::*;
 
 // Constants

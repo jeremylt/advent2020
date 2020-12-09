@@ -1,3 +1,8 @@
+//! Day 5:
+//! Two separate passes are required over the data, one to convert from a string to a
+//! binary and one to find the valid seat. However, we can still save some time by
+//! locating the max seat while filling the binary seat array
+
 use crate::prelude::*;
 use itertools::Itertools;
 
@@ -13,8 +18,8 @@ fn parse_fblr_binary(s: &str) -> usize {
 // -----------------------------------------------------------------------------
 // Part 2
 // -----------------------------------------------------------------------------
-fn part_2(triple: (&bool, &bool, &bool)) -> bool {
-    *triple.0 && !*triple.1 && *triple.2
+fn part_2(tuple: (&bool, &bool)) -> bool {
+    *tuple.0 && !*tuple.1
 }
 
 // -----------------------------------------------------------------------------
@@ -52,7 +57,7 @@ pub(crate) fn run() -> Results {
     data.iter().for_each(|&s| mask[s] = true);
     let seat_2 = mask
         .iter()
-        .tuple_windows::<(_, _, _)>()
+        .tuple_windows::<(_, _)>()
         .enumerate()
         .find_map(|(i, t)| if part_2(t) { Some(i as i32) } else { None })
         .unwrap()
@@ -65,16 +70,14 @@ pub(crate) fn run() -> Results {
     let start_combined = Instant::now();
     let mut combined_mask = [false; 2 << 9];
     let mut combined_1 = 0;
-    buffer
-        .lines()
-        .map(|line| parse_fblr_binary(&line))
-        .for_each(|s| {
-            combined_mask[s] = true;
-            combined_1 = std::cmp::max(combined_1, s)
-        });
+    buffer.lines().for_each(|line| {
+        let s = parse_fblr_binary(&line);
+        combined_mask[s] = true;
+        combined_1 = std::cmp::max(combined_1, s);
+    });
     let combined_2 = mask
         .iter()
-        .tuple_windows::<(_, _, _)>()
+        .tuple_windows::<(_, _)>()
         .enumerate()
         .find_map(|(i, t)| if part_2(t) { Some(i as i32) } else { None })
         .unwrap()

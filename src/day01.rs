@@ -1,3 +1,8 @@
+//! Day 1:
+//! This solution uses a binary mask arary that contains the values between 1 and 2020
+//! found in the challenge input. I read the values into a mask array and load the values
+//! into a vector at the same time to reduce the memory movement.
+
 use crate::prelude::*;
 
 // Constant
@@ -55,14 +60,15 @@ pub(crate) fn run() -> Results {
     let buffer: String = std::fs::read_to_string("data/day01.txt").unwrap();
 
     // Read to vector
+    let mut mask = [false; YEAR + 1];
     let values: Vec<usize> = buffer
         .lines()
-        .map(|line| line.parse().expect("failed to parse line"))
+        .map(|line| {
+            let value = line.parse().expect("failed to parse line");
+            mask[value] = true;
+            value
+        })
         .collect();
-
-    // Mask array
-    let mut mask = [false; YEAR + 1];
-    values.iter().for_each(|&value| mask[value] = true);
     let time_setup = start_setup.elapsed();
 
     // -------------------------------------------------------------------------
