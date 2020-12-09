@@ -26,6 +26,8 @@ Note that this may be quite slow to download and install all of the packages.
 
 ## Observations
 
+You can read my daily notes [here](https://jeremylt.github.io/advent2020/), but I have summarized some highlights below.
+
 * Trust Rust's compiler. The high level functions give quite good performance.
 
 * File IO is very expensive. String parsing is even more so.
@@ -35,7 +37,3 @@ Note that this may be quite slow to download and install all of the packages.
 * Comparison with chars is faster than with strings, when you can trust the input.
 
 * `splitn` is faster than `split`, and indexing into slices of chars is faster than using `split`, when you know about the input.
-
-## Caveats
-
-* My timing is rather crude right now. I plan to add proper benchmarking if I get some time.
