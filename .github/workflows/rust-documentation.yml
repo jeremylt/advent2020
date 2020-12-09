@@ -16,7 +16,6 @@ jobs:
         toolchain: stable
     - name: Build documentation
       run: |
-        cd rust
         cargo doc --all --no-deps
         touch ./target/doc/.nojekyll
         echo "<meta http-equiv=refresh content=0;url=advent2020/index.html>" > ./target/doc/index.html
