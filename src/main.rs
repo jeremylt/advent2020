@@ -69,6 +69,7 @@ pub(crate) mod prelude {
     pub(crate) use crate::REPETITIONS;
     pub(crate) use crate::{output, Results, Timing};
     pub(crate) use colored::*;
+    pub(crate) use std::collections::{HashMap, HashSet};
     pub(crate) use std::time::Instant;
 }
 

@@ -1,5 +1,4 @@
 use crate::prelude::*;
-use std::collections::{HashMap, HashSet};
 use std::sync::RwLock;
 
 const CAPACITY: usize = 512;

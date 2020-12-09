@@ -1,5 +1,4 @@
 use crate::prelude::*;
-use std::collections::{HashMap, HashSet};
 
 const CAPACITY: usize = 512;
 
@@ -138,6 +137,23 @@ fn part_2(number_instructions: i32, instructions: &HashMap<i32, Node>) -> i32 {
 // -----------------------------------------------------------------------------
 // Combined
 // -----------------------------------------------------------------------------
+fn run_program(
+    start: i32,
+    number_instructions: i32,
+    instructions: &HashMap<i32, Node>,
+    executed: &HashSet<i32>,
+) -> (bool, i32) {
+    let mut count = 0;
+    let mut current = start;
+    // Iterate until repeat or out of bounds
+    while !executed.contains(&current) && (current < number_instructions) {
+        let node = instructions.get(&current).unwrap();
+        current = node.next;
+        count += node.increment;
+    }
+    (current >= number_instructions, count)
+}
+
 fn combined(number_instructions: i32, instructions: &HashMap<i32, Node>) -> (i32, i32) {
     let mut machine = Vec::<State>::with_capacity(CAPACITY);
     let mut executed = HashSet::<i32>::with_capacity(CAPACITY);
@@ -158,7 +174,7 @@ fn combined(number_instructions: i32, instructions: &HashMap<i32, Node>) -> (i32
             match node.instruction {
                 Instruction::Acc => None,
                 Instruction::Jmp => {
-                    let (terminated, updated_count) = part_1(
+                    let (terminated, updated_count) = run_program(
                         state.current + 1,
                         number_instructions,
                         &instructions,
@@ -171,7 +187,7 @@ fn combined(number_instructions: i32, instructions: &HashMap<i32, Node>) -> (i32
                     }
                 }
                 Instruction::Nop => {
-                    let (terminated, updated_count) = part_1(
+                    let (terminated, updated_count) = run_program(
                         state.current + node.value,
                         number_instructions,
                         &instructions,
