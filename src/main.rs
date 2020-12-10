@@ -158,7 +158,16 @@ fn main() {
 
     // Day comparison
     output::print_header();
-    let time_averages = average_times.iter().map(|day| day.combined).collect();
+    let time_averages = average_times
+        .iter()
+        .map(|day| {
+            if day.combined.as_nanos() > 0 {
+                day.combined
+            } else {
+                day.setup + day.part_1 + day.part_2
+            }
+        })
+        .collect();
     let time_std_devs: Vec<f64> = average_times
         .iter()
         .zip(day_results.iter())
