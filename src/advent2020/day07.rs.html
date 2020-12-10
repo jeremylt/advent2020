@@ -171,6 +171,7 @@
 <span id="168">168</span>
 <span id="169">169</span>
 <span id="170">170</span>
+<span id="171">171</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Day 7:</span>
 <span class="doccomment">//! A particularly slow day, the performance is dominated by adding each bag to a graph.</span>
@@ -213,6 +214,7 @@
     }
 }
 
+<span class="attribute">#[<span class="ident">inline</span>(<span class="ident">always</span>)]</span>
 <span class="kw">fn</span> <span class="ident">str_to_key</span>(<span class="ident">t</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u32</span> {
     <span class="ident">t</span>.<span class="ident">as_bytes</span>()
         .<span class="ident">iter</span>()

@@ -97,6 +97,8 @@
 <span id="94">94</span>
 <span id="95">95</span>
 <span id="96">96</span>
+<span id="97">97</span>
+<span id="98">98</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Day 3:</span>
 <span class="doccomment">//! An important observation from today is that you get better performance from a combined</span>
@@ -107,11 +109,13 @@
 <span class="comment">// -----------------------------------------------------------------------------</span>
 <span class="comment">// Count trees</span>
 <span class="comment">// -----------------------------------------------------------------------------</span>
+<span class="attribute">#[<span class="ident">inline</span>(<span class="ident">always</span>)]</span>
 <span class="kw">fn</span> <span class="ident">hit_tree</span>(<span class="ident">line</span>: <span class="kw-2">&amp;</span><span class="ident">String</span>, <span class="ident">i</span>: <span class="kw-2">&amp;</span><span class="ident">usize</span>, <span class="ident">right</span>: <span class="ident">usize</span>, <span class="ident">down</span>: <span class="ident">usize</span>, <span class="ident">line_length</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
     <span class="comment">// Note: this probably incurs bounds checking, but this day is already fast</span>
     (<span class="ident">i</span> <span class="op">%</span> <span class="ident">down</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span>) <span class="op">&amp;&amp;</span> (<span class="ident">line</span>.<span class="ident">as_bytes</span>()[<span class="ident">right</span> <span class="op">*</span> <span class="ident">i</span> <span class="op">/</span> <span class="ident">down</span> <span class="op">%</span> <span class="ident">line_length</span>] <span class="op">=</span><span class="op">=</span> <span class="string">b&#39;#&#39;</span>)
 }
 
+<span class="attribute">#[<span class="ident">inline</span>(<span class="ident">always</span>)]</span>
 <span class="kw">fn</span> <span class="ident">count_trees</span>(<span class="ident">data</span>: <span class="kw-2">&amp;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>, <span class="ident">right</span>: <span class="ident">usize</span>, <span class="ident">down</span>: <span class="ident">usize</span>, <span class="ident">line_length</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
     <span class="ident">data</span>.<span class="ident">iter</span>()
         .<span class="ident">enumerate</span>()

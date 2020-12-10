@@ -338,7 +338,7 @@
 <span class="comment">// -----------------------------------------------------------------------------</span>
 <span class="comment">// Prelude</span>
 <span class="comment">// -----------------------------------------------------------------------------</span>
-<span class="kw">const</span> <span class="ident">REPETITIONS</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">250</span>;
+<span class="kw">const</span> <span class="ident">REPETITIONS</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">500</span>;
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">mod</span> <span class="ident">prelude</span> {
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">REPETITIONS</span>;
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">output</span>, <span class="ident">Results</span>, <span class="ident">Timing</span>};
@@ -432,14 +432,14 @@
     <span class="kw">let</span> <span class="ident">time_averages</span> <span class="op">=</span> <span class="ident">average_times</span>
         .<span class="ident">iter</span>()
         .<span class="ident">map</span>(<span class="op">|</span><span class="ident">day</span><span class="op">|</span> {
-            <span class="kw">if</span> <span class="ident">day</span>.<span class="ident">combined</span>.<span class="ident">as_nanos</span>() <span class="op">&gt;</span> <span class="number">0</span> {
+            <span class="kw">if</span> <span class="ident">day</span>.<span class="ident">combined</span>.<span class="ident">as_nanos</span>() <span class="op">&gt;</span> <span class="number">1</span> {
                 <span class="ident">day</span>.<span class="ident">combined</span>
             } <span class="kw">else</span> {
                 <span class="ident">day</span>.<span class="ident">setup</span> <span class="op">+</span> <span class="ident">day</span>.<span class="ident">part_1</span> <span class="op">+</span> <span class="ident">day</span>.<span class="ident">part_2</span>
             }
         })
-        .<span class="ident">collect</span>();
-    <span class="kw">let</span> <span class="ident">time_std_devs</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">average_times</span>
+        .<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span><span class="op">&gt;</span>();
+    <span class="kw">let</span> <span class="ident">time_std_devs</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">time_averages</span>
         .<span class="ident">iter</span>()
         .<span class="ident">zip</span>(<span class="ident">day_results</span>.<span class="ident">iter</span>())
         .<span class="ident">map</span>(<span class="op">|</span>(<span class="ident">averages</span>, <span class="ident">day</span>)<span class="op">|</span> {
@@ -451,7 +451,7 @@
                         <span class="op">+</span> <span class="ident">repetition</span>.<span class="ident">times</span>.<span class="ident">part_1</span>.<span class="ident">as_nanos</span>()
                         <span class="op">+</span> <span class="ident">repetition</span>.<span class="ident">times</span>.<span class="ident">part_2</span>.<span class="ident">as_nanos</span>()
                 };
-                <span class="ident">acc</span> <span class="op">+</span> ((<span class="ident">averages</span>.<span class="ident">combined</span>.<span class="ident">as_nanos</span>() <span class="kw">as</span> <span class="ident">f64</span> <span class="op">-</span> <span class="ident">current</span> <span class="kw">as</span> <span class="ident">f64</span>) <span class="op">/</span> <span class="number">1000.0</span>).<span class="ident">powf</span>(<span class="number">2.0</span>)
+                <span class="ident">acc</span> <span class="op">+</span> ((<span class="ident">averages</span>.<span class="ident">as_nanos</span>() <span class="kw">as</span> <span class="ident">f64</span> <span class="op">-</span> <span class="ident">current</span> <span class="kw">as</span> <span class="ident">f64</span>) <span class="op">/</span> <span class="number">1000.0</span>).<span class="ident">powf</span>(<span class="number">2.0</span>)
                     <span class="op">/</span> ((<span class="ident">REPETITIONS</span> <span class="op">-</span> <span class="number">1</span>) <span class="kw">as</span> <span class="ident">f64</span>)
             }))
             .<span class="ident">powf</span>(<span class="number">0.5</span>)

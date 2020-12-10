@@ -110,6 +110,8 @@
 <span id="107">107</span>
 <span id="108">108</span>
 <span id="109">109</span>
+<span id="110">110</span>
+<span id="111">111</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Day 5:</span>
 <span class="doccomment">//! Two separate passes are required over the data, one to convert from a string to a</span>
@@ -122,6 +124,7 @@
 <span class="comment">// -----------------------------------------------------------------------------</span>
 <span class="comment">// Parse FBLR encoded binary</span>
 <span class="comment">// -----------------------------------------------------------------------------</span>
+<span class="attribute">#[<span class="ident">inline</span>(<span class="ident">always</span>)]</span>
 <span class="kw">fn</span> <span class="ident">parse_fblr_binary</span>(<span class="ident">s</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
     <span class="ident">s</span>.<span class="ident">as_bytes</span>()
         .<span class="ident">iter</span>()
@@ -131,6 +134,7 @@
 <span class="comment">// -----------------------------------------------------------------------------</span>
 <span class="comment">// Part 2</span>
 <span class="comment">// -----------------------------------------------------------------------------</span>
+<span class="attribute">#[<span class="ident">inline</span>(<span class="ident">always</span>)]</span>
 <span class="kw">fn</span> <span class="ident">part_2</span>(<span class="ident">tuple</span>: (<span class="kw-2">&amp;</span><span class="ident">bool</span>, <span class="kw-2">&amp;</span><span class="ident">bool</span>)) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
     <span class="kw-2">*</span><span class="ident">tuple</span>.<span class="number">0</span> <span class="op">&amp;&amp;</span> <span class="op">!</span><span class="kw-2">*</span><span class="ident">tuple</span>.<span class="number">1</span> <span class="comment">// First open seat, so only need to check pair, not triple</span>
 }
