@@ -140,9 +140,8 @@ impl std::str::FromStr for PassportValidityData {
         let mut cid = false;
         for field in s.trim().splitn(8, &['\n', ' '][..]) {
             fields += 1;
-            let mut entry = field.splitn(2, ':');
-            let name = entry.next().unwrap();
-            let data = entry.next().unwrap().to_string();
+            let name = &field[0..3]; // First three chars are the identifier
+            let data = field[4..].to_string();
             match name {
                 "byr" => valid_fields += byr_valid(data.parse().unwrap()) as usize,
                 "iyr" => valid_fields += iyr_valid(data.parse().unwrap()) as usize,

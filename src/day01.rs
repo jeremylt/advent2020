@@ -63,7 +63,7 @@ pub(crate) fn run() -> Results {
     let mut mask = [false; YEAR + 1];
     let values: Vec<usize> = buffer
         .lines()
-        .map(|line| {
+        .map(|line| { // Read to array and mask at same time
             let value = line.parse().expect("failed to parse line");
             mask[value] = true;
             value

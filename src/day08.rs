@@ -30,6 +30,7 @@ struct Node {
 impl Node {
     fn new(s: &str, i: i32) -> Self {
         // Instructions of the form
+        //   0   4
         //   acc value
         //   jmp value
         //   nop value
