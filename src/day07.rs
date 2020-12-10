@@ -1,7 +1,7 @@
 //! Day 7:
 //! A particularly slow day, the performance is dominated by adding each bag to a graph.
 //! Once the input has been parsed, traversing the graph to find the contained/containing
-//! bags is straightforward and fast.
+//! bags is straightforward and fast. Switching to the FNV hash crate helps mildly.
 
 use crate::prelude::*;
 use std::sync::RwLock;
@@ -48,21 +48,19 @@ fn add_to_graph(s: &str, bag_graph: &mut HashMap<u32, Node>) {
     let mut input = s.splitn(2, " bags contain ");
     let container_key = str_to_key(input.next().unwrap());
     let mut contains = vec![];
+    let contents = input.next().unwrap();
     // Containing bags
-    for line in input.next().unwrap().split(", ") {
-        let mut line = line.splitn(2, " ");
-        let number: usize;
-        match line.next().unwrap().parse() {
-            Ok(val) => number = val,
-            Err(_) => break,
+    if contents.as_bytes()[0] != b'n' {
+        for line in contents.split(", ") {
+            let number = line[0..1].parse().unwrap();
+            let contained_key = str_to_key(line[2..].splitn(2, " bag").next().unwrap());
+            bag_graph
+                .entry(contained_key)
+                .or_insert(Node::new())
+                .contained_by
+                .push(container_key);
+            contains.push(Holding::new(contained_key, number));
         }
-        let contained_key = str_to_key(line.next().unwrap().splitn(2, " bag").next().unwrap());
-        bag_graph
-            .entry(contained_key)
-            .or_insert(Node::new())
-            .contained_by
-            .push(container_key);
-        contains.push(Holding::new(contained_key, number));
     }
     // Contained bags
     bag_graph
