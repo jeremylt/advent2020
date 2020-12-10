@@ -151,15 +151,19 @@
 <span class="comment">// -----------------------------------------------------------------------------</span>
 <span class="comment">// Check for pair that sum to target in current range</span>
 <span class="comment">// -----------------------------------------------------------------------------</span>
-<span class="kw">fn</span> <span class="ident">find_two</span>(<span class="ident">target</span>: <span class="kw-2">&amp;</span><span class="ident">i64</span>, <span class="ident">values</span>: <span class="kw-2">&amp;</span>[<span class="ident">i64</span>; <span class="ident">WINDOW</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">i64</span><span class="op">&gt;</span> {
-    <span class="ident">values</span>.<span class="ident">iter</span>().<span class="ident">enumerate</span>().<span class="ident">find_map</span>(<span class="op">|</span>(<span class="ident">i</span>, <span class="ident">value</span>)<span class="op">|</span> {
-        <span class="kw">let</span> <span class="ident">search</span> <span class="op">=</span> <span class="ident">target</span> <span class="op">-</span> <span class="ident">value</span>;
-        <span class="kw">if</span> <span class="ident">values</span>.<span class="ident">iter</span>().<span class="ident">skip</span>(<span class="ident">i</span> <span class="op">+</span> <span class="number">1</span>).<span class="ident">any</span>(<span class="op">|</span><span class="ident">second</span><span class="op">|</span> <span class="kw-2">*</span><span class="ident">second</span> <span class="op">=</span><span class="op">=</span> <span class="ident">search</span>) {
-            <span class="prelude-val">Some</span>(<span class="kw-2">*</span><span class="ident">value</span>)
-        } <span class="kw">else</span> {
-            <span class="prelude-val">None</span>
-        }
-    })
+<span class="kw">fn</span> <span class="ident">find_two</span>(<span class="ident">target</span>: <span class="kw-2">&amp;</span><span class="ident">i64</span>, <span class="ident">values</span>: <span class="kw-2">&amp;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">i64</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">i64</span><span class="op">&gt;</span> {
+    <span class="ident">values</span>
+        .<span class="ident">iter</span>()
+        .<span class="ident">take</span>(<span class="ident">WINDOW</span>)
+        .<span class="ident">enumerate</span>()
+        .<span class="ident">find_map</span>(<span class="op">|</span>(<span class="ident">i</span>, <span class="kw-2">&amp;</span><span class="ident">value</span>)<span class="op">|</span> {
+            <span class="kw">let</span> <span class="ident">search</span> <span class="op">=</span> <span class="ident">target</span> <span class="op">-</span> <span class="ident">value</span>;
+            <span class="kw">if</span> <span class="ident">values</span>.<span class="ident">iter</span>().<span class="ident">skip</span>(<span class="ident">i</span> <span class="op">+</span> <span class="number">1</span>).<span class="ident">any</span>(<span class="op">|</span><span class="kw-2">&amp;</span><span class="ident">second</span><span class="op">|</span> <span class="kw-2">*</span><span class="ident">second</span> <span class="op">=</span><span class="op">=</span> <span class="ident">search</span>) {
+                <span class="prelude-val">Some</span>(<span class="kw-2">*</span><span class="ident">value</span>)
+            } <span class="kw">else</span> {
+                <span class="prelude-val">None</span>
+            }
+        })
 }
 
 <span class="comment">// -----------------------------------------------------------------------------</span>
@@ -178,12 +182,6 @@
         .<span class="ident">lines</span>()
         .<span class="ident">map</span>(<span class="op">|</span><span class="ident">line</span><span class="op">|</span> <span class="ident">line</span>.<span class="ident">parse</span>().<span class="ident">expect</span>(<span class="string">&quot;failed to parse line&quot;</span>))
         .<span class="ident">collect</span>();
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">current_values</span>: [<span class="ident">i64</span>; <span class="ident">WINDOW</span>] <span class="op">=</span> [<span class="number">0</span>; <span class="ident">WINDOW</span>];
-    <span class="ident">values</span>
-        .<span class="ident">iter</span>()
-        .<span class="ident">take</span>(<span class="ident">WINDOW</span>)
-        .<span class="ident">enumerate</span>()
-        .<span class="ident">for_each</span>(<span class="op">|</span>(<span class="ident">i</span>, <span class="kw-2">&amp;</span><span class="ident">value</span>)<span class="op">|</span> <span class="ident">current_values</span>[<span class="ident">i</span>] <span class="op">=</span> <span class="ident">value</span>);
     <span class="kw">let</span> <span class="ident">time_setup</span> <span class="op">=</span> <span class="ident">start_setup</span>.<span class="ident">elapsed</span>();
 
     <span class="comment">// -------------------------------------------------------------------------</span>
@@ -195,12 +193,14 @@
         .<span class="ident">iter</span>()
         .<span class="ident">skip</span>(<span class="ident">WINDOW</span>)
         .<span class="ident">enumerate</span>()
-        .<span class="ident">find_map</span>(<span class="op">|</span>(<span class="ident">i</span>, <span class="ident">value</span>)<span class="op">|</span> <span class="kw">match</span> <span class="ident">find_two</span>(<span class="ident">value</span>, <span class="kw-2">&amp;</span><span class="ident">current_values</span>) {
-            <span class="prelude-val">Some</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> {
-                <span class="ident">current_values</span>[<span class="ident">i</span> <span class="op">%</span> <span class="ident">WINDOW</span>] <span class="op">=</span> <span class="kw-2">*</span><span class="ident">value</span>;
-                <span class="prelude-val">None</span>
+        .<span class="ident">find_map</span>(<span class="op">|</span>(<span class="ident">i</span>, <span class="ident">value</span>)<span class="op">|</span> {
+            <span class="kw">match</span> <span class="ident">find_two</span>(
+                <span class="ident">value</span>,
+                <span class="kw-2">&amp;</span><span class="ident">values</span>.<span class="ident">iter</span>().<span class="ident">skip</span>(<span class="ident">i</span>).<span class="ident">take</span>(<span class="ident">WINDOW</span>).<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span><span class="op">&gt;</span>(),
+            ) {
+                <span class="prelude-val">Some</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">None</span>,
+                <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Some</span>(<span class="kw-2">*</span><span class="ident">value</span>),
             }
-            <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Some</span>(<span class="kw-2">*</span><span class="ident">value</span>),
         })
         .<span class="ident">unwrap</span>();
     <span class="kw">let</span> <span class="ident">time_part_1</span> <span class="op">=</span> <span class="ident">start_part_1</span>.<span class="ident">elapsed</span>();
