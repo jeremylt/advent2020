@@ -12,15 +12,19 @@ const WINDOW: usize = 25;
 // -----------------------------------------------------------------------------
 // Check for pair that sum to target in current range
 // -----------------------------------------------------------------------------
-fn find_two(target: &i64, values: &[i64; WINDOW]) -> Option<i64> {
-    values.iter().enumerate().find_map(|(i, value)| {
-        let search = target - value;
-        if values.iter().skip(i + 1).any(|second| *second == search) {
-            Some(*value)
-        } else {
-            None
-        }
-    })
+fn find_two(target: &i64, values: &Vec<&i64>) -> Option<i64> {
+    values
+        .iter()
+        .take(WINDOW)
+        .enumerate()
+        .find_map(|(i, &value)| {
+            let search = target - value;
+            if values.iter().skip(i + 1).any(|&second| *second == search) {
+                Some(*value)
+            } else {
+                None
+            }
+        })
 }
 
 // -----------------------------------------------------------------------------
@@ -39,12 +43,6 @@ pub(crate) fn run() -> Results {
         .lines()
         .map(|line| line.parse().expect("failed to parse line"))
         .collect();
-    let mut current_values: [i64; WINDOW] = [0; WINDOW];
-    values
-        .iter()
-        .take(WINDOW)
-        .enumerate()
-        .for_each(|(i, &value)| current_values[i] = value);
     let time_setup = start_setup.elapsed();
 
     // -------------------------------------------------------------------------
@@ -56,12 +54,14 @@ pub(crate) fn run() -> Results {
         .iter()
         .skip(WINDOW)
         .enumerate()
-        .find_map(|(i, value)| match find_two(value, &current_values) {
-            Some(_) => {
-                current_values[i % WINDOW] = *value;
-                None
+        .find_map(|(i, value)| {
+            match find_two(
+                value,
+                &values.iter().skip(i).take(WINDOW).collect::<Vec<_>>(),
+            ) {
+                Some(_) => None,
+                None => Some(*value),
             }
-            None => Some(*value),
         })
         .unwrap();
     let time_part_1 = start_part_1.elapsed();
