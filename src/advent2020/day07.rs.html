@@ -165,6 +165,7 @@
 <span id="162">162</span>
 <span id="163">163</span>
 <span id="164">164</span>
+<span id="165">165</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Day 7:</span>
 <span class="doccomment">//! A particularly slow day, the performance is dominated by adding each bag to a graph.</span>
@@ -219,8 +220,9 @@
     <span class="kw">let</span> <span class="ident">contents</span> <span class="op">=</span> <span class="ident">input</span>.<span class="ident">next</span>().<span class="ident">unwrap</span>();
     <span class="comment">// Containing bags</span>
     <span class="kw">if</span> <span class="ident">contents</span>.<span class="ident">as_bytes</span>()[<span class="number">0</span>] <span class="op">!</span><span class="op">=</span> <span class="string">b&#39;n&#39;</span> {
+        <span class="comment">// Check for &#39;no other bags&#39;</span>
         <span class="kw">for</span> <span class="ident">line</span> <span class="kw">in</span> <span class="ident">contents</span>.<span class="ident">split</span>(<span class="string">&quot;, &quot;</span>) {
-            <span class="kw">let</span> <span class="ident">number</span> <span class="op">=</span> <span class="ident">line</span>[<span class="number">0</span>..<span class="number">1</span>].<span class="ident">parse</span>().<span class="ident">unwrap</span>();
+            <span class="kw">let</span> <span class="ident">number</span> <span class="op">=</span> <span class="ident">line</span>[<span class="number">0</span>..<span class="number">1</span>].<span class="ident">parse</span>().<span class="ident">unwrap</span>(); <span class="comment">// Number is always one digit</span>
             <span class="kw">let</span> <span class="ident">contained_key</span> <span class="op">=</span> <span class="ident">str_to_key</span>(<span class="ident">line</span>[<span class="number">2</span>..].<span class="ident">splitn</span>(<span class="number">2</span>, <span class="string">&quot; bag&quot;</span>).<span class="ident">next</span>().<span class="ident">unwrap</span>());
             <span class="ident">bag_graph</span>
                 .<span class="ident">entry</span>(<span class="ident">contained_key</span>)

@@ -118,9 +118,10 @@
 <span id="115">115</span>
 <span id="116">116</span>
 <span id="117">117</span>
+<span id="118">118</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Day 1:</span>
-<span class="doccomment">//! This solution uses a binary mask arary that contains the values between 1 and 2020</span>
+<span class="doccomment">//! This solution uses a binary mask array that contains the values between 1 and 2020</span>
 <span class="doccomment">//! found in the challenge input. I read the values into a mask array and load the values</span>
 <span class="doccomment">//! into a vector at the same time to reduce the memory movement.</span>
 
@@ -185,6 +186,7 @@
     <span class="kw">let</span> <span class="ident">values</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">buffer</span>
         .<span class="ident">lines</span>()
         .<span class="ident">map</span>(<span class="op">|</span><span class="ident">line</span><span class="op">|</span> {
+            <span class="comment">// Read to array and mask at same time</span>
             <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">line</span>.<span class="ident">parse</span>().<span class="ident">expect</span>(<span class="string">&quot;failed to parse line&quot;</span>);
             <span class="ident">mask</span>[<span class="ident">value</span>] <span class="op">=</span> <span class="bool-val">true</span>;
             <span class="ident">value</span>
