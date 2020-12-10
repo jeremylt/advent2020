@@ -173,10 +173,14 @@ fn main() {
         .zip(day_results.iter())
         .map(|(averages, day)| {
             (day.iter().fold(0.0, |acc, repetition| {
-                acc + ((averages.combined.as_nanos() as f64
-                    - repetition.times.combined.as_nanos() as f64)
-                    / 1000.0)
-                    .powf(2.0)
+                let current = if repetition.times.combined.as_nanos() > 1 {
+                    repetition.times.combined.as_nanos()
+                } else {
+                    repetition.times.setup.as_nanos()
+                        + repetition.times.part_1.as_nanos()
+                        + repetition.times.part_2.as_nanos()
+                };
+                acc + ((averages.combined.as_nanos() as f64 - current as f64) / 1000.0).powf(2.0)
                     / ((REPETITIONS - 1) as f64)
             }))
             .powf(0.5)
