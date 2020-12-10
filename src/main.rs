@@ -245,6 +245,12 @@ mod tests {
         let results = day09::run();
         test_day!(results, 756008079, 93727241);
     }
+
+    #[test]
+    fn test_10() {
+        let results = day10::run();
+        test_day!(results, 2244, 3947645370368);
+    }
 }
 
 // -----------------------------------------------------------------------------
