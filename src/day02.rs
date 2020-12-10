@@ -37,6 +37,7 @@ impl std::str::FromStr for PasswordData {
 // -----------------------------------------------------------------------------
 // Part 1
 // -----------------------------------------------------------------------------
+#[inline(always)]
 fn part_1(data: &PasswordData) -> bool {
     (data.lower..=data.upper).contains(
         &data
@@ -51,6 +52,7 @@ fn part_1(data: &PasswordData) -> bool {
 // -----------------------------------------------------------------------------
 // Part 2
 // -----------------------------------------------------------------------------
+#[inline(always)]
 fn part_2(data: &PasswordData) -> bool {
     let chars = data.password.as_bytes();
     let first = chars[data.lower - 1] == data.required as u8;

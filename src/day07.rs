@@ -39,6 +39,7 @@ impl Node {
     }
 }
 
+#[inline(always)]
 fn str_to_key(t: &str) -> u32 {
     t.as_bytes()
         .iter()

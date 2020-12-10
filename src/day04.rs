@@ -67,6 +67,7 @@ impl std::str::FromStr for PassportData {
 // -----------------------------------------------------------------------------
 // Part 1
 // -----------------------------------------------------------------------------
+#[inline(always)]
 fn part_1(data: &PassportData) -> bool {
     (data.len == 8) ^ (data.len == 7 && data.cid == "invalid")
 }
@@ -75,36 +76,43 @@ fn part_1(data: &PassportData) -> bool {
 // Part 2
 // -----------------------------------------------------------------------------
 // Birth year
+#[inline(always)]
 fn byr_valid(byr: i32) -> bool {
     (1920..=2002).contains(&byr)
 }
 
 // Issue year
+#[inline(always)]
 fn iyr_valid(iyr: i32) -> bool {
     (2010..=2020).contains(&iyr)
 }
 
 // Expire year
+#[inline(always)]
 fn eyr_valid(eyr: i32) -> bool {
     (2020..=2030).contains(&eyr)
 }
 
 // Eye color
+#[inline(always)]
 fn ecl_valid(ecl: &String) -> bool {
     ["amb", "blu", "brn", "gry", "grn", "hzl", "oth"].contains(&ecl.as_str())
 }
 
 // Hair color
+#[inline(always)]
 fn hcl_valid(hcl: &String) -> bool {
     (hcl.as_bytes()[0] == b'#') && (hcl.len() == 7) && (hcl.chars().skip(1).all(|x| x.is_digit(16)))
 }
 
 // Passport ID
+#[inline(always)]
 fn pid_valid(pid: &String) -> bool {
     (pid.len() == 9) && (pid.chars().all(char::is_numeric))
 }
 
 // Passport ID
+#[inline(always)]
 fn hgt_valid(hgt: &String) -> bool {
     let len = hgt.len();
     (hgt.as_bytes()[len - 1] == b'm' && (150..=193).contains(&hgt[0..len - 2].parse().unwrap()))

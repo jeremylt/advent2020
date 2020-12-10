@@ -12,6 +12,7 @@ const WINDOW: usize = 25;
 // -----------------------------------------------------------------------------
 // Check for pair that sum to target in current range
 // -----------------------------------------------------------------------------
+#[inline(always)]
 fn find_two(target: &i64, values: &Vec<&i64>) -> Option<i64> {
     values
         .iter()

@@ -9,6 +9,7 @@ use itertools::Itertools;
 // -----------------------------------------------------------------------------
 // Parse FBLR encoded binary
 // -----------------------------------------------------------------------------
+#[inline(always)]
 fn parse_fblr_binary(s: &str) -> usize {
     s.as_bytes()
         .iter()
@@ -18,6 +19,7 @@ fn parse_fblr_binary(s: &str) -> usize {
 // -----------------------------------------------------------------------------
 // Part 2
 // -----------------------------------------------------------------------------
+#[inline(always)]
 fn part_2(tuple: (&bool, &bool)) -> bool {
     *tuple.0 && !*tuple.1 // First open seat, so only need to check pair, not triple
 }

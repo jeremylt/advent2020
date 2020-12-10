@@ -7,11 +7,13 @@ use crate::prelude::*;
 // -----------------------------------------------------------------------------
 // Count trees
 // -----------------------------------------------------------------------------
+#[inline(always)]
 fn hit_tree(line: &String, i: &usize, right: usize, down: usize, line_length: usize) -> bool {
     // Note: this probably incurs bounds checking, but this day is already fast
     (i % down == 0) && (line.as_bytes()[right * i / down % line_length] == b'#')
 }
 
+#[inline(always)]
 fn count_trees(data: &Vec<String>, right: usize, down: usize, line_length: usize) -> usize {
     data.iter()
         .enumerate()

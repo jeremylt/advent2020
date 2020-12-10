@@ -11,6 +11,7 @@ const YEAR: usize = 2020;
 // -----------------------------------------------------------------------------
 // Find pair of flagged indices that sum to length of mask array
 // -----------------------------------------------------------------------------
+#[inline(always)]
 fn find_two(array: &[bool]) -> Option<i32> {
     array
         .iter()

@@ -66,7 +66,7 @@ impl Timing {
 // -----------------------------------------------------------------------------
 // Prelude
 // -----------------------------------------------------------------------------
-const REPETITIONS: u32 = 250;
+const REPETITIONS: u32 = 500;
 pub(crate) mod prelude {
     pub(crate) use crate::REPETITIONS;
     pub(crate) use crate::{output, Results, Timing};
@@ -160,14 +160,14 @@ fn main() {
     let time_averages = average_times
         .iter()
         .map(|day| {
-            if day.combined.as_nanos() > 0 {
+            if day.combined.as_nanos() > 1 {
                 day.combined
             } else {
                 day.setup + day.part_1 + day.part_2
             }
         })
-        .collect();
-    let time_std_devs: Vec<f64> = average_times
+        .collect::<Vec<_>>();
+    let time_std_devs: Vec<f64> = time_averages
         .iter()
         .zip(day_results.iter())
         .map(|(averages, day)| {
@@ -179,7 +179,7 @@ fn main() {
                         + repetition.times.part_1.as_nanos()
                         + repetition.times.part_2.as_nanos()
                 };
-                acc + ((averages.combined.as_nanos() as f64 - current as f64) / 1000.0).powf(2.0)
+                acc + ((averages.as_nanos() as f64 - current as f64) / 1000.0).powf(2.0)
                     / ((REPETITIONS - 1) as f64)
             }))
             .powf(0.5)
