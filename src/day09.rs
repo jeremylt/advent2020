@@ -54,13 +54,13 @@ pub(crate) fn run() -> Results {
         .iter()
         .skip(WINDOW)
         .enumerate()
-        .find_map(|(i, value)| {
+        .find_map(|(i, &value)| {
             match find_two(
-                value,
+                &value,
                 &values.iter().skip(i).take(WINDOW).collect::<Vec<_>>(),
             ) {
                 Some(_) => None,
-                None => Some(*value),
+                None => Some(value),
             }
         })
         .unwrap();
@@ -75,19 +75,15 @@ pub(crate) fn run() -> Results {
         .iter()
         .skip(WINDOW)
         .enumerate()
-        .find_map(|(i, value)| {
-            let mut sum = *value;
-            let j = values
+        .find_map(|(i, &value)| {
+            let mut sum = value;
+            let (j, _) = values
                 .iter()
                 .skip(i + WINDOW + 1)
                 .enumerate()
-                .find_map(|(j, next)| {
+                .find(|(_, &next)| {
                     sum += next;
-                    if sum >= value_1 {
-                        Some(j)
-                    } else {
-                        None
-                    }
+                    sum >= value_1
                 })
                 .unwrap();
             if sum == value_1 {
@@ -101,8 +97,8 @@ pub(crate) fn run() -> Results {
         .iter()
         .skip(WINDOW + lower)
         .take(upper)
-        .fold((value_1, 0), |acc, value| {
-            (std::cmp::min(acc.0, *value), std::cmp::max(acc.1, *value))
+        .fold((value_1, 0), |acc, &value| {
+            (std::cmp::min(acc.0, value), std::cmp::max(acc.1, value))
         });
     let sum_2 = min + max;
     let time_part_2 = start_part_2.elapsed();
