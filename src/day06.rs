@@ -30,8 +30,9 @@ fn part_1(responses: &[usize; 27]) -> usize {
 // Part 2
 // -----------------------------------------------------------------------------
 fn part_2(responses: &[usize; 27]) -> usize {
-    responses[0..26]
+    responses
         .iter()
+        .take(26)
         .filter(|&c| *c == responses[26])
         .count()
 }
@@ -71,12 +72,10 @@ pub(crate) fn run() -> Results {
     // Combined
     // -------------------------------------------------------------------------
     let start_combined = Instant::now();
-    let (combined_1, combined_2) = buffer
-        .split("\n\n")
-        .map(|line| to_array(line))
-        .fold((0, 0), |acc, responses| {
-            (acc.0 + part_1(&responses), acc.1 + part_2(&responses))
-        });
+    let (combined_1, combined_2) = buffer.split("\n\n").fold((0, 0), |acc, line| {
+        let responses = to_array(line);
+        (acc.0 + part_1(&responses), acc.1 + part_2(&responses))
+    });
     let time_combined = start_combined.elapsed();
     assert_eq!(combined_1, count_1);
     assert_eq!(combined_2, count_2);

@@ -1,5 +1,5 @@
 //! Day 1:
-//! This solution uses a binary mask arary that contains the values between 1 and 2020
+//! This solution uses a binary mask array that contains the values between 1 and 2020
 //! found in the challenge input. I read the values into a mask array and load the values
 //! into a vector at the same time to reduce the memory movement.
 
@@ -63,7 +63,8 @@ pub(crate) fn run() -> Results {
     let mut mask = [false; YEAR + 1];
     let values: Vec<usize> = buffer
         .lines()
-        .map(|line| { // Read to array and mask at same time
+        .map(|line| {
+            // Read to array and mask at same time
             let value = line.parse().expect("failed to parse line");
             mask[value] = true;
             value

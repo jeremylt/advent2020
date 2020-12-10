@@ -50,7 +50,8 @@ fn add_to_graph(s: &str, bag_graph: &mut HashMap<u32, Node>) {
     let mut contains = vec![];
     let contents = input.next().unwrap();
     // Containing bags
-    if contents.as_bytes()[0] != b'n' { // Check for 'no other bags'
+    if contents.as_bytes()[0] != b'n' {
+        // Check for 'no other bags'
         for line in contents.split(", ") {
             let number = line[0..1].parse().unwrap(); // Number is always one digit
             let contained_key = str_to_key(line[2..].splitn(2, " bag").next().unwrap());
