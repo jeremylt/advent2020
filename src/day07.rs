@@ -46,12 +46,13 @@ fn str_to_key(t: &str) -> u32 {
 
 fn add_to_graph(s: &str, bag_graph: &mut HashMap<u32, Node>) {
     let mut input = s.splitn(2, " bags contain ");
-    let container_key = str_to_key(input.next().unwrap());
-    let mut contains = vec![];
+    let container_str = input.next();
     let contents = input.next().unwrap();
-    // Containing bags
+    // Only add if not 'no other bags'
     if contents.as_bytes()[0] != b'n' {
-        // Check for 'no other bags'
+        let container_key = str_to_key(container_str.unwrap());
+        let mut contains = vec![];
+        // Containing bags
         for line in contents.split(", ") {
             let number = line[0..1].parse().unwrap(); // Number is always one digit
             let contained_key = str_to_key(line[2..].splitn(2, " bag").next().unwrap());
@@ -62,12 +63,12 @@ fn add_to_graph(s: &str, bag_graph: &mut HashMap<u32, Node>) {
                 .push(container_key);
             contains.push(Holding::new(contained_key, number));
         }
+        // Contained bags
+        bag_graph
+            .entry(container_key)
+            .or_insert(Node::new())
+            .contains = contains;
     }
-    // Contained bags
-    bag_graph
-        .entry(container_key)
-        .or_insert(Node::new())
-        .contains = contains;
 }
 
 // -----------------------------------------------------------------------------
