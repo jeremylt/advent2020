@@ -13,6 +13,7 @@ mod day06;
 mod day07;
 mod day08;
 mod day09;
+mod day10;
 mod output;
 
 // -----------------------------------------------------------------------------
@@ -79,7 +80,7 @@ pub(crate) mod prelude {
 // -----------------------------------------------------------------------------
 fn main() {
     // Setup
-    const DAYS: usize = 9;
+    const DAYS: usize = 10;
     let runs = [
         day01::run,
         day02::run,
@@ -90,6 +91,7 @@ fn main() {
         day07::run,
         day08::run,
         day09::run,
+        day10::run,
     ];
     let reports = [
         day01::report,
@@ -101,11 +103,13 @@ fn main() {
         day07::report,
         day08::report,
         day09::report,
+        day10::report,
     ];
 
     // Each day
     output::print_header();
     let mut day_results: [Vec<Results>; DAYS] = [
+        vec![],
         vec![],
         vec![],
         vec![],
