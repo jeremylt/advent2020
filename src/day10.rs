@@ -1,16 +1,10 @@
 //! Day 10:
 //! The only tricks in this one are using a mask array to sort the input and counting the
-//! unique combinations from the end of the array.
+//! unique combinations from the end of the array. This is a good example of a problem
+//! where the fastest approach to each part walks the data in a different direction and
+//! cannot be combined.
 
 use crate::prelude::*;
-
-// -----------------------------------------------------------------------------
-// Part 1
-// -----------------------------------------------------------------------------
-
-// -----------------------------------------------------------------------------
-// Part 2
-// -----------------------------------------------------------------------------
 
 // -----------------------------------------------------------------------------
 // Run
@@ -42,16 +36,14 @@ pub(crate) fn run() -> Results {
     // -------------------------------------------------------------------------
     // Part 1
     // -------------------------------------------------------------------------
-    // Look for pair
+    // Count gaps
     let start_part_1 = Instant::now();
     let mut count_1 = [0, 0, 1];
     let mut last = 0;
-    mask.iter().skip(1).for_each(|&value| {
+    mask.iter().enumerate().skip(1).for_each(|(i, &value)| {
         if value > 0 {
-            count_1[last] += 1;
-            last = 0;
-        } else {
-            last += 1;
+            count_1[i - last - 1] += 1;
+            last = i;
         }
     });
     let product_1 = count_1[0] * count_1[2];
@@ -60,7 +52,7 @@ pub(crate) fn run() -> Results {
     // -------------------------------------------------------------------------
     // Part 2
     // -------------------------------------------------------------------------
-    // Look for triple
+    // Find number of possible paths
     let start_part_2 = Instant::now();
     mask.append(&mut vec![0, 0, 1]);
     (0..max).rev().for_each(|i| {
