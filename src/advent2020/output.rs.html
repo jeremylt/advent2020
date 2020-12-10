@@ -197,7 +197,7 @@
     <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;      Total: {:?}&quot;</span>, <span class="ident">times_total</span>,);
     <span class="macro">println</span><span class="macro">!</span>(
         <span class="string">&quot;      Combined Time: {}&quot;</span>,
-        <span class="kw">if</span> (<span class="ident">times_total</span>.<span class="ident">as_nanos</span>() <span class="kw">as</span> <span class="ident">f64</span> <span class="op">-</span> <span class="ident">times</span>.<span class="ident">combined</span>.<span class="ident">as_nanos</span>() <span class="kw">as</span> <span class="ident">f64</span>).<span class="ident">abs</span>() <span class="op">&gt;</span> <span class="number">500.0</span> {
+        <span class="kw">if</span> <span class="ident">times</span>.<span class="ident">combined</span>.<span class="ident">as_nanos</span>() <span class="op">&gt;</span> <span class="number">1</span> {
             <span class="macro">format</span><span class="macro">!</span>(
                 <span class="string">&quot;{:?} ({:2.1}%)&quot;</span>,
                 <span class="ident">times</span>.<span class="ident">combined</span>,
