@@ -30,6 +30,7 @@ pub(crate) fn run() -> Results {
 
     // Collect into mask array
     let mut mask: Vec<usize> = vec![0; max + 1];
+    mask[0] = 1;
     values.iter().for_each(|&value| mask[value] = 1);
     let time_setup = start_setup.elapsed();
 
@@ -60,7 +61,7 @@ pub(crate) fn run() -> Results {
             mask[i] = mask[i + 1] + mask[i + 2] + mask[i + 3]
         }
     });
-    let count_2 = mask[1] + mask[2] + mask[3];
+    let count_2 = mask[0];
     let time_part_2 = start_part_2.elapsed();
 
     // -------------------------------------------------------------------------
