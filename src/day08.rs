@@ -6,6 +6,7 @@
 //! Note that this is very messy code that should be cleaned up.
 
 use crate::prelude::*;
+use rustc_hash::{FxHashMap, FxHashSet};
 
 const CAPACITY: usize = 512;
 
@@ -75,8 +76,8 @@ struct State {
 fn part_1(
     start: i32,
     number_instructions: i32,
-    instructions: &HashMap<i32, Node>,
-    previous_executed: &HashSet<i32>,
+    instructions: &FxHashMap<i32, Node>,
+    previous_executed: &FxHashSet<i32>,
 ) -> (bool, i32) {
     let mut executed = previous_executed.clone();
     let mut count = 0;
@@ -93,9 +94,9 @@ fn part_1(
 // -----------------------------------------------------------------------------
 // Part 2
 // -----------------------------------------------------------------------------
-fn part_2(number_instructions: i32, instructions: &HashMap<i32, Node>) -> i32 {
+fn part_2(number_instructions: i32, instructions: &FxHashMap<i32, Node>) -> i32 {
     let mut machine = Vec::<State>::with_capacity(CAPACITY);
-    let mut executed = HashSet::<i32>::with_capacity(CAPACITY);
+    let mut executed = FxHashSet::<i32>::with_capacity_and_hasher(CAPACITY, Default::default());
     let mut count = 0;
     let mut current = 0;
     while executed.insert(current) {
@@ -148,8 +149,8 @@ fn part_2(number_instructions: i32, instructions: &HashMap<i32, Node>) -> i32 {
 fn run_program(
     start: i32,
     number_instructions: i32,
-    instructions: &HashMap<i32, Node>,
-    executed: &HashSet<i32>,
+    instructions: &FxHashMap<i32, Node>,
+    executed: &FxHashSet<i32>,
 ) -> (bool, i32) {
     let mut count = 0;
     let mut current = start;
@@ -162,9 +163,9 @@ fn run_program(
     (current >= number_instructions, count)
 }
 
-fn combined(number_instructions: i32, instructions: &HashMap<i32, Node>) -> (i32, i32) {
+fn combined(number_instructions: i32, instructions: &FxHashMap<i32, Node>) -> (i32, i32) {
     let mut machine = Vec::<State>::with_capacity(CAPACITY);
-    let mut executed = HashSet::<i32>::with_capacity(CAPACITY);
+    let mut executed = FxHashSet::<i32>::with_capacity_and_hasher(CAPACITY, Default::default());
     let mut count = 0;
     let mut current = 0;
     while executed.insert(current) {
@@ -225,7 +226,7 @@ pub(crate) fn run() -> Results {
     let buffer: String = std::fs::read_to_string("data/day08.txt").unwrap();
 
     // Read to graph
-    let instructions: HashMap<i32, Node> = buffer
+    let instructions: FxHashMap<i32, Node> = buffer
         .lines()
         .enumerate()
         .map(|(i, line)| (i as i32, Node::new(line, i as i32)))
@@ -242,7 +243,7 @@ pub(crate) fn run() -> Results {
         0,
         number_instructions,
         &instructions,
-        &HashSet::<i32>::new(),
+        &FxHashSet::<i32>::default(),
     );
     let time_part_1 = start_part_1.elapsed();
 
@@ -258,7 +259,7 @@ pub(crate) fn run() -> Results {
     // Combined
     // -------------------------------------------------------------------------
     let start_combined = Instant::now();
-    let instructions: HashMap<i32, Node> = buffer
+    let instructions: FxHashMap<i32, Node> = buffer
         .lines()
         .enumerate()
         .map(|(i, line)| (i as i32, Node::new(line, i as i32)))

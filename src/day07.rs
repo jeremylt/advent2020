@@ -1,9 +1,10 @@
 //! Day 7:
 //! A particularly slow day, the performance is dominated by adding each bag to a graph.
 //! Once the input has been parsed, traversing the graph to find the contained/containing
-//! bags is straightforward and fast. Switching to the FNV hash crate helps mildly.
+//! bags is straightforward and fast. Switching to the rustc hasher helped trim some time.
 
 use crate::prelude::*;
+use rustc_hash::{FxHashMap, FxHashSet};
 use std::sync::RwLock;
 
 const CAPACITY: usize = 512;
@@ -44,7 +45,7 @@ fn str_to_key(t: &str) -> u32 {
         .fold(1 as u32, |acc, c| acc * 2 + *c as u32)
 }
 
-fn add_to_graph(s: &str, bag_graph: &mut HashMap<u32, Node>) {
+fn add_to_graph(s: &str, bag_graph: &mut FxHashMap<u32, Node>) {
     let mut input = s.splitn(2, " bags contain ");
     let container_str = input.next();
     let contents = input.next().unwrap();
@@ -75,10 +76,12 @@ fn add_to_graph(s: &str, bag_graph: &mut HashMap<u32, Node>) {
 // Part 1
 // -----------------------------------------------------------------------------
 lazy_static! {
-    static ref UNIQUES: RwLock<HashSet<u32>> = RwLock::new(HashSet::<u32>::with_capacity(CAPACITY));
+    static ref UNIQUES: RwLock<FxHashSet<u32>> = RwLock::new(
+        FxHashSet::<u32>::with_capacity_and_hasher(CAPACITY, Default::default())
+    );
 }
 
-fn part_1(key: u32, bag_graph: &HashMap<u32, Node>) -> usize {
+fn part_1(key: u32, bag_graph: &FxHashMap<u32, Node>) -> usize {
     if !UNIQUES.write().unwrap().insert(key.clone()) {
         return 0;
     };
@@ -94,7 +97,7 @@ fn part_1(key: u32, bag_graph: &HashMap<u32, Node>) -> usize {
 // -----------------------------------------------------------------------------
 // Part 2
 // -----------------------------------------------------------------------------
-fn part_2(key: u32, bag_graph: &HashMap<u32, Node>) -> usize {
+fn part_2(key: u32, bag_graph: &FxHashMap<u32, Node>) -> usize {
     match bag_graph.get(&key) {
         Some(node) => node
             .contains
@@ -116,7 +119,8 @@ pub(crate) fn run() -> Results {
     let buffer: String = std::fs::read_to_string("data/day07.txt").unwrap();
 
     // Read to graph
-    let mut bag_graph = HashMap::<u32, Node>::with_capacity(CAPACITY);
+    let mut bag_graph =
+        FxHashMap::<u32, Node>::with_capacity_and_hasher(CAPACITY, Default::default());
     buffer
         .lines()
         .for_each(|line| add_to_graph(line, &mut bag_graph));
