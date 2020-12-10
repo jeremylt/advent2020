@@ -172,6 +172,7 @@
 <span id="169">169</span>
 <span id="170">170</span>
 <span id="171">171</span>
+<span id="172">172</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Day 7:</span>
 <span class="doccomment">//! A particularly slow day, the performance is dominated by adding each bag to a graph.</span>
@@ -225,27 +226,28 @@
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">input</span> <span class="op">=</span> <span class="ident">s</span>.<span class="ident">splitn</span>(<span class="number">2</span>, <span class="string">&quot; bags contain &quot;</span>);
     <span class="kw">let</span> <span class="ident">container_str</span> <span class="op">=</span> <span class="ident">input</span>.<span class="ident">next</span>();
     <span class="kw">let</span> <span class="ident">contents</span> <span class="op">=</span> <span class="ident">input</span>.<span class="ident">next</span>().<span class="ident">unwrap</span>();
-    <span class="comment">// Only add if not &#39;no other bags&#39;</span>
-    <span class="kw">if</span> <span class="ident">contents</span>.<span class="ident">as_bytes</span>()[<span class="number">0</span>] <span class="op">!</span><span class="op">=</span> <span class="string">b&#39;n&#39;</span> {
-        <span class="kw">let</span> <span class="ident">container_key</span> <span class="op">=</span> <span class="ident">str_to_key</span>(<span class="ident">container_str</span>.<span class="ident">unwrap</span>());
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">contains</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[];
-        <span class="comment">// Containing bags</span>
-        <span class="kw">for</span> <span class="ident">line</span> <span class="kw">in</span> <span class="ident">contents</span>.<span class="ident">split</span>(<span class="string">&quot;, &quot;</span>) {
-            <span class="kw">let</span> <span class="ident">number</span> <span class="op">=</span> <span class="ident">line</span>[<span class="number">0</span>..<span class="number">1</span>].<span class="ident">parse</span>().<span class="ident">unwrap</span>(); <span class="comment">// Number is always one digit</span>
-            <span class="kw">let</span> <span class="ident">contained_key</span> <span class="op">=</span> <span class="ident">str_to_key</span>(<span class="ident">line</span>[<span class="number">2</span>..].<span class="ident">splitn</span>(<span class="number">2</span>, <span class="string">&quot; bag&quot;</span>).<span class="ident">next</span>().<span class="ident">unwrap</span>());
-            <span class="ident">bag_graph</span>
-                .<span class="ident">entry</span>(<span class="ident">contained_key</span>)
-                .<span class="ident">or_insert</span>(<span class="ident">Node</span>::<span class="ident">new</span>())
-                .<span class="ident">contained_by</span>
-                .<span class="ident">push</span>(<span class="ident">container_key</span>);
-            <span class="ident">contains</span>.<span class="ident">push</span>(<span class="ident">Holding</span>::<span class="ident">new</span>(<span class="ident">contained_key</span>, <span class="ident">number</span>));
-        }
-        <span class="comment">// Contained bags</span>
-        <span class="ident">bag_graph</span>
-            .<span class="ident">entry</span>(<span class="ident">container_key</span>)
-            .<span class="ident">or_insert</span>(<span class="ident">Node</span>::<span class="ident">new</span>())
-            .<span class="ident">contains</span> <span class="op">=</span> <span class="ident">contains</span>;
+    <span class="comment">// Continue only if contents aren&#39;t &#39;no other bags&#39;</span>
+    <span class="kw">if</span> <span class="ident">contents</span>.<span class="ident">as_bytes</span>()[<span class="number">0</span>] <span class="op">=</span><span class="op">=</span> <span class="string">b&#39;n&#39;</span> {
+        <span class="kw">return</span>;
     }
+    <span class="kw">let</span> <span class="ident">container_key</span> <span class="op">=</span> <span class="ident">str_to_key</span>(<span class="ident">container_str</span>.<span class="ident">unwrap</span>());
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">contains</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[];
+    <span class="comment">// Containing bags</span>
+    <span class="kw">for</span> <span class="ident">line</span> <span class="kw">in</span> <span class="ident">contents</span>.<span class="ident">split</span>(<span class="string">&quot;, &quot;</span>) {
+        <span class="kw">let</span> <span class="ident">number</span> <span class="op">=</span> <span class="ident">line</span>.<span class="ident">chars</span>().<span class="ident">nth</span>(<span class="number">0</span>).<span class="ident">unwrap</span>().<span class="ident">to_digit</span>(<span class="number">10</span>).<span class="ident">unwrap</span>() <span class="kw">as</span> <span class="ident">usize</span>; <span class="comment">// Number is always one digit</span>
+        <span class="kw">let</span> <span class="ident">contained_key</span> <span class="op">=</span> <span class="ident">str_to_key</span>(<span class="ident">line</span>[<span class="number">2</span>..].<span class="ident">splitn</span>(<span class="number">2</span>, <span class="string">&quot; bag&quot;</span>).<span class="ident">next</span>().<span class="ident">unwrap</span>());
+        <span class="ident">bag_graph</span>
+            .<span class="ident">entry</span>(<span class="ident">contained_key</span>)
+            .<span class="ident">or_insert</span>(<span class="ident">Node</span>::<span class="ident">new</span>())
+            .<span class="ident">contained_by</span>
+            .<span class="ident">push</span>(<span class="ident">container_key</span>);
+        <span class="ident">contains</span>.<span class="ident">push</span>(<span class="ident">Holding</span>::<span class="ident">new</span>(<span class="ident">contained_key</span>, <span class="ident">number</span>));
+    }
+    <span class="comment">// Contained bags</span>
+    <span class="ident">bag_graph</span>
+        .<span class="ident">entry</span>(<span class="ident">container_key</span>)
+        .<span class="ident">or_insert</span>(<span class="ident">Node</span>::<span class="ident">new</span>())
+        .<span class="ident">contains</span> <span class="op">=</span> <span class="ident">contains</span>;
 }
 
 <span class="comment">// -----------------------------------------------------------------------------</span>
