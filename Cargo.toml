@@ -5,6 +5,7 @@ authors = ["Jeremy L Thompson <thompson.jeremy.luke@gmail.com>"]
 edition = "2018"
 
 [dependencies]
+arrayvec = "0.5.2"
 colored = "2"
 itertools = "0.9"
 lazy_static = "1.4.0"
