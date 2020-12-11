@@ -12,34 +12,32 @@ const NEIGHBORS: usize = 8;
 #[inline(always)]
 fn game_of_life(
     seats: &mut Vec<u8>,
-    max_neighbors: u8,
-    check_indices: &Vec<ArrayVec<[usize; NEIGHBORS]>>,
+    check_seats: &Vec<usize>,
+    max_neighbors: usize,
+    check_neighbors: &Vec<ArrayVec<[usize; NEIGHBORS]>>,
 ) {
     let mut changed: Vec<usize> = vec![];
     let mut repeat = true;
     while repeat {
-        seats
-            .iter()
-            .enumerate()
-            .filter(|(_, &value)| value < 2)
-            .for_each(|(i, &value)| {
-                // Check seats for change
-                if value == 0 {
-                    // Empty seat
-                    if !check_indices[i].iter().any(|&index| seats[index] == 1) {
-                        changed.push(i);
-                    }
-                } else if check_indices[i].len() >= max_neighbors as usize {
-                    // Occupied seat
-                    let mut count = 0;
-                    if check_indices[i].iter().any(|&index| {
-                        count += seats[index];
-                        count >= max_neighbors
-                    }) {
-                        changed.push(i);
-                    }
+        check_seats.iter().for_each(|&i| {
+            // Check seats for change
+            if seats[i] == 0 {
+                // Empty seat
+                if check_neighbors[i].iter().all(|&index| seats[index] != 1) {
+                    changed.push(i);
                 }
-            });
+            } else if check_neighbors[i].len() >= max_neighbors {
+                // Occupied seat
+                if check_neighbors[i]
+                    .iter()
+                    .filter(|&index| seats[*index] == 1)
+                    .count()
+                    >= max_neighbors
+                {
+                    changed.push(i);
+                }
+            }
+        });
         if changed.len() > 0 {
             // Apply changes
             changed
@@ -237,6 +235,11 @@ pub(crate) fn run() -> Results {
         .map(|c| if c == 'L' { 1 } else { 2 })
         .collect();
     let number_rows = seats.len() / row_length;
+    let check_seats = seats
+        .iter()
+        .enumerate()
+        .filter_map(|(i, &value)| if value != 2 { Some(i) } else { None })
+        .collect();
     let time_setup = start_setup.elapsed();
 
     // -------------------------------------------------------------------------
@@ -245,11 +248,11 @@ pub(crate) fn run() -> Results {
     // Find stable configuration
     let start_part_1 = Instant::now();
 
-    // Indices to check
-    let check_indices = part_1(&seats, row_length, number_rows);
+    // Neighbors to check
+    let check_neighbors = part_1(&seats, row_length, number_rows);
 
     // Run Game of Life
-    game_of_life(&mut seats, 4, &check_indices);
+    game_of_life(&mut seats, &check_seats, 4, &check_neighbors);
     let count_1 = seats.iter().filter(|&s| *s == 1).count();
 
     let time_part_1 = start_part_1.elapsed();
@@ -267,11 +270,11 @@ pub(crate) fn run() -> Results {
         }
     });
 
-    // Indices to check
-    let check_indices = part_2(&seats, row_length, number_rows);
+    // Neighbors to check
+    let check_neighbors = part_2(&seats, row_length, number_rows);
 
     // Run Game of Life
-    game_of_life(&mut seats, 5, &check_indices);
+    game_of_life(&mut seats, &check_seats, 5, &check_neighbors);
     let count_2 = seats.iter().filter(|&s| *s == 1).count();
 
     let time_part_2 = start_part_2.elapsed();
