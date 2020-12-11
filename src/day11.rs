@@ -27,7 +27,8 @@ fn game_of_life(
             // Check seats for change
             let count = check_neighbors[i]
                 .iter()
-                .fold(0, |acc, &index| acc + (seats[index] % 2)) as usize;
+                .map(|&index| (seats[index] % 2))
+                .sum::<u8>() as usize;
             if (seats[i] == 0 && count == 0) || (seats[i] == 1 && count >= max_neighbors) {
                 changed.push(i);
                 true
@@ -35,16 +36,12 @@ fn game_of_life(
                 false
             }
         });
-        if changed.len() > 0 {
-            // Apply changes
-            changed.retain(|&index| {
-                seats[index] = (seats[index] + 1) % 2;
-                false
-            });
-        } else {
-            // Exit simulation
-            repeat = false;
-        }
+        repeat = changed.len() != 0;
+        // Apply changes
+        changed.retain(|&index| {
+            seats[index] = (seats[index] + 1) % 2;
+            false
+        });
     }
 }
 
@@ -65,44 +62,44 @@ fn part_1(
             let col = i % row_length;
             if col > 0 {
                 let index = i - 1;
-                if seats[index] < 2 {
+                if seats[index] == 1 {
                     indices.push(index);
                 }
                 if row > 0 {
-                    if seats[index - row_length] < 2 {
+                    if seats[index - row_length] == 1 {
                         indices.push(index - row_length);
                     }
                 }
             }
             if col < row_length - 1 {
                 let index = i + 1;
-                if seats[index] < 2 {
+                if seats[index] == 1 {
                     indices.push(index);
                 }
                 if row < number_rows - 1 {
-                    if seats[index + row_length] < 2 {
+                    if seats[index + row_length] == 1 {
                         indices.push(index + row_length);
                     }
                 }
             }
             if row > 0 {
                 let index = i - row_length;
-                if seats[index] < 2 {
+                if seats[index] == 1 {
                     indices.push(index);
                 }
                 if col < row_length - 1 {
-                    if seats[index + 1] < 2 {
+                    if seats[index + 1] == 1 {
                         indices.push(index + 1);
                     }
                 }
             }
             if row < number_rows - 1 {
                 let index = i + row_length;
-                if seats[index] < 2 {
+                if seats[index] == 1 {
                     indices.push(index);
                 }
                 if col > 0 {
-                    if seats[index - 1] < 2 {
+                    if seats[index - 1] == 1 {
                         indices.push(index - 1);
                     }
                 }
@@ -249,7 +246,7 @@ pub(crate) fn run() -> Results {
     let check_neighbors = part_1(&seats, row_length, number_rows);
 
     // Run Game of Life
-    //game_of_life(&mut seats, &mut check_seats, 4, &check_neighbors);
+    game_of_life(&mut seats, &mut check_seats, 4, &check_neighbors);
     let count_1 = seats.iter().filter(|&s| *s == 1).count();
 
     let time_part_1 = start_part_1.elapsed();
@@ -276,7 +273,7 @@ pub(crate) fn run() -> Results {
     let check_neighbors = part_2(&seats, row_length, number_rows);
 
     // Run Game of Life
-    //game_of_life(&mut seats, &mut check_seats, 5, &check_neighbors);
+    game_of_life(&mut seats, &mut check_seats, 5, &check_neighbors);
     let count_2 = seats.iter().filter(|&s| *s == 1).count();
 
     let time_part_2 = start_part_2.elapsed();
