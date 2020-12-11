@@ -305,6 +305,9 @@
 <span id="302">302</span>
 <span id="303">303</span>
 <span id="304">304</span>
+<span id="305">305</span>
+<span id="306">306</span>
+<span id="307">307</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Day 11:</span>
 
@@ -320,34 +323,32 @@
 <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">always</span>)]</span>
 <span class="kw">fn</span> <span class="ident">game_of_life</span>(
     <span class="ident">seats</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>,
-    <span class="ident">max_neighbors</span>: <span class="ident">u8</span>,
-    <span class="ident">check_indices</span>: <span class="kw-2">&amp;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">ArrayVec</span><span class="op">&lt;</span>[<span class="ident">usize</span>; <span class="ident">NEIGHBORS</span>]<span class="op">&gt;</span><span class="op">&gt;</span>,
+    <span class="ident">check_seats</span>: <span class="kw-2">&amp;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span>,
+    <span class="ident">max_neighbors</span>: <span class="ident">usize</span>,
+    <span class="ident">check_neighbors</span>: <span class="kw-2">&amp;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">ArrayVec</span><span class="op">&lt;</span>[<span class="ident">usize</span>; <span class="ident">NEIGHBORS</span>]<span class="op">&gt;</span><span class="op">&gt;</span>,
 ) {
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">changed</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[];
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">repeat</span> <span class="op">=</span> <span class="bool-val">true</span>;
     <span class="kw">while</span> <span class="ident">repeat</span> {
-        <span class="ident">seats</span>
-            .<span class="ident">iter</span>()
-            .<span class="ident">enumerate</span>()
-            .<span class="ident">filter</span>(<span class="op">|</span>(<span class="kw">_</span>, <span class="kw-2">&amp;</span><span class="ident">value</span>)<span class="op">|</span> <span class="ident">value</span> <span class="op">&lt;</span> <span class="number">2</span>)
-            .<span class="ident">for_each</span>(<span class="op">|</span>(<span class="ident">i</span>, <span class="kw-2">&amp;</span><span class="ident">value</span>)<span class="op">|</span> {
-                <span class="comment">// Check seats for change</span>
-                <span class="kw">if</span> <span class="ident">value</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span> {
-                    <span class="comment">// Empty seat</span>
-                    <span class="kw">if</span> <span class="op">!</span><span class="ident">check_indices</span>[<span class="ident">i</span>].<span class="ident">iter</span>().<span class="ident">any</span>(<span class="op">|</span><span class="kw-2">&amp;</span><span class="ident">index</span><span class="op">|</span> <span class="ident">seats</span>[<span class="ident">index</span>] <span class="op">=</span><span class="op">=</span> <span class="number">1</span>) {
-                        <span class="ident">changed</span>.<span class="ident">push</span>(<span class="ident">i</span>);
-                    }
-                } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">check_indices</span>[<span class="ident">i</span>].<span class="ident">len</span>() <span class="op">&gt;</span><span class="op">=</span> <span class="ident">max_neighbors</span> <span class="kw">as</span> <span class="ident">usize</span> {
-                    <span class="comment">// Occupied seat</span>
-                    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">count</span> <span class="op">=</span> <span class="number">0</span>;
-                    <span class="kw">if</span> <span class="ident">check_indices</span>[<span class="ident">i</span>].<span class="ident">iter</span>().<span class="ident">any</span>(<span class="op">|</span><span class="kw-2">&amp;</span><span class="ident">index</span><span class="op">|</span> {
-                        <span class="ident">count</span> <span class="op">+</span><span class="op">=</span> <span class="ident">seats</span>[<span class="ident">index</span>];
-                        <span class="ident">count</span> <span class="op">&gt;</span><span class="op">=</span> <span class="ident">max_neighbors</span>
-                    }) {
-                        <span class="ident">changed</span>.<span class="ident">push</span>(<span class="ident">i</span>);
-                    }
+        <span class="ident">check_seats</span>.<span class="ident">iter</span>().<span class="ident">for_each</span>(<span class="op">|</span><span class="kw-2">&amp;</span><span class="ident">i</span><span class="op">|</span> {
+            <span class="comment">// Check seats for change</span>
+            <span class="kw">if</span> <span class="ident">seats</span>[<span class="ident">i</span>] <span class="op">=</span><span class="op">=</span> <span class="number">0</span> {
+                <span class="comment">// Empty seat</span>
+                <span class="kw">if</span> <span class="ident">check_neighbors</span>[<span class="ident">i</span>].<span class="ident">iter</span>().<span class="ident">all</span>(<span class="op">|</span><span class="kw-2">&amp;</span><span class="ident">index</span><span class="op">|</span> <span class="ident">seats</span>[<span class="ident">index</span>] <span class="op">!</span><span class="op">=</span> <span class="number">1</span>) {
+                    <span class="ident">changed</span>.<span class="ident">push</span>(<span class="ident">i</span>);
                 }
-            });
+            } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">check_neighbors</span>[<span class="ident">i</span>].<span class="ident">len</span>() <span class="op">&gt;</span><span class="op">=</span> <span class="ident">max_neighbors</span> {
+                <span class="comment">// Occupied seat</span>
+                <span class="kw">if</span> <span class="ident">check_neighbors</span>[<span class="ident">i</span>]
+                    .<span class="ident">iter</span>()
+                    .<span class="ident">filter</span>(<span class="op">|</span><span class="kw-2">&amp;</span><span class="ident">index</span><span class="op">|</span> <span class="ident">seats</span>[<span class="kw-2">*</span><span class="ident">index</span>] <span class="op">=</span><span class="op">=</span> <span class="number">1</span>)
+                    .<span class="ident">count</span>()
+                    <span class="op">&gt;</span><span class="op">=</span> <span class="ident">max_neighbors</span>
+                {
+                    <span class="ident">changed</span>.<span class="ident">push</span>(<span class="ident">i</span>);
+                }
+            }
+        });
         <span class="kw">if</span> <span class="ident">changed</span>.<span class="ident">len</span>() <span class="op">&gt;</span> <span class="number">0</span> {
             <span class="comment">// Apply changes</span>
             <span class="ident">changed</span>
@@ -545,6 +546,11 @@
         .<span class="ident">map</span>(<span class="op">|</span><span class="ident">c</span><span class="op">|</span> <span class="kw">if</span> <span class="ident">c</span> <span class="op">=</span><span class="op">=</span> <span class="string">&#39;L&#39;</span> { <span class="number">1</span> } <span class="kw">else</span> { <span class="number">2</span> })
         .<span class="ident">collect</span>();
     <span class="kw">let</span> <span class="ident">number_rows</span> <span class="op">=</span> <span class="ident">seats</span>.<span class="ident">len</span>() <span class="op">/</span> <span class="ident">row_length</span>;
+    <span class="kw">let</span> <span class="ident">check_seats</span> <span class="op">=</span> <span class="ident">seats</span>
+        .<span class="ident">iter</span>()
+        .<span class="ident">enumerate</span>()
+        .<span class="ident">filter_map</span>(<span class="op">|</span>(<span class="ident">i</span>, <span class="kw-2">&amp;</span><span class="ident">value</span>)<span class="op">|</span> <span class="kw">if</span> <span class="ident">value</span> <span class="op">!</span><span class="op">=</span> <span class="number">2</span> { <span class="prelude-val">Some</span>(<span class="ident">i</span>) } <span class="kw">else</span> { <span class="prelude-val">None</span> })
+        .<span class="ident">collect</span>();
     <span class="kw">let</span> <span class="ident">time_setup</span> <span class="op">=</span> <span class="ident">start_setup</span>.<span class="ident">elapsed</span>();
 
     <span class="comment">// -------------------------------------------------------------------------</span>
@@ -553,11 +559,11 @@
     <span class="comment">// Find stable configuration</span>
     <span class="kw">let</span> <span class="ident">start_part_1</span> <span class="op">=</span> <span class="ident">Instant</span>::<span class="ident">now</span>();
 
-    <span class="comment">// Indices to check</span>
-    <span class="kw">let</span> <span class="ident">check_indices</span> <span class="op">=</span> <span class="ident">part_1</span>(<span class="kw-2">&amp;</span><span class="ident">seats</span>, <span class="ident">row_length</span>, <span class="ident">number_rows</span>);
+    <span class="comment">// Neighbors to check</span>
+    <span class="kw">let</span> <span class="ident">check_neighbors</span> <span class="op">=</span> <span class="ident">part_1</span>(<span class="kw-2">&amp;</span><span class="ident">seats</span>, <span class="ident">row_length</span>, <span class="ident">number_rows</span>);
 
     <span class="comment">// Run Game of Life</span>
-    <span class="ident">game_of_life</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">seats</span>, <span class="number">4</span>, <span class="kw-2">&amp;</span><span class="ident">check_indices</span>);
+    <span class="ident">game_of_life</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">seats</span>, <span class="kw-2">&amp;</span><span class="ident">check_seats</span>, <span class="number">4</span>, <span class="kw-2">&amp;</span><span class="ident">check_neighbors</span>);
     <span class="kw">let</span> <span class="ident">count_1</span> <span class="op">=</span> <span class="ident">seats</span>.<span class="ident">iter</span>().<span class="ident">filter</span>(<span class="op">|</span><span class="kw-2">&amp;</span><span class="ident">s</span><span class="op">|</span> <span class="kw-2">*</span><span class="ident">s</span> <span class="op">=</span><span class="op">=</span> <span class="number">1</span>).<span class="ident">count</span>();
 
     <span class="kw">let</span> <span class="ident">time_part_1</span> <span class="op">=</span> <span class="ident">start_part_1</span>.<span class="ident">elapsed</span>();
@@ -575,11 +581,11 @@
         }
     });
 
-    <span class="comment">// Indices to check</span>
-    <span class="kw">let</span> <span class="ident">check_indices</span> <span class="op">=</span> <span class="ident">part_2</span>(<span class="kw-2">&amp;</span><span class="ident">seats</span>, <span class="ident">row_length</span>, <span class="ident">number_rows</span>);
+    <span class="comment">// Neighbors to check</span>
+    <span class="kw">let</span> <span class="ident">check_neighbors</span> <span class="op">=</span> <span class="ident">part_2</span>(<span class="kw-2">&amp;</span><span class="ident">seats</span>, <span class="ident">row_length</span>, <span class="ident">number_rows</span>);
 
     <span class="comment">// Run Game of Life</span>
-    <span class="ident">game_of_life</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">seats</span>, <span class="number">5</span>, <span class="kw-2">&amp;</span><span class="ident">check_indices</span>);
+    <span class="ident">game_of_life</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">seats</span>, <span class="kw-2">&amp;</span><span class="ident">check_seats</span>, <span class="number">5</span>, <span class="kw-2">&amp;</span><span class="ident">check_neighbors</span>);
     <span class="kw">let</span> <span class="ident">count_2</span> <span class="op">=</span> <span class="ident">seats</span>.<span class="ident">iter</span>().<span class="ident">filter</span>(<span class="op">|</span><span class="kw-2">&amp;</span><span class="ident">s</span><span class="op">|</span> <span class="kw-2">*</span><span class="ident">s</span> <span class="op">=</span><span class="op">=</span> <span class="number">1</span>).<span class="ident">count</span>();
 
     <span class="kw">let</span> <span class="ident">time_part_2</span> <span class="op">=</span> <span class="ident">start_part_2</span>.<span class="ident">elapsed</span>();
