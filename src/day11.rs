@@ -21,7 +21,7 @@ fn game_of_life(
     max_neighbors: u8,
     check_neighbors: &ArrayVec<[ArrayVec<[u16; NEIGHBORS]>; CAPACITY]>,
 ) {
-    let mut changed: Vec<u16> = Vec::with_capacity(8192);
+    let mut changed: ArrayVec<[u16; CAPACITY]> = ArrayVec::new();
     let mut repeat = true;
     while repeat {
         check_seats.retain(|&i| {
