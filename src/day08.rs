@@ -29,34 +29,34 @@ struct Node {
 }
 
 impl Node {
-    fn new(s: &str, i: i32) -> Self {
+    fn new(s: &str, i: i32) -> Result<Self, std::num::ParseIntError> {
         // Instructions of the form
         //   0   4
         //   acc value
         //   jmp value
         //   nop value
         let instruction_char = s.as_bytes()[0];
-        let value = s[4..].parse::<i32>().unwrap();
+        let value = s[4..].parse::<i32>()?;
         match instruction_char {
-            b'a' => Self {
+            b'a' => Ok(Self {
                 instruction: Instruction::Acc,
                 value: value,
                 increment: value,
                 next: i + 1,
-            },
-            b'j' => Self {
+            }),
+            b'j' => Ok(Self {
                 instruction: Instruction::Jmp,
                 value: value,
                 increment: 0,
                 next: i + value,
-            },
-            b'n' => Self {
+            }),
+            b'n' => Ok(Self {
                 instruction: Instruction::Nop,
                 value: value,
                 increment: 0,
                 next: i + 1,
-            },
-            _ => panic!("Unknown instruction"),
+            }),
+            _ => panic!("instruction not found"),
         }
     }
 }
@@ -229,7 +229,12 @@ pub(crate) fn run() -> Results {
     let instructions: FxHashMap<i32, Node> = buffer
         .lines()
         .enumerate()
-        .map(|(i, line)| (i as i32, Node::new(line, i as i32)))
+        .map(|(i, line)| {
+            (
+                i as i32,
+                Node::new(line, i as i32).expect("failed to parse line"),
+            )
+        })
         .collect();
     let number_instructions = instructions.len() as i32;
     let time_setup = start_setup.elapsed();
@@ -262,7 +267,12 @@ pub(crate) fn run() -> Results {
     let instructions: FxHashMap<i32, Node> = buffer
         .lines()
         .enumerate()
-        .map(|(i, line)| (i as i32, Node::new(line, i as i32)))
+        .map(|(i, line)| {
+            (
+                i as i32,
+                Node::new(line, i as i32).expect("failed to parse line"),
+            )
+        })
         .collect();
     let number_instructions = instructions.len() as i32;
 

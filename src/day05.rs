@@ -10,10 +10,10 @@ use itertools::Itertools;
 // Parse FBLR encoded binary
 // -----------------------------------------------------------------------------
 #[inline(always)]
-fn parse_fblr_binary(s: &str) -> usize {
-    s.as_bytes()
+fn parse_fblr_binary(s: &str) -> Result<usize, std::num::ParseIntError> {
+    Ok(s.as_bytes()
         .iter()
-        .fold(0, |id, c| id * 2 + (*c as usize % 7) % 2) // B, R -> 1; F, L -> 0
+        .fold(0, |id, c| id * 2 + (*c as usize % 7) % 2)) // B, R -> 1; F, L -> 0
 }
 
 // -----------------------------------------------------------------------------
@@ -38,7 +38,7 @@ pub(crate) fn run() -> Results {
     // Read to object iterator
     let data: Vec<usize> = buffer
         .lines()
-        .map(|line| parse_fblr_binary(&line))
+        .map(|line| parse_fblr_binary(&line).expect("failed to parse line"))
         .collect();
     let time_setup = start_setup.elapsed();
 
@@ -73,7 +73,7 @@ pub(crate) fn run() -> Results {
     let mut combined_mask = [false; 2 << 9];
     let mut combined_1 = 0;
     buffer.lines().for_each(|line| {
-        let s = parse_fblr_binary(&line);
+        let s = parse_fblr_binary(&line).expect("failed to parse line");
         combined_mask[s] = true;
         combined_1 = std::cmp::max(combined_1, s);
     });

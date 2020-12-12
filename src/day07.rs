@@ -40,10 +40,10 @@ impl Node {
 }
 
 #[inline(always)]
-fn str_to_key(t: &str) -> u32 {
-    t.as_bytes()
+fn str_to_key(t: &str) -> Result<u32, std::num::ParseIntError> {
+    Ok(t.as_bytes()
         .iter()
-        .fold(1 as u32, |acc, c| acc * 2 + *c as u32)
+        .fold(1 as u32, |acc, c| acc * 2 + *c as u32))
 }
 
 fn add_to_graph(s: &str, bag_graph: &mut FxHashMap<u32, Node>) {
@@ -54,12 +54,13 @@ fn add_to_graph(s: &str, bag_graph: &mut FxHashMap<u32, Node>) {
     if contents.as_bytes()[0] == b'n' {
         return;
     }
-    let container_key = str_to_key(container_str.unwrap());
+    let container_key = str_to_key(container_str.unwrap()).expect("failed to create key");
     let mut contains = vec![];
     // Containing bags
     for line in contents.split(", ") {
         let number = line.chars().nth(0).unwrap().to_digit(10).unwrap() as usize; // Number is always one digit
-        let contained_key = str_to_key(line[2..].splitn(2, " bag").next().unwrap());
+        let contained_key =
+            str_to_key(line[2..].splitn(2, " bag").next().unwrap()).expect("failed to create key");
         bag_graph
             .entry(contained_key)
             .or_insert(Node::new())
@@ -133,7 +134,7 @@ pub(crate) fn run() -> Results {
     // -------------------------------------------------------------------------
     // Find number of containing bags
     let start_part_1 = Instant::now();
-    let count_1 = part_1(str_to_key("shiny gold"), &bag_graph) as i64 - 1;
+    let count_1 = part_1(str_to_key("shiny gold").unwrap(), &bag_graph) as i64 - 1;
     let time_part_1 = start_part_1.elapsed();
 
     // -------------------------------------------------------------------------
@@ -141,7 +142,7 @@ pub(crate) fn run() -> Results {
     // -------------------------------------------------------------------------
     // Find number of contained bags
     let start_part_2 = Instant::now();
-    let count_2 = part_2(str_to_key("shiny gold"), &bag_graph) - 1;
+    let count_2 = part_2(str_to_key("shiny gold").unwrap(), &bag_graph) - 1;
     let time_part_2 = start_part_2.elapsed();
 
     // -------------------------------------------------------------------------

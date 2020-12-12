@@ -8,7 +8,7 @@ use crate::prelude::*;
 // -----------------------------------------------------------------------------
 // Parse line to array
 // -----------------------------------------------------------------------------
-fn to_array(responses: &str) -> [usize; 27] {
+fn to_array(responses: &str) -> Result<[usize; 27], std::num::ParseIntError> {
     let mut array = [0; 27];
     responses.trim().split("\n").for_each(|person| {
         person
@@ -17,7 +17,7 @@ fn to_array(responses: &str) -> [usize; 27] {
             .for_each(|answer| array[(answer - b'a') as usize] += 1);
         array[26] += 1
     });
-    array
+    Ok(array)
 }
 
 // -----------------------------------------------------------------------------
@@ -52,7 +52,10 @@ pub(crate) fn run() -> Results {
     let buffer: String = std::fs::read_to_string("data/day06.txt").unwrap();
 
     // Read to object iterator
-    let data: Vec<[usize; 27]> = buffer.split("\n\n").map(|line| to_array(line)).collect();
+    let data: Vec<[usize; 27]> = buffer
+        .split("\n\n")
+        .map(|line| to_array(line).expect("failed to parse line"))
+        .collect();
     let time_setup = start_setup.elapsed();
 
     // -------------------------------------------------------------------------
@@ -77,7 +80,7 @@ pub(crate) fn run() -> Results {
     let start_combined = Instant::now();
     let (combined_1, combined_2) = buffer
         .split("\n\n")
-        .map(|line| to_array(line))
+        .map(|line| to_array(line).expect("failed to parse line"))
         .fold((0, 0), |acc, responses| {
             (acc.0 + part_1(&responses), acc.1 + part_2(&responses))
         });
