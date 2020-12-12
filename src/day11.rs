@@ -9,16 +9,17 @@ use arrayvec::ArrayVec;
 
 // Constants
 const NEIGHBORS: usize = 8;
+const CAPACITY: usize = 16384;
 
 // -----------------------------------------------------------------------------
 // Game of Life
 // -----------------------------------------------------------------------------
 #[inline(always)]
 fn game_of_life(
-    seats: &mut Vec<u8>,
+    seats: &mut ArrayVec<[u8; CAPACITY]>,
     check_seats: &mut Vec<u16>,
     max_neighbors: u8,
-    check_neighbors: &Vec<ArrayVec<[u16; NEIGHBORS]>>,
+    check_neighbors: &ArrayVec<[ArrayVec<[u16; NEIGHBORS]>; CAPACITY]>,
 ) {
     let mut changed: Vec<u16> = Vec::with_capacity(8192);
     let mut repeat = true;
@@ -52,7 +53,11 @@ fn game_of_life(
 // Part 1
 // -----------------------------------------------------------------------------
 #[inline]
-fn part_1(seats: &Vec<u8>, row_length: u16, number_rows: u16) -> Vec<ArrayVec<[u16; NEIGHBORS]>> {
+fn part_1(
+    seats: &ArrayVec<[u8; CAPACITY]>,
+    row_length: u16,
+    number_rows: u16,
+) -> ArrayVec<[ArrayVec<[u16; NEIGHBORS]>; CAPACITY]> {
     seats
         .iter()
         .enumerate()
@@ -109,14 +114,18 @@ fn part_1(seats: &Vec<u8>, row_length: u16, number_rows: u16) -> Vec<ArrayVec<[u
             }
             indices
         })
-        .collect::<Vec<ArrayVec<[u16; NEIGHBORS]>>>()
+        .collect::<ArrayVec<[ArrayVec<[u16; NEIGHBORS]>; CAPACITY]>>()
 }
 
 // -----------------------------------------------------------------------------
 // Part 2
 // -----------------------------------------------------------------------------
 #[inline]
-fn part_2(seats: &Vec<u8>, row_length: u16, number_rows: u16) -> Vec<ArrayVec<[u16; NEIGHBORS]>> {
+fn part_2(
+    seats: &ArrayVec<[u8; CAPACITY]>,
+    row_length: u16,
+    number_rows: u16,
+) -> ArrayVec<[ArrayVec<[u16; NEIGHBORS]>; CAPACITY]> {
     seats
         .iter()
         .enumerate()
@@ -215,7 +224,7 @@ fn part_2(seats: &Vec<u8>, row_length: u16, number_rows: u16) -> Vec<ArrayVec<[u
             }
             indices
         })
-        .collect::<Vec<ArrayVec<[u16; NEIGHBORS]>>>()
+        .collect::<ArrayVec<[ArrayVec<[u16; NEIGHBORS]>; CAPACITY]>>()
 }
 
 // -----------------------------------------------------------------------------
@@ -231,7 +240,7 @@ pub(crate) fn run() -> Results {
 
     // Read to vector
     let row_length = buffer.lines().nth(0).unwrap().chars().count() as u16;
-    let mut seats: Vec<u8> = buffer
+    let mut seats: ArrayVec<[u8; CAPACITY]> = buffer
         .chars()
         .filter(|&c| c != '\n')
         .map(|c| if c == 'L' { 1 } else { 2 })
