@@ -5,7 +5,6 @@
 
 use crate::prelude::*;
 use arrayvec::ArrayVec;
-use rustc_hash::FxHashSet;
 
 // Constants
 const NEIGHBORS: usize = 8;
@@ -16,7 +15,7 @@ const NEIGHBORS: usize = 8;
 #[inline(always)]
 fn game_of_life(
     seats: &mut Vec<u8>,
-    check_seats: &mut FxHashSet<u16>,
+    check_seats: &mut Vec<u16>,
     max_neighbors: u8,
     check_neighbors: &Vec<ArrayVec<[u16; NEIGHBORS]>>,
 ) {
@@ -54,52 +53,54 @@ fn part_1(seats: &Vec<u8>, row_length: u16, number_rows: u16) -> Vec<ArrayVec<[u
     seats
         .iter()
         .enumerate()
-        .map(|(index, _)| {
+        .map(|(index, &value)| {
             let mut indices = ArrayVec::<[u16; NEIGHBORS]>::new();
-            let i = index as u16;
-            let row = i / row_length;
-            let col = i % row_length;
-            if col > 0 {
-                let index = i - 1;
-                if seats[index as usize] == 1 {
-                    indices.push(index);
-                }
-                if row > 0 {
-                    if seats[(index - row_length) as usize] == 1 {
-                        indices.push(index - row_length);
+            if value != 2 {
+                let i = index as u16;
+                let row = i / row_length;
+                let col = i % row_length;
+                if col > 0 {
+                    let index = i - 1;
+                    if seats[index as usize] == 1 {
+                        indices.push(index);
                     }
-                }
-            }
-            if col < row_length - 1 {
-                let index = i + 1;
-                if seats[index as usize] == 1 {
-                    indices.push(index);
-                }
-                if row < number_rows - 1 {
-                    if seats[(index + row_length) as usize] == 1 {
-                        indices.push(index + row_length);
+                    if row > 0 {
+                        if seats[(index - row_length) as usize] == 1 {
+                            indices.push(index - row_length);
+                        }
                     }
-                }
-            }
-            if row > 0 {
-                let index = i - row_length;
-                if seats[index as usize] == 1 {
-                    indices.push(index);
                 }
                 if col < row_length - 1 {
-                    if seats[(index + 1) as usize] == 1 {
-                        indices.push(index + 1);
+                    let index = i + 1;
+                    if seats[index as usize] == 1 {
+                        indices.push(index);
+                    }
+                    if row < number_rows - 1 {
+                        if seats[(index + row_length) as usize] == 1 {
+                            indices.push(index + row_length);
+                        }
                     }
                 }
-            }
-            if row < number_rows - 1 {
-                let index = i + row_length;
-                if seats[index as usize] == 1 {
-                    indices.push(index);
+                if row > 0 {
+                    let index = i - row_length;
+                    if seats[index as usize] == 1 {
+                        indices.push(index);
+                    }
+                    if col < row_length - 1 {
+                        if seats[(index + 1) as usize] == 1 {
+                            indices.push(index + 1);
+                        }
+                    }
                 }
-                if col > 0 {
-                    if seats[(index - 1) as usize] == 1 {
-                        indices.push(index - 1);
+                if row < number_rows - 1 {
+                    let index = i + row_length;
+                    if seats[index as usize] == 1 {
+                        indices.push(index);
+                    }
+                    if col > 0 {
+                        if seats[(index - 1) as usize] == 1 {
+                            indices.push(index - 1);
+                        }
                     }
                 }
             }
@@ -115,93 +116,96 @@ fn part_2(seats: &Vec<u8>, row_length: u16, number_rows: u16) -> Vec<ArrayVec<[u
     seats
         .iter()
         .enumerate()
-        .map(|(index, _)| {
+        .map(|(index, &value)| {
             let mut indices = ArrayVec::<[u16; NEIGHBORS]>::new();
-            let i = index as u16;
-            let row = i as u16 / row_length;
-            let col = i as u16 % row_length;
-            if col > 0 {
-                let mut left = 1;
-                while left <= col && seats[(i - left) as usize] == 2 {
-                    left += 1;
-                }
-                if left <= col {
-                    indices.push(i - left);
-                }
-                if row > 0 {
-                    let mut diag = 1;
-                    while diag <= col
-                        && diag <= row
-                        && seats[(i - diag - diag * row_length) as usize] == 2
-                    {
-                        diag += 1;
+            if value != 2 {
+                let i = index as u16;
+                let row = i as u16 / row_length;
+                let col = i as u16 % row_length;
+                if col > 0 {
+                    let mut left = 1;
+                    while left <= col && seats[(i - left) as usize] == 2 {
+                        left += 1;
                     }
-                    if diag <= col && diag <= row {
-                        indices.push(i - diag - diag * row_length);
+                    if left <= col {
+                        indices.push(i - left);
                     }
-                }
-            }
-            if col < row_length - 1 {
-                let mut right = 1;
-                while right <= row_length - 1 - col && seats[(i + right) as usize] == 2 {
-                    right += 1;
-                }
-                if right <= row_length - 1 - col {
-                    indices.push(i + right);
-                }
-                if row < number_rows - 1 {
-                    let mut diag = 1;
-                    while diag <= row_length - 1 - col
-                        && diag <= number_rows - 1 - row
-                        && seats[(i + diag + diag * row_length) as usize] == 2
-                    {
-                        diag += 1;
+                    if row > 0 {
+                        let mut diag = 1;
+                        while diag <= col
+                            && diag <= row
+                            && seats[(i - diag - diag * row_length) as usize] == 2
+                        {
+                            diag += 1;
+                        }
+                        if diag <= col && diag <= row {
+                            indices.push(i - diag - diag * row_length);
+                        }
                     }
-                    if diag <= row_length - 1 - col && diag <= number_rows - 1 - row {
-                        indices.push(i + diag + diag * row_length);
-                    }
-                }
-            }
-            if row > 0 {
-                let mut up = 1;
-                while up <= row && seats[(i - up * row_length) as usize] == 2 {
-                    up += 1;
-                }
-                if up <= row {
-                    indices.push(i - up * row_length);
                 }
                 if col < row_length - 1 {
-                    let mut diag = 1;
-                    while diag <= row
-                        && diag <= row_length - 1 - col
-                        && seats[(i + diag - diag * row_length) as usize] == 2
+                    let mut right = 1;
+                    while right <= row_length - 1 - col && seats[(i + right) as usize] == 2 {
+                        right += 1;
+                    }
+                    if right <= row_length - 1 - col {
+                        indices.push(i + right);
+                    }
+                    if row < number_rows - 1 {
+                        let mut diag = 1;
+                        while diag <= row_length - 1 - col
+                            && diag <= number_rows - 1 - row
+                            && seats[(i + diag + diag * row_length) as usize] == 2
+                        {
+                            diag += 1;
+                        }
+                        if diag <= row_length - 1 - col && diag <= number_rows - 1 - row {
+                            indices.push(i + diag + diag * row_length);
+                        }
+                    }
+                }
+                if row > 0 {
+                    let mut up = 1;
+                    while up <= row && seats[(i - up * row_length) as usize] == 2 {
+                        up += 1;
+                    }
+                    if up <= row {
+                        indices.push(i - up * row_length);
+                    }
+                    if col < row_length - 1 {
+                        let mut diag = 1;
+                        while diag <= row
+                            && diag <= row_length - 1 - col
+                            && seats[(i + diag - diag * row_length) as usize] == 2
+                        {
+                            diag += 1;
+                        }
+                        if diag <= row && diag <= row_length - 1 - col {
+                            indices.push(i + diag - diag * row_length);
+                        }
+                    }
+                }
+                if row < number_rows - 1 {
+                    let mut down = 1;
+                    while down <= number_rows - 1 - row
+                        && seats[(i + down * row_length) as usize] == 2
                     {
-                        diag += 1;
+                        down += 1;
                     }
-                    if diag <= row && diag <= row_length - 1 - col {
-                        indices.push(i + diag - diag * row_length);
+                    if down <= number_rows - 1 - row {
+                        indices.push(i + down * row_length);
                     }
-                }
-            }
-            if row < number_rows - 1 {
-                let mut down = 1;
-                while down <= number_rows - 1 - row && seats[(i + down * row_length) as usize] == 2
-                {
-                    down += 1;
-                }
-                if down <= number_rows - 1 - row {
-                    indices.push(i + down * row_length);
-                }
-                if col > 0 {
-                    let mut diag = 1;
-                    while diag <= col
-                        && diag <= number_rows - 1 - row
-                        && seats[(i - diag + diag * row_length) as usize] == 2
-                    {
-                        diag += 1;
-                    }
-                    if diag <= col && diag <= number_rows - 1 - row {
-                        indices.push(i - diag + diag * row_length);
+                    if col > 0 {
+                        let mut diag = 1;
+                        while diag <= col
+                            && diag <= number_rows - 1 - row
+                            && seats[(i - diag + diag * row_length) as usize] == 2
+                        {
+                            diag += 1;
+                        }
+                        if diag <= col && diag <= number_rows - 1 - row {
+                            indices.push(i - diag + diag * row_length);
+                        }
                     }
                 }
             }
@@ -233,7 +237,7 @@ pub(crate) fn run() -> Results {
         .iter()
         .enumerate()
         .filter_map(|(i, &value)| if value != 2 { Some(i as u16) } else { None })
-        .collect::<FxHashSet<u16>>();
+        .collect::<Vec<u16>>();
     let time_setup = start_setup.elapsed();
 
     // -------------------------------------------------------------------------
@@ -267,7 +271,7 @@ pub(crate) fn run() -> Results {
         .iter()
         .enumerate()
         .filter_map(|(i, &value)| if value != 2 { Some(i as u16) } else { None })
-        .collect::<FxHashSet<u16>>();
+        .collect::<Vec<u16>>();
 
     // Neighbors to check
     let check_neighbors = part_2(&seats, row_length, number_rows);
