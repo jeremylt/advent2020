@@ -16,20 +16,22 @@ const NEIGHBORS: usize = 8;
 #[inline(always)]
 fn game_of_life(
     seats: &mut Vec<u8>,
-    check_seats: &mut FxHashSet<usize>,
-    max_neighbors: usize,
-    check_neighbors: &Vec<ArrayVec<[usize; NEIGHBORS]>>,
+    check_seats: &mut FxHashSet<u16>,
+    max_neighbors: u8,
+    check_neighbors: &Vec<ArrayVec<[u16; NEIGHBORS]>>,
 ) {
-    let mut changed: Vec<usize> = Vec::with_capacity(8192);
+    let mut changed: Vec<u16> = Vec::with_capacity(8192);
     let mut repeat = true;
     while repeat {
         check_seats.retain(|&i| {
             // Check seats for change
-            let count = check_neighbors[i]
+            let count = check_neighbors[i as usize]
                 .iter()
-                .map(|&index| (seats[index] % 2))
-                .sum::<u8>() as usize;
-            if (seats[i] == 0 && count == 0) || (seats[i] == 1 && count >= max_neighbors) {
+                .map(|&index| (seats[index as usize] % 2))
+                .sum::<u8>();
+            if (seats[i as usize] == 0 && count == 0)
+                || (seats[i as usize] == 1 && count >= max_neighbors)
+            {
                 changed.push(i);
                 true
             } else {
@@ -39,7 +41,7 @@ fn game_of_life(
         repeat = changed.len() != 0;
         // Apply changes
         changed.retain(|&index| {
-            seats[index] = (seats[index] + 1) % 2;
+            seats[index as usize] = (seats[index as usize] + 1) % 2;
             false
         });
     }
@@ -48,85 +50,79 @@ fn game_of_life(
 // -----------------------------------------------------------------------------
 // Part 1
 // -----------------------------------------------------------------------------
-fn part_1(
-    seats: &Vec<u8>,
-    row_length: usize,
-    number_rows: usize,
-) -> Vec<ArrayVec<[usize; NEIGHBORS]>> {
+fn part_1(seats: &Vec<u8>, row_length: u16, number_rows: u16) -> Vec<ArrayVec<[u16; NEIGHBORS]>> {
     seats
         .iter()
         .enumerate()
-        .map(|(i, _)| {
-            let mut indices = ArrayVec::<[usize; NEIGHBORS]>::new();
+        .map(|(index, _)| {
+            let mut indices = ArrayVec::<[u16; NEIGHBORS]>::new();
+            let i = index as u16;
             let row = i / row_length;
             let col = i % row_length;
             if col > 0 {
                 let index = i - 1;
-                if seats[index] == 1 {
+                if seats[index as usize] == 1 {
                     indices.push(index);
                 }
                 if row > 0 {
-                    if seats[index - row_length] == 1 {
+                    if seats[(index - row_length) as usize] == 1 {
                         indices.push(index - row_length);
                     }
                 }
             }
             if col < row_length - 1 {
                 let index = i + 1;
-                if seats[index] == 1 {
+                if seats[index as usize] == 1 {
                     indices.push(index);
                 }
                 if row < number_rows - 1 {
-                    if seats[index + row_length] == 1 {
+                    if seats[(index + row_length) as usize] == 1 {
                         indices.push(index + row_length);
                     }
                 }
             }
             if row > 0 {
                 let index = i - row_length;
-                if seats[index] == 1 {
+                if seats[index as usize] == 1 {
                     indices.push(index);
                 }
                 if col < row_length - 1 {
-                    if seats[index + 1] == 1 {
+                    if seats[(index + 1) as usize] == 1 {
                         indices.push(index + 1);
                     }
                 }
             }
             if row < number_rows - 1 {
                 let index = i + row_length;
-                if seats[index] == 1 {
+                if seats[index as usize] == 1 {
                     indices.push(index);
                 }
                 if col > 0 {
-                    if seats[index - 1] == 1 {
+                    if seats[(index - 1) as usize] == 1 {
                         indices.push(index - 1);
                     }
                 }
             }
             indices
         })
-        .collect::<Vec<ArrayVec<[usize; NEIGHBORS]>>>()
+        .collect::<Vec<ArrayVec<[u16; NEIGHBORS]>>>()
 }
 
 // -----------------------------------------------------------------------------
 // Part 2
 // -----------------------------------------------------------------------------
-fn part_2(
-    seats: &Vec<u8>,
-    row_length: usize,
-    number_rows: usize,
-) -> Vec<ArrayVec<[usize; NEIGHBORS]>> {
+fn part_2(seats: &Vec<u8>, row_length: u16, number_rows: u16) -> Vec<ArrayVec<[u16; NEIGHBORS]>> {
     seats
         .iter()
         .enumerate()
-        .map(|(i, _)| {
-            let mut indices = ArrayVec::<[usize; NEIGHBORS]>::new();
-            let row = i / row_length;
-            let col = i % row_length;
+        .map(|(index, _)| {
+            let mut indices = ArrayVec::<[u16; NEIGHBORS]>::new();
+            let i = index as u16;
+            let row = i as u16 / row_length;
+            let col = i as u16 % row_length;
             if col > 0 {
                 let mut left = 1;
-                while left <= col && seats[i - left] == 2 {
+                while left <= col && seats[(i - left) as usize] == 2 {
                     left += 1;
                 }
                 if left <= col {
@@ -134,7 +130,10 @@ fn part_2(
                 }
                 if row > 0 {
                     let mut diag = 1;
-                    while diag <= col && diag <= row && seats[i - diag - diag * row_length] == 2 {
+                    while diag <= col
+                        && diag <= row
+                        && seats[(i - diag - diag * row_length) as usize] == 2
+                    {
                         diag += 1;
                     }
                     if diag <= col && diag <= row {
@@ -144,7 +143,7 @@ fn part_2(
             }
             if col < row_length - 1 {
                 let mut right = 1;
-                while right <= row_length - 1 - col && seats[i + right] == 2 {
+                while right <= row_length - 1 - col && seats[(i + right) as usize] == 2 {
                     right += 1;
                 }
                 if right <= row_length - 1 - col {
@@ -154,7 +153,7 @@ fn part_2(
                     let mut diag = 1;
                     while diag <= row_length - 1 - col
                         && diag <= number_rows - 1 - row
-                        && seats[i + diag + diag * row_length] == 2
+                        && seats[(i + diag + diag * row_length) as usize] == 2
                     {
                         diag += 1;
                     }
@@ -165,7 +164,7 @@ fn part_2(
             }
             if row > 0 {
                 let mut up = 1;
-                while up <= row && seats[i - up * row_length] == 2 {
+                while up <= row && seats[(i - up * row_length) as usize] == 2 {
                     up += 1;
                 }
                 if up <= row {
@@ -175,7 +174,7 @@ fn part_2(
                     let mut diag = 1;
                     while diag <= row
                         && diag <= row_length - 1 - col
-                        && seats[i + diag - diag * row_length] == 2
+                        && seats[(i + diag - diag * row_length) as usize] == 2
                     {
                         diag += 1;
                     }
@@ -186,7 +185,8 @@ fn part_2(
             }
             if row < number_rows - 1 {
                 let mut down = 1;
-                while down <= number_rows - 1 - row && seats[i + down * row_length] == 2 {
+                while down <= number_rows - 1 - row && seats[(i + down * row_length) as usize] == 2
+                {
                     down += 1;
                 }
                 if down <= number_rows - 1 - row {
@@ -196,7 +196,7 @@ fn part_2(
                     let mut diag = 1;
                     while diag <= col
                         && diag <= number_rows - 1 - row
-                        && seats[i - diag + diag * row_length] == 2
+                        && seats[(i - diag + diag * row_length) as usize] == 2
                     {
                         diag += 1;
                     }
@@ -207,7 +207,7 @@ fn part_2(
             }
             indices
         })
-        .collect::<Vec<ArrayVec<[usize; NEIGHBORS]>>>()
+        .collect::<Vec<ArrayVec<[u16; NEIGHBORS]>>>()
 }
 
 // -----------------------------------------------------------------------------
@@ -222,18 +222,18 @@ pub(crate) fn run() -> Results {
     let buffer: String = std::fs::read_to_string("data/day11.txt").unwrap();
 
     // Read to vector
-    let row_length = buffer.lines().nth(0).unwrap().chars().count();
+    let row_length = buffer.lines().nth(0).unwrap().chars().count() as u16;
     let mut seats: Vec<u8> = buffer
         .chars()
         .filter(|&c| c != '\n')
         .map(|c| if c == 'L' { 1 } else { 2 })
         .collect();
-    let number_rows = seats.len() / row_length;
+    let number_rows = seats.len() as u16 / row_length;
     let mut check_seats = seats
         .iter()
         .enumerate()
-        .filter_map(|(i, &value)| if value != 2 { Some(i) } else { None })
-        .collect::<FxHashSet<usize>>();
+        .filter_map(|(i, &value)| if value != 2 { Some(i as u16) } else { None })
+        .collect::<FxHashSet<u16>>();
     let time_setup = start_setup.elapsed();
 
     // -------------------------------------------------------------------------
@@ -266,8 +266,8 @@ pub(crate) fn run() -> Results {
     let mut check_seats = seats
         .iter()
         .enumerate()
-        .filter_map(|(i, &value)| if value != 2 { Some(i) } else { None })
-        .collect::<FxHashSet<usize>>();
+        .filter_map(|(i, &value)| if value != 2 { Some(i as u16) } else { None })
+        .collect::<FxHashSet<u16>>();
 
     // Neighbors to check
     let check_neighbors = part_2(&seats, row_length, number_rows);
