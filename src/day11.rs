@@ -38,11 +38,12 @@ fn game_of_life(
                 false
             }
         });
-        repeat = changed.len() != 0;
+        repeat = false;
         // Apply changes
-        changed
-            .iter()
-            .for_each(|&index| seats[index as usize] = (seats[index as usize] + 1) % 2);
+        changed.iter().for_each(|&index| {
+            repeat = true;
+            seats[index as usize] = (seats[index as usize] + 1) % 2;
+        });
         changed.clear();
     }
 }
@@ -50,6 +51,7 @@ fn game_of_life(
 // -----------------------------------------------------------------------------
 // Part 1
 // -----------------------------------------------------------------------------
+#[inline]
 fn part_1(seats: &Vec<u8>, row_length: u16, number_rows: u16) -> Vec<ArrayVec<[u16; NEIGHBORS]>> {
     seats
         .iter()
@@ -113,6 +115,7 @@ fn part_1(seats: &Vec<u8>, row_length: u16, number_rows: u16) -> Vec<ArrayVec<[u
 // -----------------------------------------------------------------------------
 // Part 2
 // -----------------------------------------------------------------------------
+#[inline]
 fn part_2(seats: &Vec<u8>, row_length: u16, number_rows: u16) -> Vec<ArrayVec<[u16; NEIGHBORS]>> {
     seats
         .iter()
