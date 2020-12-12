@@ -169,6 +169,67 @@
 <span id="166">166</span>
 <span id="167">167</span>
 <span id="168">168</span>
+<span id="169">169</span>
+<span id="170">170</span>
+<span id="171">171</span>
+<span id="172">172</span>
+<span id="173">173</span>
+<span id="174">174</span>
+<span id="175">175</span>
+<span id="176">176</span>
+<span id="177">177</span>
+<span id="178">178</span>
+<span id="179">179</span>
+<span id="180">180</span>
+<span id="181">181</span>
+<span id="182">182</span>
+<span id="183">183</span>
+<span id="184">184</span>
+<span id="185">185</span>
+<span id="186">186</span>
+<span id="187">187</span>
+<span id="188">188</span>
+<span id="189">189</span>
+<span id="190">190</span>
+<span id="191">191</span>
+<span id="192">192</span>
+<span id="193">193</span>
+<span id="194">194</span>
+<span id="195">195</span>
+<span id="196">196</span>
+<span id="197">197</span>
+<span id="198">198</span>
+<span id="199">199</span>
+<span id="200">200</span>
+<span id="201">201</span>
+<span id="202">202</span>
+<span id="203">203</span>
+<span id="204">204</span>
+<span id="205">205</span>
+<span id="206">206</span>
+<span id="207">207</span>
+<span id="208">208</span>
+<span id="209">209</span>
+<span id="210">210</span>
+<span id="211">211</span>
+<span id="212">212</span>
+<span id="213">213</span>
+<span id="214">214</span>
+<span id="215">215</span>
+<span id="216">216</span>
+<span id="217">217</span>
+<span id="218">218</span>
+<span id="219">219</span>
+<span id="220">220</span>
+<span id="221">221</span>
+<span id="222">222</span>
+<span id="223">223</span>
+<span id="224">224</span>
+<span id="225">225</span>
+<span id="226">226</span>
+<span id="227">227</span>
+<span id="228">228</span>
+<span id="229">229</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Day 12:</span>
 <span class="doccomment">//! Another straightforward problem today. As usual, for these easier problems parsing</span>
@@ -180,44 +241,71 @@
 <span class="comment">// -----------------------------------------------------------------------------</span>
 <span class="comment">// Read line to array</span>
 <span class="comment">// -----------------------------------------------------------------------------</span>
-<span class="attribute">#[<span class="ident">inline</span>(<span class="ident">always</span>)]</span>
-<span class="kw">fn</span> <span class="ident">to_array</span>(<span class="ident">s</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>[<span class="ident">i16</span>; <span class="number">4</span>], <span class="ident">std</span>::<span class="ident">num</span>::<span class="ident">ParseIntError</span><span class="op">&gt;</span> {
-    <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">s</span>[<span class="number">1</span>..].<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">i16</span><span class="op">&gt;</span>()<span class="question-mark">?</span>;
-    <span class="kw">match</span> <span class="ident">s</span>.<span class="ident">as_bytes</span>()[<span class="number">0</span>] {
-        <span class="string">b&#39;N&#39;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>([<span class="ident">value</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>]),
-        <span class="string">b&#39;S&#39;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>([<span class="op">-</span><span class="ident">value</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>]),
-        <span class="string">b&#39;E&#39;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>([<span class="number">0</span>, <span class="ident">value</span>, <span class="number">0</span>, <span class="number">0</span>]),
-        <span class="string">b&#39;W&#39;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>([<span class="number">0</span>, <span class="op">-</span><span class="ident">value</span>, <span class="number">0</span>, <span class="number">0</span>]),
-        <span class="string">b&#39;L&#39;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>([<span class="number">0</span>, <span class="number">0</span>, <span class="ident">value</span>, <span class="number">0</span>]),
-        <span class="string">b&#39;R&#39;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>([<span class="number">0</span>, <span class="number">0</span>, <span class="number">360</span> <span class="op">-</span> <span class="ident">value</span>, <span class="number">0</span>]),
-        <span class="string">b&#39;F&#39;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>([<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="ident">value</span>]),
-        <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;unknown instruction&quot;</span>),
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
+<span class="kw">struct</span> <span class="ident">Instruction</span> {
+    <span class="ident">north</span>: <span class="ident">i16</span>,
+    <span class="ident">east</span>: <span class="ident">i16</span>,
+    <span class="ident">bearing</span>: <span class="ident">i16</span>,
+    <span class="ident">forward</span>: <span class="ident">i16</span>,
+}
+
+<span class="kw">impl</span> <span class="ident">std</span>::<span class="ident">str</span>::<span class="ident">FromStr</span> <span class="kw">for</span> <span class="ident">Instruction</span> {
+    <span class="kw">type</span> <span class="prelude-val">Err</span> <span class="op">=</span> <span class="ident">std</span>::<span class="ident">num</span>::<span class="ident">ParseIntError</span>;
+    <span class="kw">fn</span> <span class="ident">from_str</span>(<span class="ident">s</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="self">Self</span>::<span class="prelude-val">Err</span><span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">s</span>[<span class="number">1</span>..].<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">i16</span><span class="op">&gt;</span>()<span class="question-mark">?</span>;
+        <span class="kw">let</span> (<span class="kw-2">mut</span> <span class="ident">north</span>, <span class="kw-2">mut</span> <span class="ident">east</span>, <span class="kw-2">mut</span> <span class="ident">bearing</span>, <span class="kw-2">mut</span> <span class="ident">forward</span>) <span class="op">=</span> (<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>);
+        <span class="kw">match</span> <span class="ident">s</span>.<span class="ident">as_bytes</span>()[<span class="number">0</span>] {
+            <span class="string">b&#39;N&#39;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">north</span> <span class="op">=</span> <span class="ident">value</span>,
+            <span class="string">b&#39;S&#39;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">north</span> <span class="op">=</span> <span class="op">-</span><span class="ident">value</span>,
+            <span class="string">b&#39;E&#39;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">east</span> <span class="op">=</span> <span class="ident">value</span>,
+            <span class="string">b&#39;W&#39;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">east</span> <span class="op">=</span> <span class="op">-</span><span class="ident">value</span>,
+            <span class="string">b&#39;L&#39;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">bearing</span> <span class="op">=</span> <span class="ident">value</span>,
+            <span class="string">b&#39;R&#39;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">bearing</span> <span class="op">=</span> <span class="number">360</span> <span class="op">-</span> <span class="ident">value</span>,
+            <span class="string">b&#39;F&#39;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">forward</span> <span class="op">=</span> <span class="ident">value</span>,
+            <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;unknown instruction&quot;</span>),
+        }
+        <span class="prelude-val">Ok</span>(<span class="self">Self</span> {
+            <span class="ident">north</span>,
+            <span class="ident">east</span>,
+            <span class="ident">bearing</span>,
+            <span class="ident">forward</span>,
+        })
     }
 }
 
 <span class="comment">// -----------------------------------------------------------------------------</span>
 <span class="comment">// Part 1</span>
 <span class="comment">// -----------------------------------------------------------------------------</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
+<span class="kw">struct</span> <span class="ident">Position</span> {
+    <span class="ident">north</span>: <span class="ident">i16</span>,
+    <span class="ident">east</span>: <span class="ident">i16</span>,
+    <span class="ident">bearing</span>: <span class="ident">i16</span>,
+}
+
 <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">always</span>)]</span>
-<span class="kw">fn</span> <span class="ident">part_1</span>(<span class="ident">current</span>: <span class="kw-2">&amp;</span>[<span class="ident">i16</span>; <span class="number">3</span>], <span class="ident">instruction</span>: <span class="kw-2">&amp;</span>[<span class="ident">i16</span>; <span class="number">4</span>]) <span class="op">-</span><span class="op">&gt;</span> [<span class="ident">i16</span>; <span class="number">3</span>] {
-    <span class="kw">let</span> <span class="ident">result</span>: [<span class="ident">i16</span>; <span class="number">3</span>];
-    <span class="kw">let</span> [<span class="ident">north</span>, <span class="ident">east</span>, <span class="ident">degree</span>] <span class="op">=</span> <span class="kw-2">*</span><span class="ident">current</span>;
-    <span class="kw">if</span> <span class="ident">instruction</span>[<span class="number">2</span>] <span class="op">!</span><span class="op">=</span> <span class="number">0</span> {
-        <span class="comment">// Update degree</span>
-        <span class="ident">result</span> <span class="op">=</span> [<span class="ident">north</span>, <span class="ident">east</span>, (<span class="ident">degree</span> <span class="op">+</span> <span class="ident">instruction</span>[<span class="number">2</span>]) <span class="op">%</span> <span class="number">360</span>];
-    } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">instruction</span>[<span class="number">3</span>] <span class="op">&gt;</span> <span class="number">0</span> {
+<span class="kw">fn</span> <span class="ident">part_1</span>(<span class="ident">current</span>: <span class="kw-2">&amp;</span><span class="ident">Position</span>, <span class="ident">instruction</span>: <span class="kw-2">&amp;</span><span class="ident">Instruction</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Position</span> {
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">Position</span> {
+        <span class="ident">north</span>: <span class="ident">current</span>.<span class="ident">north</span>,
+        <span class="ident">east</span>: <span class="ident">current</span>.<span class="ident">east</span>,
+        <span class="ident">bearing</span>: <span class="ident">current</span>.<span class="ident">bearing</span>,
+    };
+    <span class="kw">if</span> <span class="ident">instruction</span>.<span class="ident">bearing</span> <span class="op">!</span><span class="op">=</span> <span class="number">0</span> {
+        <span class="comment">// Update bearing</span>
+        <span class="ident">result</span>.<span class="ident">bearing</span> <span class="op">=</span> (<span class="ident">current</span>.<span class="ident">bearing</span> <span class="op">+</span> <span class="ident">instruction</span>.<span class="ident">bearing</span>) <span class="op">%</span> <span class="number">360</span>;
+    } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">instruction</span>.<span class="ident">forward</span> <span class="op">&gt;</span> <span class="number">0</span> {
         <span class="comment">// Move &#39;forward&#39;</span>
-        <span class="kw">let</span> <span class="ident">forward</span> <span class="op">=</span> <span class="ident">instruction</span>[<span class="number">3</span>];
-        <span class="kw">match</span> <span class="ident">current</span>[<span class="number">2</span>] {
-            <span class="number">0</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">result</span> <span class="op">=</span> [<span class="ident">north</span>, <span class="ident">east</span> <span class="op">+</span> <span class="ident">forward</span>, <span class="ident">degree</span>],
-            <span class="number">90</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">result</span> <span class="op">=</span> [<span class="ident">north</span> <span class="op">+</span> <span class="ident">forward</span>, <span class="ident">east</span>, <span class="ident">degree</span>],
-            <span class="number">180</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">result</span> <span class="op">=</span> [<span class="ident">north</span>, <span class="ident">east</span> <span class="op">-</span> <span class="ident">forward</span>, <span class="ident">degree</span>],
-            <span class="number">270</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">result</span> <span class="op">=</span> [<span class="ident">north</span> <span class="op">-</span> <span class="ident">forward</span>, <span class="ident">east</span>, <span class="ident">degree</span>],
+        <span class="kw">match</span> <span class="ident">current</span>.<span class="ident">bearing</span> {
+            <span class="number">0</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">result</span>.<span class="ident">east</span> <span class="op">+</span><span class="op">=</span> <span class="ident">instruction</span>.<span class="ident">forward</span>,
+            <span class="number">90</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">result</span>.<span class="ident">north</span> <span class="op">+</span><span class="op">=</span> <span class="ident">instruction</span>.<span class="ident">forward</span>,
+            <span class="number">180</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">result</span>.<span class="ident">east</span> <span class="op">-</span><span class="op">=</span> <span class="ident">instruction</span>.<span class="ident">forward</span>,
+            <span class="number">270</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">result</span>.<span class="ident">north</span> <span class="op">-</span><span class="op">=</span> <span class="ident">instruction</span>.<span class="ident">forward</span>,
             <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;unknown direction&quot;</span>),
         }
     } <span class="kw">else</span> {
         <span class="comment">// Move in direction</span>
-        <span class="ident">result</span> <span class="op">=</span> [<span class="ident">north</span> <span class="op">+</span> <span class="ident">instruction</span>[<span class="number">0</span>], <span class="ident">east</span> <span class="op">+</span> <span class="ident">instruction</span>[<span class="number">1</span>], <span class="ident">degree</span>];
+        <span class="ident">result</span>.<span class="ident">north</span> <span class="op">+</span><span class="op">=</span> <span class="ident">instruction</span>.<span class="ident">north</span>;
+        <span class="ident">result</span>.<span class="ident">east</span> <span class="op">+</span><span class="op">=</span> <span class="ident">instruction</span>.<span class="ident">east</span>;
     }
     <span class="ident">result</span>
 }
@@ -225,36 +313,46 @@
 <span class="comment">// -----------------------------------------------------------------------------</span>
 <span class="comment">// Part 2</span>
 <span class="comment">// -----------------------------------------------------------------------------</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
+<span class="kw">struct</span> <span class="ident">PositionWaypoint</span> {
+    <span class="ident">north</span>: <span class="ident">i16</span>,
+    <span class="ident">east</span>: <span class="ident">i16</span>,
+    <span class="ident">waypoint_north</span>: <span class="ident">i16</span>,
+    <span class="ident">waypoint_east</span>: <span class="ident">i16</span>,
+}
 <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">always</span>)]</span>
-<span class="kw">fn</span> <span class="ident">part_2</span>(<span class="ident">current</span>: <span class="kw-2">&amp;</span>[<span class="ident">i16</span>; <span class="number">4</span>], <span class="ident">instruction</span>: <span class="kw-2">&amp;</span>[<span class="ident">i16</span>; <span class="number">4</span>]) <span class="op">-</span><span class="op">&gt;</span> [<span class="ident">i16</span>; <span class="number">4</span>] {
-    <span class="kw">let</span> <span class="ident">result</span>: [<span class="ident">i16</span>; <span class="number">4</span>];
-    <span class="kw">let</span> [<span class="ident">north</span>, <span class="ident">east</span>, <span class="ident">waypoint_north</span>, <span class="ident">waypoint_east</span>] <span class="op">=</span> <span class="kw-2">*</span><span class="ident">current</span>;
-    <span class="kw">if</span> <span class="ident">instruction</span>[<span class="number">2</span>] <span class="op">!</span><span class="op">=</span> <span class="number">0</span> {
+<span class="kw">fn</span> <span class="ident">part_2</span>(<span class="ident">current</span>: <span class="kw-2">&amp;</span><span class="ident">PositionWaypoint</span>, <span class="ident">instruction</span>: <span class="kw-2">&amp;</span><span class="ident">Instruction</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">PositionWaypoint</span> {
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">PositionWaypoint</span> {
+        <span class="ident">north</span>: <span class="ident">current</span>.<span class="ident">north</span>,
+        <span class="ident">east</span>: <span class="ident">current</span>.<span class="ident">east</span>,
+        <span class="ident">waypoint_north</span>: <span class="ident">current</span>.<span class="ident">waypoint_north</span>,
+        <span class="ident">waypoint_east</span>: <span class="ident">current</span>.<span class="ident">waypoint_east</span>,
+    };
+    <span class="kw">if</span> <span class="ident">instruction</span>.<span class="ident">bearing</span> <span class="op">!</span><span class="op">=</span> <span class="number">0</span> {
         <span class="comment">// Rotate waypoint orientation</span>
-        <span class="kw">let</span> <span class="ident">degree</span> <span class="op">=</span> <span class="ident">instruction</span>[<span class="number">2</span>];
-        <span class="kw">match</span> <span class="ident">degree</span> {
-            <span class="number">90</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">result</span> <span class="op">=</span> [<span class="ident">north</span>, <span class="ident">east</span>, <span class="ident">waypoint_east</span>, <span class="op">-</span><span class="ident">waypoint_north</span>],
-            <span class="number">180</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">result</span> <span class="op">=</span> [<span class="ident">north</span>, <span class="ident">east</span>, <span class="op">-</span><span class="ident">waypoint_north</span>, <span class="op">-</span><span class="ident">waypoint_east</span>],
-            <span class="number">270</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">result</span> <span class="op">=</span> [<span class="ident">north</span>, <span class="ident">east</span>, <span class="op">-</span><span class="ident">waypoint_east</span>, <span class="ident">waypoint_north</span>],
+        <span class="kw">match</span> <span class="ident">instruction</span>.<span class="ident">bearing</span> {
+            <span class="number">90</span> <span class="op">=</span><span class="op">&gt;</span> {
+                <span class="ident">result</span>.<span class="ident">waypoint_north</span> <span class="op">=</span> <span class="ident">current</span>.<span class="ident">waypoint_east</span>;
+                <span class="ident">result</span>.<span class="ident">waypoint_east</span> <span class="op">=</span> <span class="op">-</span><span class="ident">current</span>.<span class="ident">waypoint_north</span>;
+            }
+            <span class="number">180</span> <span class="op">=</span><span class="op">&gt;</span> {
+                <span class="ident">result</span>.<span class="ident">waypoint_north</span> <span class="kw-2">*</span><span class="op">=</span> <span class="op">-</span><span class="number">1</span>;
+                <span class="ident">result</span>.<span class="ident">waypoint_east</span> <span class="kw-2">*</span><span class="op">=</span> <span class="op">-</span><span class="number">1</span>;
+            }
+            <span class="number">270</span> <span class="op">=</span><span class="op">&gt;</span> {
+                <span class="ident">result</span>.<span class="ident">waypoint_north</span> <span class="op">=</span> <span class="op">-</span><span class="ident">current</span>.<span class="ident">waypoint_east</span>;
+                <span class="ident">result</span>.<span class="ident">waypoint_east</span> <span class="op">=</span> <span class="ident">current</span>.<span class="ident">waypoint_north</span>;
+            }
             <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;unknown direction&quot;</span>),
         }
-    } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">instruction</span>[<span class="number">3</span>] <span class="op">&gt;</span> <span class="number">0</span> {
+    } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">instruction</span>.<span class="ident">forward</span> <span class="op">&gt;</span> <span class="number">0</span> {
         <span class="comment">// Move &quot;forward&quot; towards waypoint</span>
-        <span class="kw">let</span> <span class="ident">forward</span> <span class="op">=</span> <span class="ident">instruction</span>[<span class="number">3</span>];
-        <span class="ident">result</span> <span class="op">=</span> [
-            <span class="ident">north</span> <span class="op">+</span> <span class="ident">forward</span> <span class="op">*</span> <span class="ident">waypoint_north</span>,
-            <span class="ident">east</span> <span class="op">+</span> <span class="ident">forward</span> <span class="op">*</span> <span class="ident">waypoint_east</span>,
-            <span class="ident">waypoint_north</span>,
-            <span class="ident">waypoint_east</span>,
-        ];
+        <span class="ident">result</span>.<span class="ident">north</span> <span class="op">+</span><span class="op">=</span> <span class="ident">instruction</span>.<span class="ident">forward</span> <span class="op">*</span> <span class="ident">current</span>.<span class="ident">waypoint_north</span>;
+        <span class="ident">result</span>.<span class="ident">east</span> <span class="op">+</span><span class="op">=</span> <span class="ident">instruction</span>.<span class="ident">forward</span> <span class="op">*</span> <span class="ident">current</span>.<span class="ident">waypoint_east</span>;
     } <span class="kw">else</span> {
         <span class="comment">// Move waypoint</span>
-        <span class="ident">result</span> <span class="op">=</span> [
-            <span class="ident">north</span>,
-            <span class="ident">east</span>,
-            <span class="ident">waypoint_north</span> <span class="op">+</span> <span class="ident">instruction</span>[<span class="number">0</span>],
-            <span class="ident">waypoint_east</span> <span class="op">+</span> <span class="ident">instruction</span>[<span class="number">1</span>],
-        ];
+        <span class="ident">result</span>.<span class="ident">waypoint_north</span> <span class="op">+</span><span class="op">=</span> <span class="ident">instruction</span>.<span class="ident">north</span>;
+        <span class="ident">result</span>.<span class="ident">waypoint_east</span> <span class="op">+</span><span class="op">=</span> <span class="ident">instruction</span>.<span class="ident">east</span>;
     }
     <span class="ident">result</span>
 }
@@ -271,9 +369,9 @@
     <span class="kw">let</span> <span class="ident">buffer</span>: <span class="ident">String</span> <span class="op">=</span> <span class="ident">std</span>::<span class="ident">fs</span>::<span class="ident">read_to_string</span>(<span class="string">&quot;data/day12.txt&quot;</span>).<span class="ident">unwrap</span>();
 
     <span class="comment">// Read to vector</span>
-    <span class="kw">let</span> <span class="ident">values</span>: <span class="ident">Vec</span><span class="op">&lt;</span>[<span class="ident">i16</span>; <span class="number">4</span>]<span class="op">&gt;</span> <span class="op">=</span> <span class="ident">buffer</span>
+    <span class="kw">let</span> <span class="ident">values</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Instruction</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">buffer</span>
         .<span class="ident">lines</span>()
-        .<span class="ident">map</span>(<span class="op">|</span><span class="ident">line</span><span class="op">|</span> <span class="ident">to_array</span>(<span class="ident">line</span>).<span class="ident">expect</span>(<span class="string">&quot;failed to parse line&quot;</span>))
+        .<span class="ident">map</span>(<span class="op">|</span><span class="ident">line</span><span class="op">|</span> <span class="ident">line</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">Instruction</span><span class="op">&gt;</span>().<span class="ident">expect</span>(<span class="string">&quot;failed to parse line&quot;</span>))
         .<span class="ident">collect</span>();
     <span class="kw">let</span> <span class="ident">time_setup</span> <span class="op">=</span> <span class="ident">start_setup</span>.<span class="ident">elapsed</span>();
 
@@ -282,10 +380,15 @@
     <span class="comment">// -------------------------------------------------------------------------</span>
     <span class="comment">// Move in directions given</span>
     <span class="kw">let</span> <span class="ident">start_part_1</span> <span class="op">=</span> <span class="ident">Instant</span>::<span class="ident">now</span>();
-    <span class="kw">let</span> [<span class="ident">north_1</span>, <span class="ident">east_1</span>, <span class="kw">_</span>] <span class="op">=</span> <span class="ident">values</span>
-        .<span class="ident">iter</span>()
-        .<span class="ident">fold</span>([<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>], <span class="op">|</span><span class="ident">acc</span>, <span class="ident">instruction</span><span class="op">|</span> <span class="ident">part_1</span>(<span class="kw-2">&amp;</span><span class="ident">acc</span>, <span class="ident">instruction</span>));
-    <span class="kw">let</span> <span class="ident">distance_1</span> <span class="op">=</span> <span class="ident">north_1</span>.<span class="ident">abs</span>() <span class="op">+</span> <span class="ident">east_1</span>.<span class="ident">abs</span>();
+    <span class="kw">let</span> <span class="ident">position_1</span> <span class="op">=</span> <span class="ident">values</span>.<span class="ident">iter</span>().<span class="ident">fold</span>(
+        <span class="ident">Position</span> {
+            <span class="ident">north</span>: <span class="number">0</span>,
+            <span class="ident">east</span>: <span class="number">0</span>,
+            <span class="ident">bearing</span>: <span class="number">0</span>,
+        },
+        <span class="op">|</span><span class="ident">acc</span>, <span class="ident">instruction</span><span class="op">|</span> <span class="ident">part_1</span>(<span class="kw-2">&amp;</span><span class="ident">acc</span>, <span class="ident">instruction</span>),
+    );
+    <span class="kw">let</span> <span class="ident">distance_1</span> <span class="op">=</span> <span class="ident">position_1</span>.<span class="ident">north</span>.<span class="ident">abs</span>() <span class="op">+</span> <span class="ident">position_1</span>.<span class="ident">east</span>.<span class="ident">abs</span>();
     <span class="kw">let</span> <span class="ident">time_part_1</span> <span class="op">=</span> <span class="ident">start_part_1</span>.<span class="ident">elapsed</span>();
 
     <span class="comment">// -------------------------------------------------------------------------</span>
@@ -293,10 +396,16 @@
     <span class="comment">// -------------------------------------------------------------------------</span>
     <span class="comment">// Move towards waypoint</span>
     <span class="kw">let</span> <span class="ident">start_part_2</span> <span class="op">=</span> <span class="ident">Instant</span>::<span class="ident">now</span>();
-    <span class="kw">let</span> [<span class="ident">north_2</span>, <span class="ident">east_2</span>, <span class="kw">_</span>, <span class="kw">_</span>] <span class="op">=</span> <span class="ident">values</span>
-        .<span class="ident">iter</span>()
-        .<span class="ident">fold</span>([<span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">10</span>], <span class="op">|</span><span class="ident">acc</span>, <span class="ident">instruction</span><span class="op">|</span> <span class="ident">part_2</span>(<span class="kw-2">&amp;</span><span class="ident">acc</span>, <span class="ident">instruction</span>));
-    <span class="kw">let</span> <span class="ident">distance_2</span> <span class="op">=</span> <span class="ident">north_2</span>.<span class="ident">abs</span>() <span class="op">+</span> <span class="ident">east_2</span>.<span class="ident">abs</span>();
+    <span class="kw">let</span> <span class="ident">position_2</span> <span class="op">=</span> <span class="ident">values</span>.<span class="ident">iter</span>().<span class="ident">fold</span>(
+        <span class="ident">PositionWaypoint</span> {
+            <span class="ident">north</span>: <span class="number">0</span>,
+            <span class="ident">east</span>: <span class="number">0</span>,
+            <span class="ident">waypoint_north</span>: <span class="number">1</span>,
+            <span class="ident">waypoint_east</span>: <span class="number">10</span>,
+        },
+        <span class="op">|</span><span class="ident">acc</span>, <span class="ident">instruction</span><span class="op">|</span> <span class="ident">part_2</span>(<span class="kw-2">&amp;</span><span class="ident">acc</span>, <span class="ident">instruction</span>),
+    );
+    <span class="kw">let</span> <span class="ident">distance_2</span> <span class="op">=</span> <span class="ident">position_2</span>.<span class="ident">north</span>.<span class="ident">abs</span>() <span class="op">+</span> <span class="ident">position_2</span>.<span class="ident">east</span>.<span class="ident">abs</span>();
     <span class="kw">let</span> <span class="ident">time_part_2</span> <span class="op">=</span> <span class="ident">start_part_2</span>.<span class="ident">elapsed</span>();
 
     <span class="comment">// -------------------------------------------------------------------------</span>
@@ -305,13 +414,26 @@
     <span class="kw">let</span> <span class="ident">start_combined</span> <span class="op">=</span> <span class="ident">Instant</span>::<span class="ident">now</span>();
     <span class="kw">let</span> (<span class="ident">result_1</span>, <span class="ident">result_2</span>) <span class="op">=</span> <span class="ident">buffer</span>
         .<span class="ident">lines</span>()
-        .<span class="ident">map</span>(<span class="op">|</span><span class="ident">line</span><span class="op">|</span> <span class="ident">to_array</span>(<span class="ident">line</span>).<span class="ident">expect</span>(<span class="string">&quot;failed to parse line&quot;</span>))
-        .<span class="ident">fold</span>(([<span class="number">0</span>; <span class="number">3</span>], [<span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">10</span>]), <span class="op">|</span><span class="ident">acc</span>, <span class="ident">instruction</span><span class="op">|</span> {
-            (<span class="ident">part_1</span>(<span class="kw-2">&amp;</span><span class="ident">acc</span>.<span class="number">0</span>, <span class="kw-2">&amp;</span><span class="ident">instruction</span>), <span class="ident">part_2</span>(<span class="kw-2">&amp;</span><span class="ident">acc</span>.<span class="number">1</span>, <span class="kw-2">&amp;</span><span class="ident">instruction</span>))
-        });
+        .<span class="ident">map</span>(<span class="op">|</span><span class="ident">line</span><span class="op">|</span> <span class="ident">line</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">Instruction</span><span class="op">&gt;</span>().<span class="ident">expect</span>(<span class="string">&quot;failed to parse line&quot;</span>))
+        .<span class="ident">fold</span>(
+            (
+                <span class="ident">Position</span> {
+                    <span class="ident">north</span>: <span class="number">0</span>,
+                    <span class="ident">east</span>: <span class="number">0</span>,
+                    <span class="ident">bearing</span>: <span class="number">0</span>,
+                },
+                <span class="ident">PositionWaypoint</span> {
+                    <span class="ident">north</span>: <span class="number">0</span>,
+                    <span class="ident">east</span>: <span class="number">0</span>,
+                    <span class="ident">waypoint_north</span>: <span class="number">1</span>,
+                    <span class="ident">waypoint_east</span>: <span class="number">10</span>,
+                },
+            ),
+            <span class="op">|</span><span class="ident">acc</span>, <span class="ident">instruction</span><span class="op">|</span> (<span class="ident">part_1</span>(<span class="kw-2">&amp;</span><span class="ident">acc</span>.<span class="number">0</span>, <span class="kw-2">&amp;</span><span class="ident">instruction</span>), <span class="ident">part_2</span>(<span class="kw-2">&amp;</span><span class="ident">acc</span>.<span class="number">1</span>, <span class="kw-2">&amp;</span><span class="ident">instruction</span>)),
+        );
     <span class="kw">let</span> (<span class="ident">combined_1</span>, <span class="ident">combined_2</span>) <span class="op">=</span> (
-        <span class="ident">result_1</span>[<span class="number">0</span>].<span class="ident">abs</span>() <span class="op">+</span> <span class="ident">result_1</span>[<span class="number">1</span>].<span class="ident">abs</span>(),
-        <span class="ident">result_2</span>[<span class="number">0</span>].<span class="ident">abs</span>() <span class="op">+</span> <span class="ident">result_2</span>[<span class="number">1</span>].<span class="ident">abs</span>(),
+        <span class="ident">result_1</span>.<span class="ident">north</span>.<span class="ident">abs</span>() <span class="op">+</span> <span class="ident">result_1</span>.<span class="ident">east</span>.<span class="ident">abs</span>(),
+        <span class="ident">result_2</span>.<span class="ident">north</span>.<span class="ident">abs</span>() <span class="op">+</span> <span class="ident">result_2</span>.<span class="ident">east</span>.<span class="ident">abs</span>(),
     );
     <span class="kw">let</span> <span class="ident">time_combined</span> <span class="op">=</span> <span class="ident">start_combined</span>.<span class="ident">elapsed</span>();
     <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">combined_1</span>, <span class="ident">distance_1</span>);

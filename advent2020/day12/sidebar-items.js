@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["part_1",""],["part_2",""],["report",""],["run",""],["to_array",""]]});
+initSidebarItems({"fn":[["part_1",""],["part_2",""],["report",""],["run",""]],"struct":[["Instruction",""],["Position",""],["PositionWaypoint",""]]});
