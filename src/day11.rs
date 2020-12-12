@@ -1,7 +1,8 @@
 //! Day 11:
 //! This puzzle is similar to Conway's Game of Life. As such, I have taken some hints
 //! from optimized Game of Life simulations. Specifically, I precompute the indices to
-//! check for each day, and I maintain a reducing list of seats to recheck.
+//! check for each day, and I maintain a reducing list of seats to recheck. Of note,
+//! I discovered that retain is faster than filter if you are keeping the vector modified.
 
 use crate::prelude::*;
 use arrayvec::ArrayVec;
@@ -39,10 +40,10 @@ fn game_of_life(
         });
         repeat = changed.len() != 0;
         // Apply changes
-        changed.retain(|&index| {
-            seats[index as usize] = (seats[index as usize] + 1) % 2;
-            false
-        });
+        changed
+            .iter()
+            .for_each(|&index| seats[index as usize] = (seats[index as usize] + 1) % 2);
+        changed.clear();
     }
 }
 
