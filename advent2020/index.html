@@ -49,7 +49,8 @@ cannot be combined.</p>
 </td></tr><tr class='module-item'><td><a class="mod" href="day11/index.html" title='advent2020::day11 mod'>day11</a></td><td class='docblock-short'><p>Day 11:
 This puzzle is similar to Conway's Game of Life. As such, I have taken some hints
 from optimized Game of Life simulations. Specifically, I precompute the indices to
-check for each day, and I maintain a reducing list of seats to recheck.</p>
+check for each day, and I maintain a reducing list of seats to recheck. Of note,
+I discovered that retain is faster than filter if you are keeping the vector modified.</p>
 </td></tr><tr class='module-item'><td><a class="mod" href="output/index.html" title='advent2020::output mod'>output</a></td><td class='docblock-short'><p>Output:
 This module collects some of my <code>println!</code> boilerplate between the days.</p>
 </td></tr><tr class='module-item'><td><a class="mod" href="prelude/index.html" title='advent2020::prelude mod'>prelude</a></td><td class='docblock-short'></td></tr></table><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
