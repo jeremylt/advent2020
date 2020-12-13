@@ -50,7 +50,9 @@ cannot be combined.</p>
 This puzzle is similar to Conway's Game of Life. As such, I have taken some hints
 from optimized Game of Life simulations. Specifically, I precompute the indices to
 check for each day, and I maintain a reducing list of seats to recheck. Of note,
-I discovered that retain is faster than filter if you are keeping the vector modified.</p>
+I discovered that retain is faster than filter if you are keeping the vector modified.
+Adding a halo of empty seats around the map simplifies the code and makes it easier
+to vectorize.</p>
 </td></tr><tr class='module-item'><td><a class="mod" href="day12/index.html" title='advent2020::day12 mod'>day12</a></td><td class='docblock-short'><p>Day 12:
 Another straightforward problem today. As usual, for these easier problems parsing
 the data is expensive. Since the trig is only by 90 degrees, it is faster to just

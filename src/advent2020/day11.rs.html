@@ -246,12 +246,16 @@
 <span id="243">243</span>
 <span id="244">244</span>
 <span id="245">245</span>
+<span id="246">246</span>
+<span id="247">247</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Day 11:</span>
 <span class="doccomment">//! This puzzle is similar to Conway&#39;s Game of Life. As such, I have taken some hints</span>
 <span class="doccomment">//! from optimized Game of Life simulations. Specifically, I precompute the indices to</span>
 <span class="doccomment">//! check for each day, and I maintain a reducing list of seats to recheck. Of note,</span>
 <span class="doccomment">//! I discovered that retain is faster than filter if you are keeping the vector modified.</span>
+<span class="doccomment">//! Adding a halo of empty seats around the map simplifies the code and makes it easier</span>
+<span class="doccomment">//! to vectorize.</span>
 
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">prelude</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">arrayvec</span>::<span class="ident">ArrayVec</span>;
