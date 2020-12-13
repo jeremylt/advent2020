@@ -1,1 +1,1 @@
-initSidebarItems({"constant":[["CAPACITY",""]],"fn":[["game_of_life",""],["part_1",""],["part_2",""],["report",""],["run",""]]});
+initSidebarItems({"constant":[["CAPACITY",""],["NEIGHBORS_1",""],["NEIGHBORS_2",""]],"fn":[["game_of_life",""],["part_1",""],["part_2",""],["report",""],["run",""]]});
