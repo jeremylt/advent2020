@@ -29,7 +29,8 @@ fn game_of_life(
             // Check seats for change
             let count = check_neighbors[i as usize]
                 .iter()
-                .fold(0, |acc, &index| (acc << 1) + (seats[index as usize] & 1));
+                .map(|&index| seats[index as usize] % 2)
+                .fold(0, |acc, value| (acc << 1) | value);
             if (seats[i as usize] == 0 && count == 0)
                 || (seats[i as usize] == 1 && neighbors_bool[count as usize])
             {
