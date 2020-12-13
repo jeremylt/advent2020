@@ -19,7 +19,7 @@ const CAPACITY: usize = 16384;
 fn game_of_life(
     seats: &mut ArrayVec<[u8; CAPACITY]>,
     check_seats: &mut Vec<u16>,
-    max_neighbors: u8,
+    neighbors_bool: &[bool; 256],
     check_neighbors: &ArrayVec<[[u16; 8]; CAPACITY]>,
 ) {
     let mut changed: ArrayVec<[u16; CAPACITY]> = ArrayVec::new();
@@ -29,10 +29,9 @@ fn game_of_life(
             // Check seats for change
             let count = check_neighbors[i as usize]
                 .iter()
-                .map(|&index| (seats[index as usize] % 2))
-                .sum::<u8>();
+                .fold(0, |acc, &index| (acc << 1) + (seats[index as usize] & 1));
             if (seats[i as usize] == 0 && count == 0)
-                || (seats[i as usize] == 1 && count >= max_neighbors)
+                || (seats[i as usize] == 1 && neighbors_bool[count as usize])
             {
                 changed.push(i);
                 true
@@ -185,7 +184,7 @@ pub(crate) fn run() -> Results {
     let check_neighbors = part_1(row_length, number_rows);
 
     // Run Game of Life
-    game_of_life(&mut seats, &mut check_seats, 4, &check_neighbors);
+    game_of_life(&mut seats, &mut check_seats, &NEIGHBORS_1, &check_neighbors);
     let count_1 = seats.iter().filter(|&s| *s == 1).count();
 
     let time_part_1 = start_part_1.elapsed();
@@ -214,7 +213,7 @@ pub(crate) fn run() -> Results {
     let check_neighbors = part_2(&seats, row_length, number_rows);
 
     // Run Game of Life
-    game_of_life(&mut seats, &mut check_seats, 5, &check_neighbors);
+    game_of_life(&mut seats, &mut check_seats, &NEIGHBORS_2, &check_neighbors);
     let count_2 = seats.iter().filter(|&s| *s == 1).count();
 
     let time_part_2 = start_part_2.elapsed();
@@ -243,5 +242,51 @@ pub(crate) fn report(results: &Results) {
     output::print_part(2, "⛴ Occupied", &format!("{}", results.part_2));
     output::print_timing(&results.times);
 }
+
+// -----------------------------------------------------------------------------
+// Boolean arrays for neighbor states
+// -----------------------------------------------------------------------------
+const NEIGHBORS_1: [bool; 256] = [
+    false, false, false, false, false, false, false, false, false, false, false, false, false,
+    false, false, true, false, false, false, false, false, false, false, true, false, false, false,
+    true, false, true, true, true, false, false, false, false, false, false, false, true, false,
+    false, false, true, false, true, true, true, false, false, false, true, false, true, true,
+    true, false, true, true, true, true, true, true, true, false, false, false, false, false,
+    false, false, true, false, false, false, true, false, true, true, true, false, false, false,
+    true, false, true, true, true, false, true, true, true, true, true, true, true, false, false,
+    false, true, false, true, true, true, false, true, true, true, true, true, true, true, false,
+    true, true, true, true, true, true, true, true, true, true, true, true, true, true, true,
+    false, false, false, false, false, false, false, true, false, false, false, true, false, true,
+    true, true, false, false, false, true, false, true, true, true, false, true, true, true, true,
+    true, true, true, false, false, false, true, false, true, true, true, false, true, true, true,
+    true, true, true, true, false, true, true, true, true, true, true, true, true, true, true,
+    true, true, true, true, true, false, false, false, true, false, true, true, true, false, true,
+    true, true, true, true, true, true, false, true, true, true, true, true, true, true, true,
+    true, true, true, true, true, true, true, false, true, true, true, true, true, true, true,
+    true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true,
+    true, true, true, true, true, true, true, true,
+];
+
+const NEIGHBORS_2: [bool; 256] = [
+    false, false, false, false, false, false, false, false, false, false, false, false, false,
+    false, false, false, false, false, false, false, false, false, false, false, false, false,
+    false, false, false, false, false, true, false, false, false, false, false, false, false,
+    false, false, false, false, false, false, false, false, true, false, false, false, false,
+    false, false, false, true, false, false, false, true, false, true, true, true, false, false,
+    false, false, false, false, false, false, false, false, false, false, false, false, false,
+    true, false, false, false, false, false, false, false, true, false, false, false, true, false,
+    true, true, true, false, false, false, false, false, false, false, true, false, false, false,
+    true, false, true, true, true, false, false, false, true, false, true, true, true, false, true,
+    true, true, true, true, true, true, false, false, false, false, false, false, false, false,
+    false, false, false, false, false, false, false, true, false, false, false, false, false,
+    false, false, true, false, false, false, true, false, true, true, true, false, false, false,
+    false, false, false, false, true, false, false, false, true, false, true, true, true, false,
+    false, false, true, false, true, true, true, false, true, true, true, true, true, true, true,
+    false, false, false, false, false, false, false, true, false, false, false, true, false, true,
+    true, true, false, false, false, true, false, true, true, true, false, true, true, true, true,
+    true, true, true, false, false, false, true, false, true, true, true, false, true, true, true,
+    true, true, true, true, false, true, true, true, true, true, true, true, true, true, true,
+    true, true, true, true, true,
+];
 
 // -----------------------------------------------------------------------------

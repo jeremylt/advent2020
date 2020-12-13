@@ -43,7 +43,7 @@ impl Node {
 fn str_to_key(t: &str) -> Result<u32, std::num::ParseIntError> {
     Ok(t.as_bytes()
         .iter()
-        .fold(1 as u32, |acc, c| acc * 2 + *c as u32))
+        .fold(1 as u32, |acc, c| (acc << 1) + *c as u32))
 }
 
 fn add_to_graph(s: &str, bag_graph: &mut FxHashMap<u32, Node>) {

@@ -13,7 +13,7 @@ use itertools::Itertools;
 fn parse_fblr_binary(s: &str) -> Result<usize, std::num::ParseIntError> {
     Ok(s.as_bytes()
         .iter()
-        .fold(0, |id, c| id * 2 + (*c as usize % 7) % 2)) // B, R -> 1; F, L -> 0
+        .fold(0, |id, c| (id << 1) + (*c as usize % 7) % 2)) // B, R -> 1; F, L -> 0
 }
 
 // -----------------------------------------------------------------------------
