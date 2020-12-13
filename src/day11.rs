@@ -3,6 +3,8 @@
 //! from optimized Game of Life simulations. Specifically, I precompute the indices to
 //! check for each day, and I maintain a reducing list of seats to recheck. Of note,
 //! I discovered that retain is faster than filter if you are keeping the vector modified.
+//! Adding a halo of empty seats around the map simplifies the code and makes it easier
+//! to vectorize.
 
 use crate::prelude::*;
 use arrayvec::ArrayVec;
