@@ -69,7 +69,7 @@ pub(crate) fn run() -> Results {
             let value = entry.parse().expect("failed to parse line");
             Bus {
                 id: value,
-                time: i % value,
+                time: value - (i % value),
             }
         })
         .collect();
@@ -104,7 +104,7 @@ pub(crate) fn run() -> Results {
         .skip(1)
         .map(|bus| {
             let m_i = m / bus.id;
-            ((bus.id - bus.time) * euclid_inverse(m_i as i64, bus.id as i64) * m_i) % m
+            (bus.time * euclid_inverse(m_i as i64, bus.id as i64) * m_i) % m
         })
         .sum::<usize>()
         % m;
