@@ -22,7 +22,6 @@ fn game_of_life(
     neighbors_bool: &[bool; 256],
     check_neighbors: &ArrayVec<[[u16; 8]; CAPACITY]>,
 ) {
-    let mut changed: ArrayVec<[u16; CAPACITY]> = ArrayVec::new();
     let mut repeat = true;
     while repeat {
         check_seats.retain(|&i| {
@@ -34,19 +33,16 @@ fn game_of_life(
             if (seats[i as usize] == 0 && count == 0)
                 || (seats[i as usize] == 1 && neighbors_bool[count as usize])
             {
-                changed.push(i);
                 true
             } else {
                 false
             }
         });
-        repeat = false;
         // Apply changes
-        changed.iter().for_each(|&index| {
-            repeat = true;
+        check_seats.iter().for_each(|&index| {
             seats[index as usize] = (seats[index as usize] + 1) % 2;
         });
-        changed.clear();
+        repeat = check_seats.len() > 0;
     }
 }
 
