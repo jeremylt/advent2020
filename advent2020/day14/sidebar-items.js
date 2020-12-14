@@ -1,0 +1,1 @@
+initSidebarItems({"constant":[["CAPACITY",""],["INSTRUCTIONS",""],["MAX_36_BITS",""]],"fn":[["report",""],["run",""],["update_memory_1",""],["update_memory_2",""]],"struct":[["Instructions",""],["Update",""]]});
