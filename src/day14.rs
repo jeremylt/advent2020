@@ -20,7 +20,6 @@ const MAX_36_BITS: u64 = u64::max_value() >> (64 - 36);
 struct Instructions {
     set_mask: u64,
     clear_mask: u64,
-    floating_mask: u64,
     updates: ArrayVec<[Update; INSTRUCTIONS]>,
 }
 
@@ -44,7 +43,6 @@ impl std::str::FromStr for Instructions {
                 }
             });
         clear_mask = !clear_mask;
-        let floating_mask = set_mask | !clear_mask;
         // Updates
         let updates = data
             .map(|line| line.parse::<Update>().expect("failed to parse update"))
@@ -53,7 +51,6 @@ impl std::str::FromStr for Instructions {
         Ok(Self {
             set_mask,
             clear_mask,
-            floating_mask,
             updates,
         })
     }
@@ -95,11 +92,11 @@ fn update_memory_1(instructions: &Instructions, memory: &mut FxHashSet<u64>) -> 
 #[inline]
 fn update_memory_2(instructions: &Instructions, memory: &mut FxHashSet<u64>) -> u64 {
     let mut sum = 0;
+    let floating_mask = instructions.set_mask | !instructions.clear_mask;
     instructions.updates.iter().rev().for_each(|update| {
-        let base_address: u64 =
-            (update.address | instructions.set_mask) & instructions.floating_mask;
+        let base_address: u64 = (update.address | instructions.set_mask) & floating_mask;
 
-        let mut current_mask = instructions.floating_mask;
+        let mut current_mask = floating_mask;
         loop {
             if memory.insert(base_address | (!current_mask & MAX_36_BITS)) {
                 sum += update.value;
@@ -107,7 +104,7 @@ fn update_memory_2(instructions: &Instructions, memory: &mut FxHashSet<u64>) -> 
             if current_mask & MAX_36_BITS == MAX_36_BITS {
                 break;
             }
-            current_mask = (current_mask + 1) | instructions.floating_mask;
+            current_mask = (current_mask + 1) | floating_mask;
         }
     });
     sum
