@@ -187,9 +187,6 @@
 <span id="184">184</span>
 <span id="185">185</span>
 <span id="186">186</span>
-<span id="187">187</span>
-<span id="188">188</span>
-<span id="189">189</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Day 14:</span>
 <span class="doccomment">//! The bitwise operations are straightforward, but the combinatorics make this tricky.</span>
@@ -213,7 +210,6 @@
 <span class="kw">struct</span> <span class="ident">Instructions</span> {
     <span class="ident">set_mask</span>: <span class="ident">u64</span>,
     <span class="ident">clear_mask</span>: <span class="ident">u64</span>,
-    <span class="ident">floating_mask</span>: <span class="ident">u64</span>,
     <span class="ident">updates</span>: <span class="ident">ArrayVec</span><span class="op">&lt;</span>[<span class="ident">Update</span>; <span class="ident">INSTRUCTIONS</span>]<span class="op">&gt;</span>,
 }
 
@@ -237,7 +233,6 @@
                 }
             });
         <span class="ident">clear_mask</span> <span class="op">=</span> <span class="op">!</span><span class="ident">clear_mask</span>;
-        <span class="kw">let</span> <span class="ident">floating_mask</span> <span class="op">=</span> <span class="ident">set_mask</span> <span class="op">|</span> <span class="op">!</span><span class="ident">clear_mask</span>;
         <span class="comment">// Updates</span>
         <span class="kw">let</span> <span class="ident">updates</span> <span class="op">=</span> <span class="ident">data</span>
             .<span class="ident">map</span>(<span class="op">|</span><span class="ident">line</span><span class="op">|</span> <span class="ident">line</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">Update</span><span class="op">&gt;</span>().<span class="ident">expect</span>(<span class="string">&quot;failed to parse update&quot;</span>))
@@ -246,7 +241,6 @@
         <span class="prelude-val">Ok</span>(<span class="self">Self</span> {
             <span class="ident">set_mask</span>,
             <span class="ident">clear_mask</span>,
-            <span class="ident">floating_mask</span>,
             <span class="ident">updates</span>,
         })
     }
@@ -288,11 +282,11 @@
 <span class="attribute">#[<span class="ident">inline</span>]</span>
 <span class="kw">fn</span> <span class="ident">update_memory_2</span>(<span class="ident">instructions</span>: <span class="kw-2">&amp;</span><span class="ident">Instructions</span>, <span class="ident">memory</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">FxHashSet</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span> {
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">sum</span> <span class="op">=</span> <span class="number">0</span>;
+    <span class="kw">let</span> <span class="ident">floating_mask</span> <span class="op">=</span> <span class="ident">instructions</span>.<span class="ident">set_mask</span> <span class="op">|</span> <span class="op">!</span><span class="ident">instructions</span>.<span class="ident">clear_mask</span>;
     <span class="ident">instructions</span>.<span class="ident">updates</span>.<span class="ident">iter</span>().<span class="ident">rev</span>().<span class="ident">for_each</span>(<span class="op">|</span><span class="ident">update</span><span class="op">|</span> {
-        <span class="kw">let</span> <span class="ident">base_address</span>: <span class="ident">u64</span> <span class="op">=</span>
-            (<span class="ident">update</span>.<span class="ident">address</span> <span class="op">|</span> <span class="ident">instructions</span>.<span class="ident">set_mask</span>) <span class="op">&amp;</span> <span class="ident">instructions</span>.<span class="ident">floating_mask</span>;
+        <span class="kw">let</span> <span class="ident">base_address</span>: <span class="ident">u64</span> <span class="op">=</span> (<span class="ident">update</span>.<span class="ident">address</span> <span class="op">|</span> <span class="ident">instructions</span>.<span class="ident">set_mask</span>) <span class="op">&amp;</span> <span class="ident">floating_mask</span>;
 
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">current_mask</span> <span class="op">=</span> <span class="ident">instructions</span>.<span class="ident">floating_mask</span>;
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">current_mask</span> <span class="op">=</span> <span class="ident">floating_mask</span>;
         <span class="kw">loop</span> {
             <span class="kw">if</span> <span class="ident">memory</span>.<span class="ident">insert</span>(<span class="ident">base_address</span> <span class="op">|</span> (<span class="op">!</span><span class="ident">current_mask</span> <span class="op">&amp;</span> <span class="ident">MAX_36_BITS</span>)) {
                 <span class="ident">sum</span> <span class="op">+</span><span class="op">=</span> <span class="ident">update</span>.<span class="ident">value</span>;
@@ -300,7 +294,7 @@
             <span class="kw">if</span> <span class="ident">current_mask</span> <span class="op">&amp;</span> <span class="ident">MAX_36_BITS</span> <span class="op">=</span><span class="op">=</span> <span class="ident">MAX_36_BITS</span> {
                 <span class="kw">break</span>;
             }
-            <span class="ident">current_mask</span> <span class="op">=</span> (<span class="ident">current_mask</span> <span class="op">+</span> <span class="number">1</span>) <span class="op">|</span> <span class="ident">instructions</span>.<span class="ident">floating_mask</span>;
+            <span class="ident">current_mask</span> <span class="op">=</span> (<span class="ident">current_mask</span> <span class="op">+</span> <span class="number">1</span>) <span class="op">|</span> <span class="ident">floating_mask</span>;
         }
     });
     <span class="ident">sum</span>
