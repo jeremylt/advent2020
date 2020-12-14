@@ -191,8 +191,14 @@
 <span id="188">188</span>
 <span id="189">189</span>
 <span id="190">190</span>
+<span id="191">191</span>
+<span id="192">192</span>
+<span id="193">193</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Day 14:</span>
+<span class="doccomment">//! The bitwise operations are straightforward, but the combinatorics make this tricky.</span>
+<span class="doccomment">//! 64 bit integers are slower to work with, and my current solution to Part 2 is</span>
+<span class="doccomment">//! slow in hitting all required floating mask values.</span>
 
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">prelude</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">arrayvec</span>::<span class="ident">ArrayVec</span>;
