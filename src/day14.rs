@@ -181,7 +181,7 @@ pub(crate) fn run() -> Results {
 // Report
 // -----------------------------------------------------------------------------
 pub(crate) fn report(results: &Results) {
-    output::print_day(1, "Docking Data");
+    output::print_day(14, "Docking Data");
     output::print_part(1, "🏗 Sum", &format!("{}", results.part_1));
     output::print_part(2, "🏗 Sum", &format!("{}", results.part_2));
     output::print_timing(&results.times);
