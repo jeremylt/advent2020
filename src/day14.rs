@@ -35,12 +35,11 @@ impl std::str::FromStr for Instructions {
             .as_bytes()
             .iter()
             .enumerate()
-            .for_each(|(i, &b)| {
-                if b == b'1' {
-                    set_mask |= 1 << (35 - i);
-                } else if b == b'0' {
-                    clear_mask |= 1 << (35 - i);
-                }
+            .for_each(|(i, &b)| match b {
+                b'1' => set_mask |= 1 << (35 - i),
+                b'0' => clear_mask |= 1 << (35 - i),
+                b'X' => (), // Inferred from other masks
+                _ => panic!("invalid bit"),
             });
         clear_mask = !clear_mask;
         // Updates
@@ -66,8 +65,8 @@ impl std::str::FromStr for Update {
     type Err = std::num::ParseIntError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let mut data = s.splitn(2, "]");
-        let address: u64 = data.next().unwrap()[4..].parse().unwrap();
-        let value: u64 = data.next().unwrap()[3..].parse().unwrap();
+        let address: u64 = data.next().unwrap()[4..].parse().unwrap(); // First 4 are 'mem['
+        let value: u64 = data.next().unwrap()[3..].parse().unwrap(); // First 3 are ' = '
         Ok(Self { address, value })
     }
 }
