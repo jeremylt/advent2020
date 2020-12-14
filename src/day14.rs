@@ -1,7 +1,8 @@
 //! Day 14:
 //! The bitwise operations are straightforward, but the combinatorics make this tricky.
 //! 64 bit integers are slower to work with, and my current solution to Part 2 is
-//! slow in hitting all required floating mask values.
+//! slow in hitting all required floating mask values. I sum the data as I walk the list,
+//! visiting the instructions in reverse, to avoid repetition in traversing the map.
 
 use crate::prelude::*;
 use arrayvec::ArrayVec;
