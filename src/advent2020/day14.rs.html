@@ -189,11 +189,6 @@
 <span id="186">186</span>
 <span id="187">187</span>
 <span id="188">188</span>
-<span id="189">189</span>
-<span id="190">190</span>
-<span id="191">191</span>
-<span id="192">192</span>
-<span id="193">193</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Day 14:</span>
 <span class="doccomment">//! The bitwise operations are straightforward, but the combinatorics make this tricky.</span>
@@ -202,10 +197,10 @@
 
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">prelude</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">arrayvec</span>::<span class="ident">ArrayVec</span>;
-<span class="kw">use</span> <span class="ident">rustc_hash</span>::<span class="ident">FxHashMap</span>;
+<span class="kw">use</span> <span class="ident">rustc_hash</span>::<span class="ident">FxHashSet</span>;
 
 <span class="comment">// Constants</span>
-<span class="kw">const</span> <span class="ident">CAPACITY</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">512</span>;
+<span class="kw">const</span> <span class="ident">CAPACITY</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">4096</span>;
 <span class="kw">const</span> <span class="ident">INSTRUCTIONS</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">8</span>;
 <span class="kw">const</span> <span class="ident">MAX_36_BITS</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="ident">u64</span>::<span class="ident">max_value</span>() <span class="op">&gt;</span><span class="op">&gt;</span> (<span class="number">64</span> <span class="op">-</span> <span class="number">36</span>);
 
@@ -275,34 +270,38 @@
 <span class="comment">// Part 1</span>
 <span class="comment">// -----------------------------------------------------------------------------</span>
 <span class="attribute">#[<span class="ident">inline</span>]</span>
-<span class="kw">fn</span> <span class="ident">update_memory_1</span>(<span class="ident">instructions</span>: <span class="kw-2">&amp;</span><span class="ident">Instructions</span>, <span class="ident">memory</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">FxHashMap</span><span class="op">&lt;</span><span class="ident">u64</span>, <span class="ident">u64</span><span class="op">&gt;</span>) {
-    <span class="ident">instructions</span>.<span class="ident">updates</span>.<span class="ident">iter</span>().<span class="ident">for_each</span>(<span class="op">|</span><span class="ident">update</span><span class="op">|</span> {
-        <span class="ident">memory</span>.<span class="ident">insert</span>(
-            <span class="ident">update</span>.<span class="ident">address</span>,
-            (<span class="ident">update</span>.<span class="ident">value</span> <span class="op">|</span> <span class="ident">instructions</span>.<span class="ident">set_mask</span>) <span class="op">&amp;</span> <span class="ident">instructions</span>.<span class="ident">clear_mask</span>,
-        );
+<span class="kw">fn</span> <span class="ident">update_memory_1</span>(<span class="ident">instructions</span>: <span class="kw-2">&amp;</span><span class="ident">Instructions</span>, <span class="ident">memory</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">FxHashSet</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span> {
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">sum</span> <span class="op">=</span> <span class="number">0</span>;
+    <span class="ident">instructions</span>.<span class="ident">updates</span>.<span class="ident">iter</span>().<span class="ident">rev</span>().<span class="ident">for_each</span>(<span class="op">|</span><span class="ident">update</span><span class="op">|</span> {
+        <span class="kw">if</span> <span class="ident">memory</span>.<span class="ident">insert</span>(<span class="ident">update</span>.<span class="ident">address</span>) {
+            <span class="ident">sum</span> <span class="op">+</span><span class="op">=</span> (<span class="ident">update</span>.<span class="ident">value</span> <span class="op">|</span> <span class="ident">instructions</span>.<span class="ident">set_mask</span>) <span class="op">&amp;</span> <span class="ident">instructions</span>.<span class="ident">clear_mask</span>;
+        }
     });
+    <span class="ident">sum</span>
 }
 
 <span class="comment">// -----------------------------------------------------------------------------</span>
 <span class="comment">// Part 2</span>
 <span class="comment">// -----------------------------------------------------------------------------</span>
 <span class="attribute">#[<span class="ident">inline</span>]</span>
-<span class="kw">fn</span> <span class="ident">update_memory_2</span>(<span class="ident">instructions</span>: <span class="kw-2">&amp;</span><span class="ident">Instructions</span>, <span class="ident">memory</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">FxHashMap</span><span class="op">&lt;</span><span class="ident">u64</span>, <span class="ident">u64</span><span class="op">&gt;</span>) {
-    <span class="ident">instructions</span>.<span class="ident">updates</span>.<span class="ident">iter</span>().<span class="ident">for_each</span>(<span class="op">|</span><span class="ident">update</span><span class="op">|</span> {
+<span class="kw">fn</span> <span class="ident">update_memory_2</span>(<span class="ident">instructions</span>: <span class="kw-2">&amp;</span><span class="ident">Instructions</span>, <span class="ident">memory</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">FxHashSet</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span> {
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">sum</span> <span class="op">=</span> <span class="number">0</span>;
+    <span class="ident">instructions</span>.<span class="ident">updates</span>.<span class="ident">iter</span>().<span class="ident">rev</span>().<span class="ident">for_each</span>(<span class="op">|</span><span class="ident">update</span><span class="op">|</span> {
         <span class="kw">let</span> <span class="ident">base_address</span>: <span class="ident">u64</span> <span class="op">=</span>
             (<span class="ident">update</span>.<span class="ident">address</span> <span class="op">|</span> <span class="ident">instructions</span>.<span class="ident">set_mask</span>) <span class="op">&amp;</span> <span class="ident">instructions</span>.<span class="ident">floating_mask</span>;
 
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">current_mask</span> <span class="op">=</span> <span class="ident">instructions</span>.<span class="ident">floating_mask</span>;
         <span class="kw">loop</span> {
-            <span class="ident">memory</span>.<span class="ident">insert</span>(<span class="ident">base_address</span> <span class="op">|</span> (<span class="op">!</span><span class="ident">current_mask</span> <span class="op">&amp;</span> <span class="ident">MAX_36_BITS</span>), <span class="ident">update</span>.<span class="ident">value</span>);
+            <span class="kw">if</span> <span class="ident">memory</span>.<span class="ident">insert</span>(<span class="ident">base_address</span> <span class="op">|</span> (<span class="op">!</span><span class="ident">current_mask</span> <span class="op">&amp;</span> <span class="ident">MAX_36_BITS</span>)) {
+                <span class="ident">sum</span> <span class="op">+</span><span class="op">=</span> <span class="ident">update</span>.<span class="ident">value</span>;
+            }
             <span class="kw">if</span> <span class="ident">current_mask</span> <span class="op">&amp;</span> <span class="ident">MAX_36_BITS</span> <span class="op">=</span><span class="op">=</span> <span class="ident">MAX_36_BITS</span> {
                 <span class="kw">break</span>;
             }
-            <span class="ident">current_mask</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
-            <span class="ident">current_mask</span> <span class="op">|</span><span class="op">=</span> <span class="ident">instructions</span>.<span class="ident">floating_mask</span>;
+            <span class="ident">current_mask</span> <span class="op">=</span> (<span class="ident">current_mask</span> <span class="op">+</span> <span class="number">1</span>) <span class="op">|</span> <span class="ident">instructions</span>.<span class="ident">floating_mask</span>;
         }
     });
+    <span class="ident">sum</span>
 }
 
 <span class="comment">// -----------------------------------------------------------------------------</span>
@@ -332,10 +331,12 @@
     <span class="comment">// -------------------------------------------------------------------------</span>
     <span class="comment">// Apply value bitmasks</span>
     <span class="kw">let</span> <span class="ident">start_part_1</span> <span class="op">=</span> <span class="ident">Instant</span>::<span class="ident">now</span>();
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">memory</span> <span class="op">=</span> <span class="ident">FxHashMap</span>::<span class="op">&lt;</span><span class="ident">u64</span>, <span class="ident">u64</span><span class="op">&gt;</span>::<span class="ident">with_capacity_and_hasher</span>(<span class="ident">CAPACITY</span>, <span class="ident">Default</span>::<span class="ident">default</span>());
-    <span class="ident">data</span>.<span class="ident">iter</span>()
-        .<span class="ident">for_each</span>(<span class="op">|</span><span class="ident">instructions</span><span class="op">|</span> <span class="ident">update_memory_1</span>(<span class="ident">instructions</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">memory</span>));
-    <span class="kw">let</span> <span class="ident">sum_1</span> <span class="op">=</span> <span class="ident">memory</span>.<span class="ident">iter</span>().<span class="ident">fold</span>(<span class="number">0</span>, <span class="op">|</span><span class="ident">acc</span>, (<span class="kw">_</span>, <span class="ident">value</span>)<span class="op">|</span> <span class="ident">acc</span> <span class="op">+</span> <span class="ident">value</span>);
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">memory</span> <span class="op">=</span> <span class="ident">FxHashSet</span>::<span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span>::<span class="ident">with_capacity_and_hasher</span>(<span class="ident">CAPACITY</span>, <span class="ident">Default</span>::<span class="ident">default</span>());
+    <span class="kw">let</span> <span class="ident">sum_1</span> <span class="op">=</span> <span class="ident">data</span>
+        .<span class="ident">iter</span>()
+        .<span class="ident">rev</span>()
+        .<span class="ident">map</span>(<span class="op">|</span><span class="ident">instructions</span><span class="op">|</span> <span class="ident">update_memory_1</span>(<span class="ident">instructions</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">memory</span>))
+        .<span class="ident">sum</span>::<span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span>();
     <span class="kw">let</span> <span class="ident">time_part_1</span> <span class="op">=</span> <span class="ident">start_part_1</span>.<span class="ident">elapsed</span>();
 
     <span class="comment">// -------------------------------------------------------------------------</span>
@@ -344,28 +345,12 @@
     <span class="comment">// Apply memory bitmasks</span>
     <span class="kw">let</span> <span class="ident">start_part_2</span> <span class="op">=</span> <span class="ident">Instant</span>::<span class="ident">now</span>();
     <span class="ident">memory</span>.<span class="ident">clear</span>();
-    <span class="ident">data</span>.<span class="ident">iter</span>()
-        .<span class="ident">for_each</span>(<span class="op">|</span><span class="ident">instructions</span><span class="op">|</span> <span class="ident">update_memory_2</span>(<span class="ident">instructions</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">memory</span>));
-    <span class="kw">let</span> <span class="ident">sum_2</span> <span class="op">=</span> <span class="ident">memory</span>.<span class="ident">iter</span>().<span class="ident">fold</span>(<span class="number">0</span>, <span class="op">|</span><span class="ident">acc</span>, (<span class="kw">_</span>, <span class="ident">value</span>)<span class="op">|</span> <span class="ident">acc</span> <span class="op">+</span> <span class="ident">value</span>);
+    <span class="kw">let</span> <span class="ident">sum_2</span> <span class="op">=</span> <span class="ident">data</span>
+        .<span class="ident">iter</span>()
+        .<span class="ident">rev</span>()
+        .<span class="ident">map</span>(<span class="op">|</span><span class="ident">instructions</span><span class="op">|</span> <span class="ident">update_memory_2</span>(<span class="ident">instructions</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">memory</span>))
+        .<span class="ident">sum</span>::<span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span>();
     <span class="kw">let</span> <span class="ident">time_part_2</span> <span class="op">=</span> <span class="ident">start_part_2</span>.<span class="ident">elapsed</span>();
-
-    <span class="comment">// -------------------------------------------------------------------------</span>
-    <span class="comment">// Combined</span>
-    <span class="comment">// -------------------------------------------------------------------------</span>
-    <span class="kw">let</span> <span class="ident">start_combined</span> <span class="op">=</span> <span class="ident">Instant</span>::<span class="ident">now</span>();
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">memory_1</span> <span class="op">=</span>
-        <span class="ident">FxHashMap</span>::<span class="op">&lt;</span><span class="ident">u64</span>, <span class="ident">u64</span><span class="op">&gt;</span>::<span class="ident">with_capacity_and_hasher</span>(<span class="ident">CAPACITY</span>, <span class="ident">Default</span>::<span class="ident">default</span>());
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">memory_2</span> <span class="op">=</span>
-        <span class="ident">FxHashMap</span>::<span class="op">&lt;</span><span class="ident">u64</span>, <span class="ident">u64</span><span class="op">&gt;</span>::<span class="ident">with_capacity_and_hasher</span>(<span class="ident">CAPACITY</span>, <span class="ident">Default</span>::<span class="ident">default</span>());
-    <span class="ident">data</span>.<span class="ident">iter</span>().<span class="ident">for_each</span>(<span class="op">|</span><span class="ident">instructions</span><span class="op">|</span> {
-        <span class="ident">update_memory_1</span>(<span class="ident">instructions</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">memory_1</span>);
-        <span class="ident">update_memory_2</span>(<span class="ident">instructions</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">memory_2</span>);
-    });
-    <span class="kw">let</span> <span class="ident">combined_1</span> <span class="op">=</span> <span class="ident">memory_1</span>.<span class="ident">iter</span>().<span class="ident">fold</span>(<span class="number">0</span>, <span class="op">|</span><span class="ident">acc</span>, (<span class="kw">_</span>, <span class="ident">value</span>)<span class="op">|</span> <span class="ident">acc</span> <span class="op">+</span> <span class="ident">value</span>);
-    <span class="kw">let</span> <span class="ident">combined_2</span> <span class="op">=</span> <span class="ident">memory_2</span>.<span class="ident">iter</span>().<span class="ident">fold</span>(<span class="number">0</span>, <span class="op">|</span><span class="ident">acc</span>, (<span class="kw">_</span>, <span class="ident">value</span>)<span class="op">|</span> <span class="ident">acc</span> <span class="op">+</span> <span class="ident">value</span>);
-    <span class="kw">let</span> <span class="ident">time_combined</span> <span class="op">=</span> <span class="ident">start_combined</span>.<span class="ident">elapsed</span>();
-    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">combined_1</span>, <span class="ident">sum_1</span>);
-    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">combined_2</span>, <span class="ident">sum_2</span>);
 
     <span class="comment">// -------------------------------------------------------------------------</span>
     <span class="comment">// Return</span>
@@ -373,7 +358,12 @@
     <span class="ident">Results</span>::<span class="ident">new</span>(
         <span class="ident">sum_1</span> <span class="kw">as</span> <span class="ident">i64</span>,
         <span class="ident">sum_2</span> <span class="kw">as</span> <span class="ident">i64</span>,
-        <span class="ident">Timing</span>::<span class="ident">new</span>(<span class="ident">time_setup</span>, <span class="ident">time_part_1</span>, <span class="ident">time_part_2</span>, <span class="ident">time_combined</span>),
+        <span class="ident">Timing</span>::<span class="ident">new</span>(
+            <span class="ident">time_setup</span>,
+            <span class="ident">time_part_1</span>,
+            <span class="ident">time_part_2</span>,
+            <span class="ident">std</span>::<span class="ident">time</span>::<span class="ident">Duration</span>::<span class="ident">new</span>(<span class="number">0</span>, <span class="number">0</span>),
+        ),
     )
 }
 
