@@ -5,10 +5,10 @@
 
 use crate::prelude::*;
 use arrayvec::ArrayVec;
-use rustc_hash::FxHashMap;
+use rustc_hash::FxHashSet;
 
 // Constants
-const CAPACITY: usize = 512;
+const CAPACITY: usize = 4096;
 const INSTRUCTIONS: usize = 8;
 const MAX_36_BITS: u64 = u64::max_value() >> (64 - 36);
 
@@ -78,34 +78,38 @@ impl std::str::FromStr for Update {
 // Part 1
 // -----------------------------------------------------------------------------
 #[inline]
-fn update_memory_1(instructions: &Instructions, memory: &mut FxHashMap<u64, u64>) {
-    instructions.updates.iter().for_each(|update| {
-        memory.insert(
-            update.address,
-            (update.value | instructions.set_mask) & instructions.clear_mask,
-        );
+fn update_memory_1(instructions: &Instructions, memory: &mut FxHashSet<u64>) -> u64 {
+    let mut sum = 0;
+    instructions.updates.iter().rev().for_each(|update| {
+        if memory.insert(update.address) {
+            sum += (update.value | instructions.set_mask) & instructions.clear_mask;
+        }
     });
+    sum
 }
 
 // -----------------------------------------------------------------------------
 // Part 2
 // -----------------------------------------------------------------------------
 #[inline]
-fn update_memory_2(instructions: &Instructions, memory: &mut FxHashMap<u64, u64>) {
-    instructions.updates.iter().for_each(|update| {
+fn update_memory_2(instructions: &Instructions, memory: &mut FxHashSet<u64>) -> u64 {
+    let mut sum = 0;
+    instructions.updates.iter().rev().for_each(|update| {
         let base_address: u64 =
             (update.address | instructions.set_mask) & instructions.floating_mask;
 
         let mut current_mask = instructions.floating_mask;
         loop {
-            memory.insert(base_address | (!current_mask & MAX_36_BITS), update.value);
+            if memory.insert(base_address | (!current_mask & MAX_36_BITS)) {
+                sum += update.value;
+            }
             if current_mask & MAX_36_BITS == MAX_36_BITS {
                 break;
             }
-            current_mask += 1;
-            current_mask |= instructions.floating_mask;
+            current_mask = (current_mask + 1) | instructions.floating_mask;
         }
     });
+    sum
 }
 
 // -----------------------------------------------------------------------------
@@ -135,10 +139,12 @@ pub(crate) fn run() -> Results {
     // -------------------------------------------------------------------------
     // Apply value bitmasks
     let start_part_1 = Instant::now();
-    let mut memory = FxHashMap::<u64, u64>::with_capacity_and_hasher(CAPACITY, Default::default());
-    data.iter()
-        .for_each(|instructions| update_memory_1(instructions, &mut memory));
-    let sum_1 = memory.iter().fold(0, |acc, (_, value)| acc + value);
+    let mut memory = FxHashSet::<u64>::with_capacity_and_hasher(CAPACITY, Default::default());
+    let sum_1 = data
+        .iter()
+        .rev()
+        .map(|instructions| update_memory_1(instructions, &mut memory))
+        .sum::<u64>();
     let time_part_1 = start_part_1.elapsed();
 
     // -------------------------------------------------------------------------
@@ -147,28 +153,12 @@ pub(crate) fn run() -> Results {
     // Apply memory bitmasks
     let start_part_2 = Instant::now();
     memory.clear();
-    data.iter()
-        .for_each(|instructions| update_memory_2(instructions, &mut memory));
-    let sum_2 = memory.iter().fold(0, |acc, (_, value)| acc + value);
+    let sum_2 = data
+        .iter()
+        .rev()
+        .map(|instructions| update_memory_2(instructions, &mut memory))
+        .sum::<u64>();
     let time_part_2 = start_part_2.elapsed();
-
-    // -------------------------------------------------------------------------
-    // Combined
-    // -------------------------------------------------------------------------
-    let start_combined = Instant::now();
-    let mut memory_1 =
-        FxHashMap::<u64, u64>::with_capacity_and_hasher(CAPACITY, Default::default());
-    let mut memory_2 =
-        FxHashMap::<u64, u64>::with_capacity_and_hasher(CAPACITY, Default::default());
-    data.iter().for_each(|instructions| {
-        update_memory_1(instructions, &mut memory_1);
-        update_memory_2(instructions, &mut memory_2);
-    });
-    let combined_1 = memory_1.iter().fold(0, |acc, (_, value)| acc + value);
-    let combined_2 = memory_2.iter().fold(0, |acc, (_, value)| acc + value);
-    let time_combined = start_combined.elapsed();
-    assert_eq!(combined_1, sum_1);
-    assert_eq!(combined_2, sum_2);
 
     // -------------------------------------------------------------------------
     // Return
@@ -176,7 +166,12 @@ pub(crate) fn run() -> Results {
     Results::new(
         sum_1 as i64,
         sum_2 as i64,
-        Timing::new(time_setup, time_part_1, time_part_2, time_combined),
+        Timing::new(
+            time_setup,
+            time_part_1,
+            time_part_2,
+            std::time::Duration::new(0, 0),
+        ),
     )
 }
 
