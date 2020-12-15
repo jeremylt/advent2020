@@ -41,17 +41,15 @@ pub(crate) fn run() -> Results {
             said[value] = i + 1;
         });
 
-    let mut current = values[number_starters - 1];
-    (number_starters..YEAR).for_each(|i| {
+    let number_1 = (number_starters..YEAR).fold(values[number_starters - 1], |current, i| {
         let last_said = said[current];
         said[current] = i;
         if last_said == 0 {
-            current = 0;
+            0
         } else {
-            current = i - last_said;
+            i - last_said
         }
     });
-    let number_1 = current;
     let time_part_1 = start_part_1.elapsed();
 
     // -------------------------------------------------------------------------
@@ -68,17 +66,15 @@ pub(crate) fn run() -> Results {
             said[value] = i + 1;
         });
 
-    let mut current = values[number_starters - 1];
-    (number_starters..CAPACITY).for_each(|i| {
+    let number_2 = (number_starters..CAPACITY).fold(values[number_starters - 1], |current, i| {
         let last_said = said[current];
         said[current] = i;
         if last_said == 0 {
-            current = 0;
+            0
         } else {
-            current = i - last_said;
+            i - last_said
         }
     });
-    let number_2 = current;
     let time_part_2 = start_part_2.elapsed();
 
     // -------------------------------------------------------------------------
