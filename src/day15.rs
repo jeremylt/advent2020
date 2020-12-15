@@ -50,7 +50,7 @@ pub(crate) fn run() -> Results {
     // -------------------------------------------------------------------------
     // Part 2
     // -------------------------------------------------------------------------
-    // Look for triple
+    // Find 30000000th number
     let start_part_2 = Instant::now();
     let mut said = vec![u32::MAX; CAPACITY + 1];
     values
