@@ -47,10 +47,18 @@ pub(crate) fn print_timing(times: &Timing) {
     println!("    {}:", "Timing".purple().bold());
     let times_total = times.setup + times.part_1 + times.part_2;
     let part_1_percent = times.part_1.as_nanos() as f64 / times_total.as_nanos() as f64;
-    let part_1_portion = std::cmp::max(1, (NUMBER_DASHES as f64 * part_1_percent) as usize);
+    let mut part_1_portion = std::cmp::max(1, (NUMBER_DASHES as f64 * part_1_percent) as usize);
     let part_2_percent = times.part_2.as_nanos() as f64 / times_total.as_nanos() as f64;
-    let part_2_portion = std::cmp::max(1, (NUMBER_DASHES as f64 * part_2_percent) as usize);
-    let setup_portion = NUMBER_DASHES - part_1_portion - part_2_portion;
+    let mut part_2_portion = std::cmp::max(1, (NUMBER_DASHES as f64 * part_2_percent) as usize);
+    let mut setup_portion = NUMBER_DASHES - part_1_portion - part_2_portion;
+    if setup_portion == 0 {
+        setup_portion = 1;
+        if part_1_portion > part_2_portion {
+            part_1_portion -= 1;
+        } else {
+            part_2_portion -= 1;
+        }
+    }
     println!(
         "      {}: {:?} ({:02.1}%)",
         "Setup".blue(),
