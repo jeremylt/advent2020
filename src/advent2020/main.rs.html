@@ -319,6 +319,10 @@
 <span id="316">316</span>
 <span id="317">317</span>
 <span id="318">318</span>
+<span id="319">319</span>
+<span id="320">320</span>
+<span id="321">321</span>
+<span id="322">322</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="attribute">#[<span class="ident">macro_use</span>]</span>
 <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">lazy_static</span>;
@@ -542,14 +546,17 @@
         (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">results</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">part_1</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">part_2</span>:<span class="ident">expr</span>) <span class="op">=</span><span class="op">&gt;</span> {
             <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">results</span>.<span class="ident">part_1</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">part_1</span>);
             <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">results</span>.<span class="ident">part_2</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">part_2</span>);
-            <span class="macro">assert</span><span class="macro">!</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">results</span>.<span class="ident">times</span>.<span class="ident">combined</span>.<span class="ident">as_millis</span>() <span class="op">&lt;</span> <span class="ident">MAX_TIME</span>);
+            <span class="macro">assert</span><span class="macro">!</span>(
+                (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">results</span>.<span class="ident">times</span>.<span class="ident">setup</span> <span class="op">+</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">results</span>.<span class="ident">times</span>.<span class="ident">part_1</span> <span class="op">+</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">results</span>.<span class="ident">times</span>.<span class="ident">part_2</span>).<span class="ident">as_millis</span>()
+                    <span class="op">&lt;</span> <span class="ident">MAX_TIME</span>
+            );
         };
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_01</span>() {
         <span class="kw">let</span> <span class="ident">results</span> <span class="op">=</span> <span class="ident">day01</span>::<span class="ident">run</span>();
-        <span class="macro">test_day</span><span class="macro">!</span>(<span class="ident">results</span>, <span class="number">326211</span>, <span class="number">131347190</span>);
+        <span class="macro">test_day</span><span class="macro">!</span>(<span class="ident">results</span>, <span class="number">326_211</span>, <span class="number">131_347_190</span>);
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
@@ -561,7 +568,7 @@
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_03</span>() {
         <span class="kw">let</span> <span class="ident">results</span> <span class="op">=</span> <span class="ident">day03</span>::<span class="ident">run</span>();
-        <span class="macro">test_day</span><span class="macro">!</span>(<span class="ident">results</span>, <span class="number">176</span>, <span class="number">5872458240</span>);
+        <span class="macro">test_day</span><span class="macro">!</span>(<span class="ident">results</span>, <span class="number">176</span>, <span class="number">5_872_458_240</span>);
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
@@ -579,61 +586,62 @@
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_06</span>() {
         <span class="kw">let</span> <span class="ident">results</span> <span class="op">=</span> <span class="ident">day06</span>::<span class="ident">run</span>();
-        <span class="macro">test_day</span><span class="macro">!</span>(<span class="ident">results</span>, <span class="number">6249</span>, <span class="number">3103</span>);
+        <span class="macro">test_day</span><span class="macro">!</span>(<span class="ident">results</span>, <span class="number">6_249</span>, <span class="number">3_103</span>);
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_07</span>() {
         <span class="kw">let</span> <span class="ident">results</span> <span class="op">=</span> <span class="ident">day07</span>::<span class="ident">run</span>();
-        <span class="macro">test_day</span><span class="macro">!</span>(<span class="ident">results</span>, <span class="number">332</span>, <span class="number">10875</span>);
+        <span class="macro">test_day</span><span class="macro">!</span>(<span class="ident">results</span>, <span class="number">332</span>, <span class="number">10_875</span>);
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_08</span>() {
         <span class="kw">let</span> <span class="ident">results</span> <span class="op">=</span> <span class="ident">day08</span>::<span class="ident">run</span>();
-        <span class="macro">test_day</span><span class="macro">!</span>(<span class="ident">results</span>, <span class="number">1594</span>, <span class="number">758</span>);
+        <span class="macro">test_day</span><span class="macro">!</span>(<span class="ident">results</span>, <span class="number">1_594</span>, <span class="number">758</span>);
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_09</span>() {
         <span class="kw">let</span> <span class="ident">results</span> <span class="op">=</span> <span class="ident">day09</span>::<span class="ident">run</span>();
-        <span class="macro">test_day</span><span class="macro">!</span>(<span class="ident">results</span>, <span class="number">756008079</span>, <span class="number">93727241</span>);
+        <span class="macro">test_day</span><span class="macro">!</span>(<span class="ident">results</span>, <span class="number">756_008_079</span>, <span class="number">93_727_241</span>);
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_10</span>() {
         <span class="kw">let</span> <span class="ident">results</span> <span class="op">=</span> <span class="ident">day10</span>::<span class="ident">run</span>();
-        <span class="macro">test_day</span><span class="macro">!</span>(<span class="ident">results</span>, <span class="number">2244</span>, <span class="number">3947645370368</span>);
+        <span class="macro">test_day</span><span class="macro">!</span>(<span class="ident">results</span>, <span class="number">2_244</span>, <span class="number">3_947_645_370_368</span>);
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_11</span>() {
         <span class="kw">let</span> <span class="ident">results</span> <span class="op">=</span> <span class="ident">day11</span>::<span class="ident">run</span>();
-        <span class="macro">test_day</span><span class="macro">!</span>(<span class="ident">results</span>, <span class="number">2263</span>, <span class="number">2002</span>);
+        <span class="macro">test_day</span><span class="macro">!</span>(<span class="ident">results</span>, <span class="number">2_263</span>, <span class="number">2_002</span>);
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_12</span>() {
         <span class="kw">let</span> <span class="ident">results</span> <span class="op">=</span> <span class="ident">day12</span>::<span class="ident">run</span>();
-        <span class="macro">test_day</span><span class="macro">!</span>(<span class="ident">results</span>, <span class="number">879</span>, <span class="number">18107</span>);
+        <span class="macro">test_day</span><span class="macro">!</span>(<span class="ident">results</span>, <span class="number">879</span>, <span class="number">18_107</span>);
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_13</span>() {
         <span class="kw">let</span> <span class="ident">results</span> <span class="op">=</span> <span class="ident">day13</span>::<span class="ident">run</span>();
-        <span class="macro">test_day</span><span class="macro">!</span>(<span class="ident">results</span>, <span class="number">2045</span>, <span class="number">402251700208309</span>);
+        <span class="macro">test_day</span><span class="macro">!</span>(<span class="ident">results</span>, <span class="number">2_045</span>, <span class="number">402_251_700_208_309</span>);
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_14</span>() {
         <span class="kw">let</span> <span class="ident">results</span> <span class="op">=</span> <span class="ident">day14</span>::<span class="ident">run</span>();
-        <span class="macro">test_day</span><span class="macro">!</span>(<span class="ident">results</span>, <span class="number">15172047086292</span>, <span class="number">4197941339968</span>);
+        <span class="macro">test_day</span><span class="macro">!</span>(<span class="ident">results</span>, <span class="number">15_172_047_086_292</span>, <span class="number">4_197_941_339_968</span>);
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_15</span>() {
         <span class="kw">let</span> <span class="ident">results</span> <span class="op">=</span> <span class="ident">day15</span>::<span class="ident">run</span>();
-        <span class="macro">test_day</span><span class="macro">!</span>(<span class="ident">results</span>, <span class="number">763</span>, <span class="number">1876406</span>);
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">results</span>.<span class="ident">part_1</span>, <span class="number">763</span>);
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">results</span>.<span class="ident">part_2</span>, <span class="number">1_876_406</span>);
     }
 }
 
