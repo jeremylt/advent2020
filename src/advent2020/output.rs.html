@@ -122,6 +122,14 @@
 <span id="119">119</span>
 <span id="120">120</span>
 <span id="121">121</span>
+<span id="122">122</span>
+<span id="123">123</span>
+<span id="124">124</span>
+<span id="125">125</span>
+<span id="126">126</span>
+<span id="127">127</span>
+<span id="128">128</span>
+<span id="129">129</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Output:</span>
 <span class="doccomment">//! This module collects some of my `println!` boilerplate between the days.</span>
@@ -172,10 +180,18 @@
     <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;    {}:&quot;</span>, <span class="string">&quot;Timing&quot;</span>.<span class="ident">purple</span>().<span class="ident">bold</span>());
     <span class="kw">let</span> <span class="ident">times_total</span> <span class="op">=</span> <span class="ident">times</span>.<span class="ident">setup</span> <span class="op">+</span> <span class="ident">times</span>.<span class="ident">part_1</span> <span class="op">+</span> <span class="ident">times</span>.<span class="ident">part_2</span>;
     <span class="kw">let</span> <span class="ident">part_1_percent</span> <span class="op">=</span> <span class="ident">times</span>.<span class="ident">part_1</span>.<span class="ident">as_nanos</span>() <span class="kw">as</span> <span class="ident">f64</span> <span class="op">/</span> <span class="ident">times_total</span>.<span class="ident">as_nanos</span>() <span class="kw">as</span> <span class="ident">f64</span>;
-    <span class="kw">let</span> <span class="ident">part_1_portion</span> <span class="op">=</span> <span class="ident">std</span>::<span class="ident">cmp</span>::<span class="ident">max</span>(<span class="number">1</span>, (<span class="ident">NUMBER_DASHES</span> <span class="kw">as</span> <span class="ident">f64</span> <span class="op">*</span> <span class="ident">part_1_percent</span>) <span class="kw">as</span> <span class="ident">usize</span>);
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">part_1_portion</span> <span class="op">=</span> <span class="ident">std</span>::<span class="ident">cmp</span>::<span class="ident">max</span>(<span class="number">1</span>, (<span class="ident">NUMBER_DASHES</span> <span class="kw">as</span> <span class="ident">f64</span> <span class="op">*</span> <span class="ident">part_1_percent</span>) <span class="kw">as</span> <span class="ident">usize</span>);
     <span class="kw">let</span> <span class="ident">part_2_percent</span> <span class="op">=</span> <span class="ident">times</span>.<span class="ident">part_2</span>.<span class="ident">as_nanos</span>() <span class="kw">as</span> <span class="ident">f64</span> <span class="op">/</span> <span class="ident">times_total</span>.<span class="ident">as_nanos</span>() <span class="kw">as</span> <span class="ident">f64</span>;
-    <span class="kw">let</span> <span class="ident">part_2_portion</span> <span class="op">=</span> <span class="ident">std</span>::<span class="ident">cmp</span>::<span class="ident">max</span>(<span class="number">1</span>, (<span class="ident">NUMBER_DASHES</span> <span class="kw">as</span> <span class="ident">f64</span> <span class="op">*</span> <span class="ident">part_2_percent</span>) <span class="kw">as</span> <span class="ident">usize</span>);
-    <span class="kw">let</span> <span class="ident">setup_portion</span> <span class="op">=</span> <span class="ident">NUMBER_DASHES</span> <span class="op">-</span> <span class="ident">part_1_portion</span> <span class="op">-</span> <span class="ident">part_2_portion</span>;
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">part_2_portion</span> <span class="op">=</span> <span class="ident">std</span>::<span class="ident">cmp</span>::<span class="ident">max</span>(<span class="number">1</span>, (<span class="ident">NUMBER_DASHES</span> <span class="kw">as</span> <span class="ident">f64</span> <span class="op">*</span> <span class="ident">part_2_percent</span>) <span class="kw">as</span> <span class="ident">usize</span>);
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">setup_portion</span> <span class="op">=</span> <span class="ident">NUMBER_DASHES</span> <span class="op">-</span> <span class="ident">part_1_portion</span> <span class="op">-</span> <span class="ident">part_2_portion</span>;
+    <span class="kw">if</span> <span class="ident">setup_portion</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span> {
+        <span class="ident">setup_portion</span> <span class="op">=</span> <span class="number">1</span>;
+        <span class="kw">if</span> <span class="ident">part_1_portion</span> <span class="op">&gt;</span> <span class="ident">part_2_portion</span> {
+            <span class="ident">part_1_portion</span> <span class="op">-</span><span class="op">=</span> <span class="number">1</span>;
+        } <span class="kw">else</span> {
+            <span class="ident">part_2_portion</span> <span class="op">-</span><span class="op">=</span> <span class="number">1</span>;
+        }
+    }
     <span class="macro">println</span><span class="macro">!</span>(
         <span class="string">&quot;      {}: {:?} ({:02.1}%)&quot;</span>,
         <span class="string">&quot;Setup&quot;</span>.<span class="ident">blue</span>(),
