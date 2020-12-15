@@ -1,4 +1,5 @@
-//! Day 15;
+//! Day 15:
+//! Nothing clever here.
 
 use crate::prelude::*;
 use rustc_hash::FxHashMap;
@@ -99,7 +100,7 @@ pub(crate) fn run() -> Results {
 // Report
 // -----------------------------------------------------------------------------
 pub(crate) fn report(results: &Results) {
-    output::print_day(1, "Rambunctious Recitation");
+    output::print_day(15, "Rambunctious Recitation");
     output::print_part(1, "🧝 Number", &format!("{}", results.part_1));
     output::print_part(2, "🧝 Number", &format!("{}", results.part_2));
     output::print_timing(&results.times);
