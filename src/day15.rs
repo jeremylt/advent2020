@@ -55,7 +55,7 @@ pub(crate) fn run() -> Results {
     // -------------------------------------------------------------------------
     // Find 30000000th number
     let start_part_2 = Instant::now();
-    let number_2 = play_game(30000000, &values);
+    let number_2 = play_game(30_000_000, &values);
     let time_part_2 = start_part_2.elapsed();
 
     // -------------------------------------------------------------------------

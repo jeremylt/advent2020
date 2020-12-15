@@ -220,14 +220,17 @@ mod tests {
         ($results:expr, $part_1:expr, $part_2:expr) => {
             assert_eq!($results.part_1, $part_1);
             assert_eq!($results.part_2, $part_2);
-            assert!($results.times.combined.as_millis() < MAX_TIME);
+            assert!(
+                ($results.times.setup + $results.times.part_1 + $results.times.part_2).as_millis()
+                    < MAX_TIME
+            );
         };
     }
 
     #[test]
     fn test_01() {
         let results = day01::run();
-        test_day!(results, 326211, 131347190);
+        test_day!(results, 326_211, 131_347_190);
     }
 
     #[test]
@@ -239,7 +242,7 @@ mod tests {
     #[test]
     fn test_03() {
         let results = day03::run();
-        test_day!(results, 176, 5872458240);
+        test_day!(results, 176, 5_872_458_240);
     }
 
     #[test]
@@ -257,61 +260,62 @@ mod tests {
     #[test]
     fn test_06() {
         let results = day06::run();
-        test_day!(results, 6249, 3103);
+        test_day!(results, 6_249, 3_103);
     }
 
     #[test]
     fn test_07() {
         let results = day07::run();
-        test_day!(results, 332, 10875);
+        test_day!(results, 332, 10_875);
     }
 
     #[test]
     fn test_08() {
         let results = day08::run();
-        test_day!(results, 1594, 758);
+        test_day!(results, 1_594, 758);
     }
 
     #[test]
     fn test_09() {
         let results = day09::run();
-        test_day!(results, 756008079, 93727241);
+        test_day!(results, 756_008_079, 93_727_241);
     }
 
     #[test]
     fn test_10() {
         let results = day10::run();
-        test_day!(results, 2244, 3947645370368);
+        test_day!(results, 2_244, 3_947_645_370_368);
     }
 
     #[test]
     fn test_11() {
         let results = day11::run();
-        test_day!(results, 2263, 2002);
+        test_day!(results, 2_263, 2_002);
     }
 
     #[test]
     fn test_12() {
         let results = day12::run();
-        test_day!(results, 879, 18107);
+        test_day!(results, 879, 18_107);
     }
 
     #[test]
     fn test_13() {
         let results = day13::run();
-        test_day!(results, 2045, 402251700208309);
+        test_day!(results, 2_045, 402_251_700_208_309);
     }
 
     #[test]
     fn test_14() {
         let results = day14::run();
-        test_day!(results, 15172047086292, 4197941339968);
+        test_day!(results, 15_172_047_086_292, 4_197_941_339_968);
     }
 
     #[test]
     fn test_15() {
         let results = day15::run();
-        test_day!(results, 763, 1876406);
+        assert_eq!(results.part_1, 763);
+        assert_eq!(results.part_2, 1_876_406);
     }
 }
 

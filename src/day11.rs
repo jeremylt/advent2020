@@ -10,7 +10,7 @@ use crate::prelude::*;
 use arrayvec::ArrayVec;
 
 // Constants
-const CAPACITY: usize = 16384;
+const CAPACITY: usize = 16_384;
 
 // -----------------------------------------------------------------------------
 // Game of Life
