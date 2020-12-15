@@ -3,9 +3,24 @@
 
 use crate::prelude::*;
 
-// Constant
-const YEAR: usize = 2020;
-const CAPACITY: usize = 30000000;
+// -----------------------------------------------------------------------------
+// Play game
+// -----------------------------------------------------------------------------
+fn play_game(n: usize, starters: &Vec<usize>) -> u32 {
+    let mut said = vec![u32::MAX; n + 1];
+    let number_starters = starters.len();
+    starters
+        .iter()
+        .take(number_starters - 1)
+        .enumerate()
+        .for_each(|(i, &value)| {
+            said[value] = (i + 1) as u32;
+        });
+
+    (number_starters..n).fold(starters[number_starters - 1] as u32, |current, i| {
+        (i as u32).saturating_sub(std::mem::replace(&mut said[current as usize], i as u32))
+    })
+}
 
 // -----------------------------------------------------------------------------
 // Run
@@ -31,20 +46,7 @@ pub(crate) fn run() -> Results {
     // -------------------------------------------------------------------------
     // Find 2020th number
     let start_part_1 = Instant::now();
-    let mut said = [u32::MAX; YEAR + 1];
-    let number_starters = values.len();
-    values
-        .iter()
-        .take(number_starters - 1)
-        .enumerate()
-        .for_each(|(i, &value)| {
-            said[value] = (i + 1) as u32;
-        });
-
-    let number_1: u32 =
-        (number_starters..YEAR).fold(values[number_starters - 1] as u32, |current, i| {
-            (i as u32).saturating_sub(std::mem::replace(&mut said[current as usize], i as u32))
-        });
+    let number_1 = play_game(2020, &values);
     let time_part_1 = start_part_1.elapsed();
 
     // -------------------------------------------------------------------------
@@ -52,19 +54,7 @@ pub(crate) fn run() -> Results {
     // -------------------------------------------------------------------------
     // Find 30000000th number
     let start_part_2 = Instant::now();
-    let mut said = vec![u32::MAX; CAPACITY + 1];
-    values
-        .iter()
-        .take(number_starters - 1)
-        .enumerate()
-        .for_each(|(i, &value)| {
-            said[value] = (i + 1) as u32;
-        });
-
-    let number_2: u32 =
-        (number_starters..CAPACITY).fold(values[number_starters - 1] as u32, |current, i| {
-            (i as u32).saturating_sub(std::mem::replace(&mut said[current as usize], i as u32))
-        });
+    let number_2 = play_game(30000000, &values);
     let time_part_2 = start_part_2.elapsed();
 
     // -------------------------------------------------------------------------
