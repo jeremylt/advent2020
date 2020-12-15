@@ -1,1 +1,1 @@
-initSidebarItems({"constant":[["CAPACITY",""],["YEAR",""]],"fn":[["report",""],["run",""]]});
+initSidebarItems({"fn":[["play_game",""],["report",""],["run",""]]});

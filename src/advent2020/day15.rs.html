@@ -86,25 +86,30 @@
 <span id="83">83</span>
 <span id="84">84</span>
 <span id="85">85</span>
-<span id="86">86</span>
-<span id="87">87</span>
-<span id="88">88</span>
-<span id="89">89</span>
-<span id="90">90</span>
-<span id="91">91</span>
-<span id="92">92</span>
-<span id="93">93</span>
-<span id="94">94</span>
-<span id="95">95</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Day 15:</span>
 <span class="doccomment">//! Nothing clever here.</span>
 
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">prelude</span>::<span class="kw-2">*</span>;
 
-<span class="comment">// Constant</span>
-<span class="kw">const</span> <span class="ident">YEAR</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">2020</span>;
-<span class="kw">const</span> <span class="ident">CAPACITY</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">30000000</span>;
+<span class="comment">// -----------------------------------------------------------------------------</span>
+<span class="comment">// Play game</span>
+<span class="comment">// -----------------------------------------------------------------------------</span>
+<span class="kw">fn</span> <span class="ident">play_game</span>(<span class="ident">n</span>: <span class="ident">usize</span>, <span class="ident">starters</span>: <span class="kw-2">&amp;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u32</span> {
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">said</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[<span class="ident">u32</span>::<span class="ident">MAX</span>; <span class="ident">n</span> <span class="op">+</span> <span class="number">1</span>];
+    <span class="kw">let</span> <span class="ident">number_starters</span> <span class="op">=</span> <span class="ident">starters</span>.<span class="ident">len</span>();
+    <span class="ident">starters</span>
+        .<span class="ident">iter</span>()
+        .<span class="ident">take</span>(<span class="ident">number_starters</span> <span class="op">-</span> <span class="number">1</span>)
+        .<span class="ident">enumerate</span>()
+        .<span class="ident">for_each</span>(<span class="op">|</span>(<span class="ident">i</span>, <span class="kw-2">&amp;</span><span class="ident">value</span>)<span class="op">|</span> {
+            <span class="ident">said</span>[<span class="ident">value</span>] <span class="op">=</span> (<span class="ident">i</span> <span class="op">+</span> <span class="number">1</span>) <span class="kw">as</span> <span class="ident">u32</span>;
+        });
+
+    (<span class="ident">number_starters</span>..<span class="ident">n</span>).<span class="ident">fold</span>(<span class="ident">starters</span>[<span class="ident">number_starters</span> <span class="op">-</span> <span class="number">1</span>] <span class="kw">as</span> <span class="ident">u32</span>, <span class="op">|</span><span class="ident">current</span>, <span class="ident">i</span><span class="op">|</span> {
+        (<span class="ident">i</span> <span class="kw">as</span> <span class="ident">u32</span>).<span class="ident">saturating_sub</span>(<span class="ident">std</span>::<span class="ident">mem</span>::<span class="ident">replace</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">said</span>[<span class="ident">current</span> <span class="kw">as</span> <span class="ident">usize</span>], <span class="ident">i</span> <span class="kw">as</span> <span class="ident">u32</span>))
+    })
+}
 
 <span class="comment">// -----------------------------------------------------------------------------</span>
 <span class="comment">// Run</span>
@@ -130,20 +135,7 @@
     <span class="comment">// -------------------------------------------------------------------------</span>
     <span class="comment">// Find 2020th number</span>
     <span class="kw">let</span> <span class="ident">start_part_1</span> <span class="op">=</span> <span class="ident">Instant</span>::<span class="ident">now</span>();
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">said</span> <span class="op">=</span> [<span class="ident">u32</span>::<span class="ident">MAX</span>; <span class="ident">YEAR</span> <span class="op">+</span> <span class="number">1</span>];
-    <span class="kw">let</span> <span class="ident">number_starters</span> <span class="op">=</span> <span class="ident">values</span>.<span class="ident">len</span>();
-    <span class="ident">values</span>
-        .<span class="ident">iter</span>()
-        .<span class="ident">take</span>(<span class="ident">number_starters</span> <span class="op">-</span> <span class="number">1</span>)
-        .<span class="ident">enumerate</span>()
-        .<span class="ident">for_each</span>(<span class="op">|</span>(<span class="ident">i</span>, <span class="kw-2">&amp;</span><span class="ident">value</span>)<span class="op">|</span> {
-            <span class="ident">said</span>[<span class="ident">value</span>] <span class="op">=</span> (<span class="ident">i</span> <span class="op">+</span> <span class="number">1</span>) <span class="kw">as</span> <span class="ident">u32</span>;
-        });
-
-    <span class="kw">let</span> <span class="ident">number_1</span>: <span class="ident">u32</span> <span class="op">=</span>
-        (<span class="ident">number_starters</span>..<span class="ident">YEAR</span>).<span class="ident">fold</span>(<span class="ident">values</span>[<span class="ident">number_starters</span> <span class="op">-</span> <span class="number">1</span>] <span class="kw">as</span> <span class="ident">u32</span>, <span class="op">|</span><span class="ident">current</span>, <span class="ident">i</span><span class="op">|</span> {
-            (<span class="ident">i</span> <span class="kw">as</span> <span class="ident">u32</span>).<span class="ident">saturating_sub</span>(<span class="ident">std</span>::<span class="ident">mem</span>::<span class="ident">replace</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">said</span>[<span class="ident">current</span> <span class="kw">as</span> <span class="ident">usize</span>], <span class="ident">i</span> <span class="kw">as</span> <span class="ident">u32</span>))
-        });
+    <span class="kw">let</span> <span class="ident">number_1</span> <span class="op">=</span> <span class="ident">play_game</span>(<span class="number">2020</span>, <span class="kw-2">&amp;</span><span class="ident">values</span>);
     <span class="kw">let</span> <span class="ident">time_part_1</span> <span class="op">=</span> <span class="ident">start_part_1</span>.<span class="ident">elapsed</span>();
 
     <span class="comment">// -------------------------------------------------------------------------</span>
@@ -151,19 +143,7 @@
     <span class="comment">// -------------------------------------------------------------------------</span>
     <span class="comment">// Find 30000000th number</span>
     <span class="kw">let</span> <span class="ident">start_part_2</span> <span class="op">=</span> <span class="ident">Instant</span>::<span class="ident">now</span>();
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">said</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[<span class="ident">u32</span>::<span class="ident">MAX</span>; <span class="ident">CAPACITY</span> <span class="op">+</span> <span class="number">1</span>];
-    <span class="ident">values</span>
-        .<span class="ident">iter</span>()
-        .<span class="ident">take</span>(<span class="ident">number_starters</span> <span class="op">-</span> <span class="number">1</span>)
-        .<span class="ident">enumerate</span>()
-        .<span class="ident">for_each</span>(<span class="op">|</span>(<span class="ident">i</span>, <span class="kw-2">&amp;</span><span class="ident">value</span>)<span class="op">|</span> {
-            <span class="ident">said</span>[<span class="ident">value</span>] <span class="op">=</span> (<span class="ident">i</span> <span class="op">+</span> <span class="number">1</span>) <span class="kw">as</span> <span class="ident">u32</span>;
-        });
-
-    <span class="kw">let</span> <span class="ident">number_2</span>: <span class="ident">u32</span> <span class="op">=</span>
-        (<span class="ident">number_starters</span>..<span class="ident">CAPACITY</span>).<span class="ident">fold</span>(<span class="ident">values</span>[<span class="ident">number_starters</span> <span class="op">-</span> <span class="number">1</span>] <span class="kw">as</span> <span class="ident">u32</span>, <span class="op">|</span><span class="ident">current</span>, <span class="ident">i</span><span class="op">|</span> {
-            (<span class="ident">i</span> <span class="kw">as</span> <span class="ident">u32</span>).<span class="ident">saturating_sub</span>(<span class="ident">std</span>::<span class="ident">mem</span>::<span class="ident">replace</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">said</span>[<span class="ident">current</span> <span class="kw">as</span> <span class="ident">usize</span>], <span class="ident">i</span> <span class="kw">as</span> <span class="ident">u32</span>))
-        });
+    <span class="kw">let</span> <span class="ident">number_2</span> <span class="op">=</span> <span class="ident">play_game</span>(<span class="number">30000000</span>, <span class="kw-2">&amp;</span><span class="ident">values</span>);
     <span class="kw">let</span> <span class="ident">time_part_2</span> <span class="op">=</span> <span class="ident">start_part_2</span>.<span class="ident">elapsed</span>();
 
     <span class="comment">// -------------------------------------------------------------------------</span>
