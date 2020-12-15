@@ -6,6 +6,7 @@ use crate::prelude::*;
 // -----------------------------------------------------------------------------
 // Play game
 // -----------------------------------------------------------------------------
+#[inline]
 fn play_game(n: usize, starters: &Vec<usize>) -> u32 {
     let mut said = vec![u32::MAX; n + 1];
     let number_starters = starters.len();
