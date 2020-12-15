@@ -31,25 +31,20 @@ pub(crate) fn run() -> Results {
     // -------------------------------------------------------------------------
     // Find 2020th number
     let start_part_1 = Instant::now();
-    let mut said = [0; YEAR + 1];
+    let mut said = [u32::MAX; YEAR + 1];
     let number_starters = values.len();
     values
         .iter()
         .take(number_starters - 1)
         .enumerate()
         .for_each(|(i, &value)| {
-            said[value] = i + 1;
+            said[value] = (i + 1) as u32;
         });
 
-    let number_1 = (number_starters..YEAR).fold(values[number_starters - 1], |current, i| {
-        let last_said = said[current];
-        said[current] = i;
-        if last_said == 0 {
-            0
-        } else {
-            i - last_said
-        }
-    });
+    let number_1: u32 =
+        (number_starters..YEAR).fold(values[number_starters - 1] as u32, |current, i| {
+            (i as u32).saturating_sub(std::mem::replace(&mut said[current as usize], i as u32))
+        });
     let time_part_1 = start_part_1.elapsed();
 
     // -------------------------------------------------------------------------
@@ -57,24 +52,19 @@ pub(crate) fn run() -> Results {
     // -------------------------------------------------------------------------
     // Look for triple
     let start_part_2 = Instant::now();
-    let mut said = vec![0; CAPACITY];
+    let mut said = vec![u32::MAX; CAPACITY + 1];
     values
         .iter()
         .take(number_starters - 1)
         .enumerate()
         .for_each(|(i, &value)| {
-            said[value] = i + 1;
+            said[value] = (i + 1) as u32;
         });
 
-    let number_2 = (number_starters..CAPACITY).fold(values[number_starters - 1], |current, i| {
-        let last_said = said[current];
-        said[current] = i;
-        if last_said == 0 {
-            0
-        } else {
-            i - last_said
-        }
-    });
+    let number_2: u32 =
+        (number_starters..CAPACITY).fold(values[number_starters - 1] as u32, |current, i| {
+            (i as u32).saturating_sub(std::mem::replace(&mut said[current as usize], i as u32))
+        });
     let time_part_2 = start_part_2.elapsed();
 
     // -------------------------------------------------------------------------
