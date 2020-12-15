@@ -2,7 +2,6 @@
 //! Nothing clever here.
 
 use crate::prelude::*;
-use rustc_hash::FxHashMap;
 
 // Constant
 const YEAR: usize = 2020;
@@ -60,22 +59,23 @@ pub(crate) fn run() -> Results {
     // -------------------------------------------------------------------------
     // Look for triple
     let start_part_2 = Instant::now();
-    let mut said = FxHashMap::<u32, u32>::with_capacity_and_hasher(1024, Default::default());
+    let mut said = vec![0; CAPACITY];
     values
         .iter()
         .take(number_starters - 1)
         .enumerate()
         .for_each(|(i, &value)| {
-            said.insert(value as u32, (i + 1) as u32);
+            said[value] = i + 1;
         });
 
-    let mut current = values[number_starters - 1] as u32;
+    let mut current = values[number_starters - 1];
     (number_starters..CAPACITY).for_each(|i| {
-        let last_said = said.insert(current, i as u32);
-        if last_said == None {
+        let last_said = said[current];
+        said[current] = i;
+        if last_said == 0 {
             current = 0;
         } else {
-            current = i as u32 - last_said.unwrap();
+            current = i - last_said;
         }
     });
     let number_2 = current;
