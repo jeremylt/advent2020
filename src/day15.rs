@@ -6,7 +6,7 @@ use crate::prelude::*;
 use rustc_hash::FxHashMap;
 
 // Constants
-const BREAKPOINT: usize = 1 << 21;
+const BREAKPOINT: usize = 1 << 22;
 
 // -----------------------------------------------------------------------------
 // Part 1
@@ -35,7 +35,7 @@ fn part_1(n: usize, starters: &Vec<usize>) -> u32 {
 fn part_2(n: usize, starters: &Vec<usize>) -> u32 {
     let mut said = vec![u32::MAX; BREAKPOINT];
     let mut said_big =
-        FxHashMap::<u32, u32>::with_capacity_and_hasher(BREAKPOINT / 16, Default::default());
+        FxHashMap::<u32, u32>::with_capacity_and_hasher(BREAKPOINT / 64, Default::default());
     let number_starters = starters.len();
     starters
         .iter()
@@ -45,7 +45,13 @@ fn part_2(n: usize, starters: &Vec<usize>) -> u32 {
             said[value] = (i + 1) as u32;
         });
 
-    (number_starters..n).fold(starters[number_starters - 1] as u32, |current, i| {
+    // Lower portion of range
+    let lower =
+        (number_starters..BREAKPOINT).fold(starters[number_starters - 1] as u32, |current, i| {
+            (i as u32).saturating_sub(std::mem::replace(&mut said[current as usize], i as u32))
+        });
+    // Upper portion of range
+    (BREAKPOINT..n).fold(lower, |current, i| {
         if current < BREAKPOINT as u32 {
             (i as u32).saturating_sub(std::mem::replace(&mut said[current as usize], i as u32))
         } else {
