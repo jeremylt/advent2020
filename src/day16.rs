@@ -1,4 +1,7 @@
 //! Day 16:
+//! The range checking is somewhat expensive in this problem. I imagine there is a better
+//! way to organize the data for finding the rules, but I haven't put much thought into
+//! it yet.
 
 use crate::prelude::*;
 
@@ -19,13 +22,15 @@ impl std::str::FromStr for TicketField {
     type Err = std::num::ParseIntError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         // Line of form FIELD NAME: LOWER-RANGE or UPPER-RANGE
-        let mut line = s.splitn(2, ":");
+        let mut line = s.splitn(2, ": ");
         let name = line.next().unwrap().to_string();
+
         let mut ranges = line.next().unwrap().splitn(4, &['-', 'o'][..]);
         let lower_range = // need to remove extra spaces
-            ranges.next().unwrap()[1..].parse()?..=ranges.next().unwrap().trim().parse()?;
+            ranges.next().unwrap().parse()?..=ranges.next().unwrap().trim().parse()?;
         let upper_range = // need to remove 'r ' and '\n'
             ranges.next().unwrap()[2..].parse()?..=ranges.next().unwrap().trim().parse()?;
+
         Ok(Self {
             name,
             lower_range,
@@ -37,10 +42,14 @@ impl std::str::FromStr for TicketField {
 // -----------------------------------------------------------------------------
 // Ticket field checker
 // -----------------------------------------------------------------------------
-fn valid_field(value: &u16, fields: &Vec<TicketField>) -> bool {
-    fields
-        .iter()
-        .any(|field| field.lower_range.contains(value) || field.upper_range.contains(value))
+#[inline]
+fn valid_field(value: &u16, field: &TicketField) -> bool {
+    field.lower_range.contains(value) || field.upper_range.contains(value)
+}
+
+#[inline]
+fn valid_fields(value: &u16, fields: &Vec<TicketField>) -> bool {
+    fields.iter().any(|field| valid_field(value, field))
 }
 
 // -----------------------------------------------------------------------------
@@ -91,7 +100,7 @@ pub(crate) fn run() -> Results {
             let mut invalid_data = false;
             line.split(",").enumerate().for_each(|(i, raw)| {
                 let value = raw.parse().expect("failed to parse data");
-                if !valid_field(&value, &fields) {
+                if !valid_fields(&value, &fields) {
                     error_rate_1 += value;
                     invalid_data = true;
                 } else {
@@ -120,26 +129,29 @@ pub(crate) fn run() -> Results {
     while match_count < NUMBER_FIELDS {
         other_tickets.iter().for_each(|ticket| {
             let found = unmatched.iter_mut().enumerate().find_map(|(i, position)| {
-                position.retain(|&possible| {
-                    fields[possible].lower_range.contains(&ticket[i])
-                        || fields[possible].upper_range.contains(&ticket[i])
-                });
+                position.retain(|&possible| valid_field(&ticket[i], &fields[possible]));
                 if position.len() == 1 {
                     matches[i] = position[0];
                     position.clear();
-                    match_count += 1;
                     Some(matches[i])
                 } else {
                     None
                 }
             });
             match found {
+                // Remove found index
                 None => (),
-                Some(value) => unmatched
-                    .iter_mut()
-                    .for_each(|position| position.retain(|&possible| possible != value)),
+                Some(value) => unmatched.iter_mut().for_each(|position| {
+                    if let Some(index) = position.iter().position(|possible| *possible == value) {
+                        position.swap_remove(index);
+                    }
+                }),
             }
         });
+        match_count = matches
+            .iter()
+            .filter(|&value| *value != NUMBER_FIELDS + 1)
+            .count();
     }
 
     let product_2 = matches
