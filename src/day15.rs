@@ -13,6 +13,7 @@ const BREAKPOINT: usize = 1 << 22;
 // -----------------------------------------------------------------------------
 #[inline]
 fn part_1(n: usize, starters: &Vec<usize>) -> u32 {
+    // Setup
     let mut said = vec![u32::MAX; n + 1];
     let number_starters = starters.len();
     starters
@@ -22,7 +23,7 @@ fn part_1(n: usize, starters: &Vec<usize>) -> u32 {
         .for_each(|(i, &value)| {
             said[value] = (i + 1) as u32;
         });
-
+    // Iterate to nth
     (number_starters..n).fold(starters[number_starters - 1] as u32, |current, i| {
         (i as u32).saturating_sub(std::mem::replace(&mut said[current as usize], i as u32))
     })
@@ -33,9 +34,10 @@ fn part_1(n: usize, starters: &Vec<usize>) -> u32 {
 // -----------------------------------------------------------------------------
 #[inline]
 fn part_2(n: usize, starters: &Vec<usize>) -> u32 {
+    // Setup
     let mut said = vec![u32::MAX; BREAKPOINT];
     let mut said_big =
-        FxHashMap::<u32, u32>::with_capacity_and_hasher(BREAKPOINT / 64, Default::default());
+        FxHashMap::<u32, u32>::with_capacity_and_hasher(BREAKPOINT / 256, Default::default());
     let number_starters = starters.len();
     starters
         .iter()
@@ -44,7 +46,6 @@ fn part_2(n: usize, starters: &Vec<usize>) -> u32 {
         .for_each(|(i, &value)| {
             said[value] = (i + 1) as u32;
         });
-
     // Lower portion of range
     let lower =
         (number_starters..BREAKPOINT).fold(starters[number_starters - 1] as u32, |current, i| {
