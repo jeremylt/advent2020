@@ -128,30 +128,25 @@ pub(crate) fn run() -> Results {
 
     while match_count < NUMBER_FIELDS {
         other_tickets.iter().for_each(|ticket| {
-            let found = unmatched.iter_mut().enumerate().find_map(|(i, position)| {
+            let mut found = NUMBER_FIELDS + 1;
+            // Remove invalid options
+            unmatched.iter_mut().enumerate().for_each(|(i, position)| {
                 position.retain(|&possible| valid_field(&ticket[i], &fields[possible]));
+                // Clear position if found
                 if position.len() == 1 {
                     matches[i] = position[0];
+                    found = position[0];
                     position.clear();
-                    Some(matches[i])
-                } else {
-                    None
                 }
             });
-            match found {
-                // Remove found index
-                None => (),
-                Some(value) => unmatched.iter_mut().for_each(|position| {
-                    if let Some(index) = position.iter().position(|possible| *possible == value) {
-                        position.swap_remove(index);
-                    }
-                }),
+            // Remove index if found
+            if found != NUMBER_FIELDS + 1 {
+                unmatched
+                    .iter_mut()
+                    .for_each(|position| position.retain(|&value| value != found));
+                match_count += 1;
             }
         });
-        match_count = matches
-            .iter()
-            .filter(|&value| *value != NUMBER_FIELDS + 1)
-            .count();
     }
 
     let product_2 = matches
