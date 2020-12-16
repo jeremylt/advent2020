@@ -6,11 +6,22 @@ use crate::prelude::*;
 use rustc_hash::FxHashMap;
 
 // Constants
+const YEAR: usize = 2020;
+const REALLY_BIG: usize = 30_000_000;
 const BREAKPOINT: usize = 1 << 22;
 
 // -----------------------------------------------------------------------------
 // Part 1
 // -----------------------------------------------------------------------------
+macro_rules! turns_since_said {
+    ($said:expr, $turn:expr, $current:expr) => {
+        ($turn as u32).saturating_sub(std::mem::replace(
+            &mut $said[$current as usize],
+            $turn as u32,
+        ))
+    };
+}
+
 #[inline]
 fn part_1(n: usize, starters: &Vec<usize>) -> u32 {
     // Setup
@@ -23,21 +34,31 @@ fn part_1(n: usize, starters: &Vec<usize>) -> u32 {
         .for_each(|(i, &value)| {
             said[value] = (i + 1) as u32;
         });
+
     // Iterate to nth
     (number_starters..n).fold(starters[number_starters - 1] as u32, |current, i| {
-        (i as u32).saturating_sub(std::mem::replace(&mut said[current as usize], i as u32))
+        turns_since_said!(said, i, current)
     })
 }
 
 // -----------------------------------------------------------------------------
 // Part 2
 // -----------------------------------------------------------------------------
+macro_rules! turns_since_said_big {
+    ($said_big:expr, $turn:expr, $current:expr) => {
+        match $said_big.insert($current, $turn as u32) {
+            None => 0,
+            Some(value) => $turn as u32 - value,
+        }
+    };
+}
+
 #[inline]
 fn part_2(n: usize, starters: &Vec<usize>) -> u32 {
     // Setup
     let mut said = vec![u32::MAX; BREAKPOINT];
     let mut said_big =
-        FxHashMap::<u32, u32>::with_capacity_and_hasher(BREAKPOINT / 256, Default::default());
+        FxHashMap::<u32, u32>::with_capacity_and_hasher(BREAKPOINT / 8, Default::default());
     let number_starters = starters.len();
     starters
         .iter()
@@ -46,22 +67,61 @@ fn part_2(n: usize, starters: &Vec<usize>) -> u32 {
         .for_each(|(i, &value)| {
             said[value] = (i + 1) as u32;
         });
+
     // Lower portion of range
-    let lower =
-        (number_starters..BREAKPOINT).fold(starters[number_starters - 1] as u32, |current, i| {
-            (i as u32).saturating_sub(std::mem::replace(&mut said[current as usize], i as u32))
+    let lower = (number_starters..BREAKPOINT)
+        .fold(starters[number_starters - 1] as u32, |current, i| {
+            turns_since_said!(said, i, current)
         });
+
     // Upper portion of range
     (BREAKPOINT..n).fold(lower, |current, i| {
         if current < BREAKPOINT as u32 {
-            (i as u32).saturating_sub(std::mem::replace(&mut said[current as usize], i as u32))
+            turns_since_said!(said, i, current)
         } else {
-            match said_big.insert(current, i as u32) {
-                None => 0,
-                Some(value) => i as u32 - value,
-            }
+            turns_since_said_big!(said_big, i, current)
         }
     })
+}
+
+// -----------------------------------------------------------------------------
+// Combined
+// -----------------------------------------------------------------------------
+#[inline]
+fn combined(first: usize, second: usize, starters: &Vec<usize>) -> (u32, u32) {
+    // Setup
+    let mut said = vec![u32::MAX; BREAKPOINT];
+    let mut said_big =
+        FxHashMap::<u32, u32>::with_capacity_and_hasher(BREAKPOINT / 8, Default::default());
+    let number_starters = starters.len();
+    starters
+        .iter()
+        .take(number_starters - 1)
+        .enumerate()
+        .for_each(|(i, &value)| {
+            said[value] = (i + 1) as u32;
+        });
+    // First range
+    let result_1 = (number_starters..first)
+        .fold(starters[number_starters - 1] as u32, |current, i| {
+            turns_since_said!(said, i, current)
+        });
+
+    // Lower portion of second range
+    let lower = (first..BREAKPOINT).fold(result_1 as u32, |current, i| {
+        turns_since_said!(said, i, current)
+    });
+
+    // Upper portion of second range
+    let result_2 = (BREAKPOINT..second).fold(lower, |current, i| {
+        if current < BREAKPOINT as u32 {
+            turns_since_said!(said, i, current)
+        } else {
+            turns_since_said_big!(said_big, i, current)
+        }
+    });
+
+    (result_1, result_2)
 }
 
 // -----------------------------------------------------------------------------
@@ -88,7 +148,7 @@ pub(crate) fn run() -> Results {
     // -------------------------------------------------------------------------
     // Find 2020th number
     let start_part_1 = Instant::now();
-    let number_1 = part_1(2020, &values);
+    let number_1 = part_1(YEAR, &values);
     let time_part_1 = start_part_1.elapsed();
 
     // -------------------------------------------------------------------------
@@ -96,8 +156,22 @@ pub(crate) fn run() -> Results {
     // -------------------------------------------------------------------------
     // Find 30000000th number
     let start_part_2 = Instant::now();
-    let number_2 = part_2(30_000_000, &values);
+    let number_2 = part_2(REALLY_BIG, &values);
     let time_part_2 = start_part_2.elapsed();
+
+    // -------------------------------------------------------------------------
+    // Combined
+    // -------------------------------------------------------------------------
+    let start_combined = Instant::now();
+    let values: Vec<usize> = buffer
+        .trim()
+        .split(',')
+        .map(|line| line.parse().expect("failed to parse line"))
+        .collect();
+    let (combined_1, combined_2) = combined(YEAR, REALLY_BIG, &values);
+    let time_combined = start_combined.elapsed();
+    assert_eq!(combined_1, number_1);
+    assert_eq!(combined_2, number_2);
 
     // -------------------------------------------------------------------------
     // Return
@@ -105,12 +179,7 @@ pub(crate) fn run() -> Results {
     Results::new(
         number_1 as i64,
         number_2 as i64,
-        Timing::new(
-            time_setup,
-            time_part_1,
-            time_part_2,
-            std::time::Duration::new(0, 0),
-        ),
+        Timing::new(time_setup, time_part_1, time_part_2, time_combined),
     )
 }
 
