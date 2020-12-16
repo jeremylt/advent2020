@@ -35,7 +35,7 @@ fn part_1(n: usize, starters: &Vec<usize>) -> u32 {
 fn part_2(n: usize, starters: &Vec<usize>) -> u32 {
     let mut said = vec![u32::MAX; BREAKPOINT];
     let mut said_big =
-        FxHashMap::<u32, u32>::with_capacity_and_hasher(BREAKPOINT / 4, Default::default());
+        FxHashMap::<u32, u32>::with_capacity_and_hasher(BREAKPOINT / 16, Default::default());
     let number_starters = starters.len();
     starters
         .iter()
