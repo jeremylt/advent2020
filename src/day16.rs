@@ -111,7 +111,7 @@ pub(crate) fn run() -> Results {
     // -------------------------------------------------------------------------
     // Part 2
     // -------------------------------------------------------------------------
-    // Determine field data
+    // Match fields to location
     let start_part_2 = Instant::now();
     let mut match_count = 0;
     let mut matches = [NUMBER_FIELDS + 1; NUMBER_FIELDS];
