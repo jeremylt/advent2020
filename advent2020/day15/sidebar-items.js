@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["play_game",""],["report",""],["run",""]]});
+initSidebarItems({"constant":[["BREAKPOINT",""]],"fn":[["part_1",""],["part_2",""],["report",""],["run",""]]});
