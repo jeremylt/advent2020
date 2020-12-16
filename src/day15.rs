@@ -1,13 +1,18 @@
 //! Day 15:
-//! Nothing clever here.
+//! Nothing clever here. I am using a vec for the dense portion of the integers and a
+//! hash map for the sparse portion of the integers.
 
 use crate::prelude::*;
+use rustc_hash::FxHashMap;
+
+// Constants
+const BREAKPOINT: usize = 1 << 21;
 
 // -----------------------------------------------------------------------------
-// Play game
+// Part 1
 // -----------------------------------------------------------------------------
 #[inline]
-fn play_game(n: usize, starters: &Vec<usize>) -> u32 {
+fn part_1(n: usize, starters: &Vec<usize>) -> u32 {
     let mut said = vec![u32::MAX; n + 1];
     let number_starters = starters.len();
     starters
@@ -20,6 +25,35 @@ fn play_game(n: usize, starters: &Vec<usize>) -> u32 {
 
     (number_starters..n).fold(starters[number_starters - 1] as u32, |current, i| {
         (i as u32).saturating_sub(std::mem::replace(&mut said[current as usize], i as u32))
+    })
+}
+
+// -----------------------------------------------------------------------------
+// Part 2
+// -----------------------------------------------------------------------------
+#[inline]
+fn part_2(n: usize, starters: &Vec<usize>) -> u32 {
+    let mut said = vec![u32::MAX; BREAKPOINT];
+    let mut said_big =
+        FxHashMap::<u32, u32>::with_capacity_and_hasher(BREAKPOINT / 4, Default::default());
+    let number_starters = starters.len();
+    starters
+        .iter()
+        .take(number_starters - 1)
+        .enumerate()
+        .for_each(|(i, &value)| {
+            said[value] = (i + 1) as u32;
+        });
+
+    (number_starters..n).fold(starters[number_starters - 1] as u32, |current, i| {
+        if current < BREAKPOINT as u32 {
+            (i as u32).saturating_sub(std::mem::replace(&mut said[current as usize], i as u32))
+        } else {
+            match said_big.insert(current, i as u32) {
+                None => 0,
+                Some(value) => i as u32 - value,
+            }
+        }
     })
 }
 
@@ -47,7 +81,7 @@ pub(crate) fn run() -> Results {
     // -------------------------------------------------------------------------
     // Find 2020th number
     let start_part_1 = Instant::now();
-    let number_1 = play_game(2020, &values);
+    let number_1 = part_1(2020, &values);
     let time_part_1 = start_part_1.elapsed();
 
     // -------------------------------------------------------------------------
@@ -55,7 +89,7 @@ pub(crate) fn run() -> Results {
     // -------------------------------------------------------------------------
     // Find 30000000th number
     let start_part_2 = Instant::now();
-    let number_2 = play_game(30_000_000, &values);
+    let number_2 = part_2(30_000_000, &values);
     let time_part_2 = start_part_2.elapsed();
 
     // -------------------------------------------------------------------------
