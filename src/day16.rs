@@ -44,7 +44,7 @@ impl std::str::FromStr for TicketField {
 // -----------------------------------------------------------------------------
 #[inline]
 fn valid_field(value: &u16, field: &TicketField) -> bool {
-    field.lower_range.contains(value) || field.upper_range.contains(value)
+    field.upper_range.contains(value) || field.lower_range.contains(value)
 }
 
 #[inline]
@@ -147,6 +147,10 @@ pub(crate) fn run() -> Results {
                 match_count += 1;
             }
         });
+        match_count = matches
+            .iter()
+            .filter(|&value| *value != NUMBER_FIELDS + 1)
+            .count();
     }
 
     let product_2 = matches
