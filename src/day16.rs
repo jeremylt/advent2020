@@ -4,9 +4,11 @@
 //! it yet.
 
 use crate::prelude::*;
+use arrayvec::ArrayVec;
 
 // Constants
 const NUMBER_FIELDS: usize = 20;
+const CAPACITY: usize = 256;
 
 // -----------------------------------------------------------------------------
 // Ticket fields
@@ -48,7 +50,7 @@ fn valid_field(value: &u16, field: &TicketField) -> bool {
 }
 
 #[inline]
-fn valid_fields(value: &u16, fields: &Vec<TicketField>) -> bool {
+fn valid_fields(value: &u16, fields: &ArrayVec<[TicketField; NUMBER_FIELDS]>) -> bool {
     fields.iter().any(|field| valid_field(value, field))
 }
 
@@ -65,7 +67,7 @@ pub(crate) fn run() -> Results {
 
     // Read ticket fields
     let mut data = buffer.split("\n\n");
-    let fields: Vec<TicketField> = data
+    let fields: ArrayVec<[TicketField; NUMBER_FIELDS]> = data
         .next()
         .unwrap()
         .lines()
@@ -90,7 +92,7 @@ pub(crate) fn run() -> Results {
     // Check nearby tickets, filter out invalid
     let start_part_1 = Instant::now();
     let mut error_rate_1 = 0;
-    let other_tickets: Vec<[u16; NUMBER_FIELDS]> = data
+    let other_tickets: ArrayVec<[[u16; NUMBER_FIELDS]; CAPACITY]> = data
         .next()
         .unwrap()
         .lines()
@@ -124,14 +126,15 @@ pub(crate) fn run() -> Results {
     let start_part_2 = Instant::now();
     let mut match_count = 0;
     let mut matches = [NUMBER_FIELDS + 1; NUMBER_FIELDS];
-    let mut unmatched: Vec<Vec<usize>> = vec![(0..NUMBER_FIELDS).collect(); NUMBER_FIELDS];
+    let mut unmatched: Vec<ArrayVec<[usize; NUMBER_FIELDS]>> =
+        vec![(0..NUMBER_FIELDS).collect(); NUMBER_FIELDS];
 
     while match_count < NUMBER_FIELDS {
         other_tickets.iter().for_each(|ticket| {
             let mut found = NUMBER_FIELDS + 1;
             // Remove invalid options
             unmatched.iter_mut().enumerate().for_each(|(i, position)| {
-                position.retain(|&possible| valid_field(&ticket[i], &fields[possible]));
+                position.retain(|&mut possible| valid_field(&ticket[i], &fields[possible]));
                 // Clear position if found
                 if position.len() == 1 {
                     matches[i] = position[0];
@@ -143,7 +146,7 @@ pub(crate) fn run() -> Results {
             if found != NUMBER_FIELDS + 1 {
                 unmatched
                     .iter_mut()
-                    .for_each(|position| position.retain(|&value| value != found));
+                    .for_each(|position| position.retain(|&mut value| value != found));
                 match_count += 1;
             }
         });
