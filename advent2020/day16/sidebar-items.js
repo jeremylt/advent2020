@@ -1,1 +1,1 @@
-initSidebarItems({"constant":[["NUMBER_FIELDS",""]],"fn":[["report",""],["run",""],["valid_field",""]],"struct":[["TicketField",""]]});
+initSidebarItems({"constant":[["NUMBER_FIELDS",""]],"fn":[["report",""],["run",""],["valid_field",""],["valid_fields",""]],"struct":[["TicketField",""]]});
