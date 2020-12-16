@@ -184,7 +184,7 @@ pub(crate) fn run() -> Results {
 // Report
 // -----------------------------------------------------------------------------
 pub(crate) fn report(results: &Results) {
-    output::print_day(1, "Report Repair");
+    output::print_day(16, "Ticket Translation");
     output::print_part(1, "🎫 Invalid", &format!("{}", results.part_1));
     output::print_part(2, "🎫 Product", &format!("{}", results.part_2));
     output::print_timing(&results.times);
