@@ -77,7 +77,8 @@ I have experimented with maintaining a hash set of only the active nodes, but th
 turned into an interesting example where doing lots of the same task is faster than
 some special case logic to reduce the total FLOPs. In the 4D case, the final solution
 uses ~1% of the cells, but trying to target active cells and neighbors took 10x longer
-on my machine.</p>
+on my machine. I did use symmetry in the 3rd and 4th dimension to reduce the
+computation by a factor of nearly 2 and 4, respectively.</p>
 </td></tr><tr class='module-item'><td><a class="mod" href="output/index.html" title='advent2020::output mod'>output</a></td><td class='docblock-short'><p>Output:
 This module collects some of my <code>println!</code> boilerplate between the days.</p>
 </td></tr><tr class='module-item'><td><a class="mod" href="prelude/index.html" title='advent2020::prelude mod'>prelude</a></td><td class='docblock-short'></td></tr></table><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
