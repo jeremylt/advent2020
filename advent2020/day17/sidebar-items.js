@@ -1,0 +1,1 @@
+initSidebarItems({"constant":[["CAPACITY_3D",""],["CYCLES",""],["NEIGHBOR_LIMIT",""]],"fn":[["count_neighbors_3d",""],["count_neighbors_4d",""],["game_of_life_3d",""],["game_of_life_4d",""],["report",""],["run",""]]});

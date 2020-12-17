@@ -333,6 +333,16 @@
 <span id="330">330</span>
 <span id="331">331</span>
 <span id="332">332</span>
+<span id="333">333</span>
+<span id="334">334</span>
+<span id="335">335</span>
+<span id="336">336</span>
+<span id="337">337</span>
+<span id="338">338</span>
+<span id="339">339</span>
+<span id="340">340</span>
+<span id="341">341</span>
+<span id="342">342</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="attribute">#[<span class="ident">macro_use</span>]</span>
 <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">lazy_static</span>;
@@ -356,6 +366,7 @@
 <span class="kw">mod</span> <span class="ident">day14</span>;
 <span class="kw">mod</span> <span class="ident">day15</span>;
 <span class="kw">mod</span> <span class="ident">day16</span>;
+<span class="kw">mod</span> <span class="ident">day17</span>;
 <span class="kw">mod</span> <span class="ident">output</span>;
 
 <span class="comment">// -----------------------------------------------------------------------------</span>
@@ -408,7 +419,7 @@
 <span class="comment">// -----------------------------------------------------------------------------</span>
 <span class="comment">// Prelude</span>
 <span class="comment">// -----------------------------------------------------------------------------</span>
-<span class="kw">const</span> <span class="ident">REPETITIONS</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">25</span>;
+<span class="kw">const</span> <span class="ident">REPETITIONS</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">1</span>;
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">mod</span> <span class="ident">prelude</span> {
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">REPETITIONS</span>;
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">output</span>, <span class="ident">Results</span>, <span class="ident">Timing</span>};
@@ -421,7 +432,7 @@
 <span class="comment">// -----------------------------------------------------------------------------</span>
 <span class="kw">fn</span> <span class="ident">main</span>() {
     <span class="comment">// Setup</span>
-    <span class="kw">const</span> <span class="ident">DAYS</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">16</span>;
+    <span class="kw">const</span> <span class="ident">DAYS</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">17</span>;
     <span class="kw">let</span> <span class="ident">runs</span> <span class="op">=</span> [
         <span class="ident">day01</span>::<span class="ident">run</span>,
         <span class="ident">day02</span>::<span class="ident">run</span>,
@@ -439,6 +450,7 @@
         <span class="ident">day14</span>::<span class="ident">run</span>,
         <span class="ident">day15</span>::<span class="ident">run</span>,
         <span class="ident">day16</span>::<span class="ident">run</span>,
+        <span class="ident">day17</span>::<span class="ident">run</span>,
     ];
     <span class="kw">let</span> <span class="ident">reports</span> <span class="op">=</span> [
         <span class="ident">day01</span>::<span class="ident">report</span>,
@@ -457,11 +469,13 @@
         <span class="ident">day14</span>::<span class="ident">report</span>,
         <span class="ident">day15</span>::<span class="ident">report</span>,
         <span class="ident">day16</span>::<span class="ident">report</span>,
+        <span class="ident">day17</span>::<span class="ident">report</span>,
     ];
 
     <span class="comment">// Each day</span>
     <span class="ident">output</span>::<span class="ident">print_header</span>();
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">day_results</span>: [<span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Results</span><span class="op">&gt;</span>; <span class="ident">DAYS</span>] <span class="op">=</span> [
+        <span class="macro">vec</span><span class="macro">!</span>[],
         <span class="macro">vec</span><span class="macro">!</span>[],
         <span class="macro">vec</span><span class="macro">!</span>[],
         <span class="macro">vec</span><span class="macro">!</span>[],
@@ -662,6 +676,12 @@
     <span class="kw">fn</span> <span class="ident">test_16</span>() {
         <span class="kw">let</span> <span class="ident">results</span> <span class="op">=</span> <span class="ident">day16</span>::<span class="ident">run</span>();
         <span class="macro">test_day</span><span class="macro">!</span>(<span class="ident">results</span>, <span class="number">26_988</span>, <span class="number">426_362_917_709</span>);
+    }
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">test_17</span>() {
+        <span class="kw">let</span> <span class="ident">results</span> <span class="op">=</span> <span class="ident">day17</span>::<span class="ident">run</span>();
+        <span class="macro">test_day</span><span class="macro">!</span>(<span class="ident">results</span>, <span class="number">315</span>, <span class="number">1_520</span>);
     }
 }
 
