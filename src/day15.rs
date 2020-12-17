@@ -114,7 +114,7 @@ fn combined(first: usize, second: usize, starters: &Vec<usize>) -> (u32, u32) {
 
     // Upper portion of second range
     let result_2 = (BREAKPOINT..second).fold(lower, |current, i| {
-        if current < BREAKPOINT as u32 {
+        if current < said.len() as u32 {
             turns_since_said!(said, i, current)
         } else {
             turns_since_said_big!(said_big, i, current)
