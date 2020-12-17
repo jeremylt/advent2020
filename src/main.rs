@@ -20,6 +20,7 @@ mod day13;
 mod day14;
 mod day15;
 mod day16;
+mod day17;
 mod output;
 
 // -----------------------------------------------------------------------------
@@ -72,7 +73,7 @@ impl Timing {
 // -----------------------------------------------------------------------------
 // Prelude
 // -----------------------------------------------------------------------------
-const REPETITIONS: u32 = 25;
+const REPETITIONS: u32 = 1;
 pub(crate) mod prelude {
     pub(crate) use crate::REPETITIONS;
     pub(crate) use crate::{output, Results, Timing};
@@ -85,7 +86,7 @@ pub(crate) mod prelude {
 // -----------------------------------------------------------------------------
 fn main() {
     // Setup
-    const DAYS: usize = 16;
+    const DAYS: usize = 17;
     let runs = [
         day01::run,
         day02::run,
@@ -103,6 +104,7 @@ fn main() {
         day14::run,
         day15::run,
         day16::run,
+        day17::run,
     ];
     let reports = [
         day01::report,
@@ -121,11 +123,13 @@ fn main() {
         day14::report,
         day15::report,
         day16::report,
+        day17::report,
     ];
 
     // Each day
     output::print_header();
     let mut day_results: [Vec<Results>; DAYS] = [
+        vec![],
         vec![],
         vec![],
         vec![],
@@ -326,6 +330,12 @@ mod tests {
     fn test_16() {
         let results = day16::run();
         test_day!(results, 26_988, 426_362_917_709);
+    }
+
+    #[test]
+    fn test_17() {
+        let results = day17::run();
+        test_day!(results, 315, 1_520);
     }
 }
 
