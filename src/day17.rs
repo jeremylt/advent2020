@@ -11,6 +11,7 @@ use arrayvec::ArrayVec;
 
 // Constants
 const CAPACITY_3D: usize = 1 << 13;
+const CAPACITY_4D: usize = 1 << 16;
 const CYCLES: usize = 6;
 const NEIGHBOR_LIMIT: usize = 3;
 
@@ -121,7 +122,7 @@ fn count_neighbors_4d(
     row_length: usize,
     column_length: usize,
     indices: &[i32; 80],
-    cells: &Vec<bool>,
+    cells: &ArrayVec<[bool; CAPACITY_4D]>,
 ) -> usize {
     let mut count = 0;
     indices.iter().find_map(|&offset| {
@@ -139,7 +140,11 @@ fn count_neighbors_4d(
     count
 }
 
-fn game_of_life_4d(row_length: usize, column_length: usize, cells: &mut Vec<bool>) {
+fn game_of_life_4d(
+    row_length: usize,
+    column_length: usize,
+    cells: &mut ArrayVec<[bool; CAPACITY_4D]>,
+) {
     let row = row_length as i32;
     let column = column_length as i32;
     let slab = row * column * (CYCLES + 3) as i32;
@@ -226,7 +231,7 @@ fn game_of_life_4d(row_length: usize, column_length: usize, cells: &mut Vec<bool
         slab + row * column + row + 1,
     ];
 
-    let mut next_cells = vec![false; row_length * column_length * (CYCLES + 3) * (CYCLES + 3)];
+    let mut next_cells = ArrayVec::from([false; CAPACITY_4D]);
     (0..CYCLES).for_each(|cycle| {
         (CYCLES - cycle..row_length - CYCLES + cycle).for_each(|i| {
             (CYCLES - cycle..column_length - CYCLES + cycle).for_each(|j| {
@@ -320,7 +325,7 @@ pub(crate) fn run() -> Results {
     // -------------------------------------------------------------------------
     // Find 4D initialization
     let start_part_2 = Instant::now();
-    let mut cells = vec![false; row_length * column_length * (CYCLES + 3) * (CYCLES + 3)];
+    let mut cells: ArrayVec<[bool; CAPACITY_4D]> = ArrayVec::from([false; CAPACITY_4D]);
     buffer.lines().enumerate().for_each(|(i, line)| {
         line.chars().enumerate().for_each(|(j, c)| {
             if c == '#' {
