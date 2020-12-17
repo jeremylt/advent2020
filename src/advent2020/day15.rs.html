@@ -314,7 +314,7 @@
 
     <span class="comment">// Upper portion of second range</span>
     <span class="kw">let</span> <span class="ident">result_2</span> <span class="op">=</span> (<span class="ident">BREAKPOINT</span>..<span class="ident">second</span>).<span class="ident">fold</span>(<span class="ident">lower</span>, <span class="op">|</span><span class="ident">current</span>, <span class="ident">i</span><span class="op">|</span> {
-        <span class="kw">if</span> <span class="ident">current</span> <span class="op">&lt;</span> <span class="ident">BREAKPOINT</span> <span class="kw">as</span> <span class="ident">u32</span> {
+        <span class="kw">if</span> <span class="ident">current</span> <span class="op">&lt;</span> <span class="ident">said</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u32</span> {
             <span class="macro">turns_since_said</span><span class="macro">!</span>(<span class="ident">said</span>, <span class="ident">i</span>, <span class="ident">current</span>)
         } <span class="kw">else</span> {
             <span class="macro">turns_since_said_big</span><span class="macro">!</span>(<span class="ident">said_big</span>, <span class="ident">i</span>, <span class="ident">current</span>)
