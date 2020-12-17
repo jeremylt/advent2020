@@ -1,4 +1,9 @@
 //! Day 17:
+//! I have experimented with maintaining a hash set of only the active nodes, but this
+//! turned into an interesting example where doing lots of the same task is faster than
+//! some special case logic to reduce the total FLOPs. In the 4D case, the final solution
+//! uses ~1% of the cells, but trying to target active cells and neighbors took 10x longer
+//! on my machine.
 
 use crate::prelude::*;
 use arrayvec::ArrayVec;
