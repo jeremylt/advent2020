@@ -72,7 +72,12 @@ hash map for the sparse portion of the integers.</p>
 The range checking is somewhat expensive in this problem. I imagine there is a better
 way to organize the data for finding the rules, but I haven't put much thought into
 it yet.</p>
-</td></tr><tr class='module-item'><td><a class="mod" href="day17/index.html" title='advent2020::day17 mod'>day17</a></td><td class='docblock-short'><p>Day 17:</p>
+</td></tr><tr class='module-item'><td><a class="mod" href="day17/index.html" title='advent2020::day17 mod'>day17</a></td><td class='docblock-short'><p>Day 17:
+I have experimented with maintaining a hash set of only the active nodes, but this
+turned into an interesting example where doing lots of the same task is faster than
+some special case logic to reduce the total FLOPs. In the 4D case, the final solution
+uses ~1% of the cells, but trying to target active cells and neighbors took 10x longer
+on my machine.</p>
 </td></tr><tr class='module-item'><td><a class="mod" href="output/index.html" title='advent2020::output mod'>output</a></td><td class='docblock-short'><p>Output:
 This module collects some of my <code>println!</code> boilerplate between the days.</p>
 </td></tr><tr class='module-item'><td><a class="mod" href="prelude/index.html" title='advent2020::prelude mod'>prelude</a></td><td class='docblock-short'></td></tr></table><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>

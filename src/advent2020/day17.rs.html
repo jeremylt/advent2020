@@ -336,8 +336,18 @@
 <span id="333">333</span>
 <span id="334">334</span>
 <span id="335">335</span>
+<span id="336">336</span>
+<span id="337">337</span>
+<span id="338">338</span>
+<span id="339">339</span>
+<span id="340">340</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Day 17:</span>
+<span class="doccomment">//! I have experimented with maintaining a hash set of only the active nodes, but this</span>
+<span class="doccomment">//! turned into an interesting example where doing lots of the same task is faster than</span>
+<span class="doccomment">//! some special case logic to reduce the total FLOPs. In the 4D case, the final solution</span>
+<span class="doccomment">//! uses ~1% of the cells, but trying to target active cells and neighbors took 10x longer</span>
+<span class="doccomment">//! on my machine.</span>
 
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">prelude</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">arrayvec</span>::<span class="ident">ArrayVec</span>;
