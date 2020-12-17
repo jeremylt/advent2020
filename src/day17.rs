@@ -3,7 +3,8 @@
 //! turned into an interesting example where doing lots of the same task is faster than
 //! some special case logic to reduce the total FLOPs. In the 4D case, the final solution
 //! uses ~1% of the cells, but trying to target active cells and neighbors took 10x longer
-//! on my machine.
+//! on my machine. I did use symmetry in the 3rd and 4th dimension to reduce the
+//! computation by a factor of nearly 2 and 4, respectively.
 
 use crate::prelude::*;
 use arrayvec::ArrayVec;
@@ -22,6 +23,7 @@ macro_rules! index_3d {
     };
 }
 
+#[inline]
 fn count_neighbors_3d(
     i: usize,
     j: usize,
@@ -79,7 +81,7 @@ fn game_of_life_3d(
     (0..CYCLES).for_each(|cycle| {
         (CYCLES - cycle..row_length - CYCLES + cycle).for_each(|i| {
             (CYCLES - cycle..column_length - CYCLES + cycle).for_each(|j| {
-                (CYCLES - cycle..CYCLES + 3 + cycle).for_each(|k| {
+                (1..3 + cycle).for_each(|k| {
                     let count =
                         count_neighbors_3d(i, j, k, row_length, column_length, &neighbors, &cells);
                     let activated = cells[index_3d!(i, j, k, row_length, column_length)];
@@ -88,10 +90,17 @@ fn game_of_life_3d(
                     } else {
                         next_cells[index_3d!(i, j, k, row_length, column_length)] = false;
                     }
-                })
+                });
             })
         });
         std::mem::swap(cells, &mut next_cells);
+        // Copy periodic slab
+        (CYCLES - cycle..row_length - CYCLES + cycle).for_each(|i| {
+            (CYCLES - cycle..column_length - CYCLES + cycle).for_each(|j| {
+                cells[index_3d!(i, j, 0, row_length, column_length)] =
+                    cells[index_3d!(i, j, 2, row_length, column_length)];
+            })
+        });
     });
 }
 
@@ -100,7 +109,7 @@ fn game_of_life_3d(
 // -----------------------------------------------------------------------------
 macro_rules! index_4d {
     ($i:expr, $j:expr, $k:expr, $l:expr, $row_length:expr, $column_length:expr) => {
-        ((($l) * (2 * (CYCLES + 1) + 1) + ($k)) * ($column_length) + ($i)) * ($row_length) + ($j)
+        ((($l) * (CYCLES + 3) + ($k)) * ($column_length) + ($i)) * ($row_length) + ($j)
     };
 }
 
@@ -133,7 +142,7 @@ fn count_neighbors_4d(
 fn game_of_life_4d(row_length: usize, column_length: usize, cells: &mut Vec<bool>) {
     let row = row_length as i32;
     let column = column_length as i32;
-    let slab = row * column * (2 * (CYCLES + 1) + 1) as i32;
+    let slab = row * column * (CYCLES + 3) as i32;
     let neighbors: [i32; 80] = [
         -slab - row * column - row - 1,
         -slab - row * column - row,
@@ -217,13 +226,12 @@ fn game_of_life_4d(row_length: usize, column_length: usize, cells: &mut Vec<bool
         slab + row * column + row + 1,
     ];
 
-    let mut next_cells =
-        vec![false; row_length * column_length * (2 * (CYCLES + 1) + 1) * (2 * (CYCLES + 1) + 1)];
+    let mut next_cells = vec![false; row_length * column_length * (CYCLES + 3) * (CYCLES + 3)];
     (0..CYCLES).for_each(|cycle| {
         (CYCLES - cycle..row_length - CYCLES + cycle).for_each(|i| {
             (CYCLES - cycle..column_length - CYCLES + cycle).for_each(|j| {
-                (CYCLES - cycle..CYCLES + 3 + cycle).for_each(|k| {
-                    (CYCLES - cycle..CYCLES + 3 + cycle).for_each(|l| {
+                (1..3 + cycle).for_each(|k| {
+                    (1..3 + cycle).for_each(|l| {
                         let count = count_neighbors_4d(
                             i,
                             j,
@@ -245,6 +253,21 @@ fn game_of_life_4d(row_length: usize, column_length: usize, cells: &mut Vec<bool
             })
         });
         std::mem::swap(cells, &mut next_cells);
+        // Copy periodic slabs
+        (CYCLES - cycle..row_length - CYCLES + cycle).for_each(|i| {
+            (CYCLES - cycle..column_length - CYCLES + cycle).for_each(|j| {
+                cells[index_4d!(i, j, 0, 0, row_length, column_length)] =
+                    cells[index_4d!(i, j, 2, 2, row_length, column_length)];
+                (1..3 + cycle).for_each(|k| {
+                    cells[index_4d!(i, j, k, 0, row_length, column_length)] =
+                        cells[index_4d!(i, j, k, 2, row_length, column_length)];
+                });
+                (1..3 + cycle).for_each(|l| {
+                    cells[index_4d!(i, j, 0, l, row_length, column_length)] =
+                        cells[index_4d!(i, j, 2, l, row_length, column_length)];
+                });
+            })
+        });
     });
 }
 
@@ -266,13 +289,8 @@ pub(crate) fn run() -> Results {
     buffer.lines().enumerate().for_each(|(i, line)| {
         line.chars().enumerate().for_each(|(j, c)| {
             if c == '#' {
-                cells[index_3d!(
-                    i + CYCLES + 1,
-                    j + CYCLES + 1,
-                    CYCLES + 1,
-                    row_length,
-                    column_length
-                )] = true
+                cells[index_3d!(i + CYCLES + 1, j + CYCLES + 1, 1, row_length, column_length)] =
+                    true
             }
         })
     });
@@ -284,7 +302,17 @@ pub(crate) fn run() -> Results {
     // Find 3D initialization
     let start_part_1 = Instant::now();
     game_of_life_3d(row_length, column_length, &mut cells);
-    let count_1 = cells.iter().filter(|&cell| *cell).count();
+    let count_1 = cells
+        .iter()
+        .skip(row_length * column_length)
+        .take(row_length * column_length)
+        .filter(|&cell| *cell)
+        .count()
+        + 2 * cells
+            .iter()
+            .skip(2 * row_length * column_length)
+            .filter(|&cell| *cell)
+            .count();
     let time_part_1 = start_part_1.elapsed();
 
     // -------------------------------------------------------------------------
@@ -292,16 +320,15 @@ pub(crate) fn run() -> Results {
     // -------------------------------------------------------------------------
     // Find 4D initialization
     let start_part_2 = Instant::now();
-    let mut cells =
-        vec![false; row_length * column_length * (2 * (CYCLES + 1) + 1) * (2 * (CYCLES + 1) + 1)];
+    let mut cells = vec![false; row_length * column_length * (CYCLES + 3) * (CYCLES + 3)];
     buffer.lines().enumerate().for_each(|(i, line)| {
         line.chars().enumerate().for_each(|(j, c)| {
             if c == '#' {
                 cells[index_4d!(
                     i + CYCLES + 1,
                     j + CYCLES + 1,
-                    CYCLES + 1,
-                    CYCLES + 1,
+                    1,
+                    1,
                     row_length,
                     column_length
                 )] = true
@@ -309,7 +336,33 @@ pub(crate) fn run() -> Results {
         })
     });
     game_of_life_4d(row_length, column_length, &mut cells);
-    let count_2 = cells.iter().filter(|&cell| *cell).count();
+    let mut count_2 = 0;
+    (1..row_length - 1).for_each(|i| {
+        (1..column_length - 1).for_each(|j| {
+            // Not repeated
+            if cells[index_4d!(i, j, 1, 1, row_length, column_length)] {
+                count_2 += 1;
+            }
+            // Repeated twice
+            (2..CYCLES + 2).for_each(|k| {
+                if cells[index_4d!(i, j, k, 1, row_length, column_length)] {
+                    count_2 += 2;
+                }
+            });
+            (2..CYCLES + 2).for_each(|l| {
+                // Repeated twice
+                if cells[index_4d!(i, j, 1, l, row_length, column_length)] {
+                    count_2 += 2;
+                }
+                // Repeated four times
+                (2..CYCLES + 2).for_each(|k| {
+                    if cells[index_4d!(i, j, k, l, row_length, column_length)] {
+                        count_2 += 4;
+                    }
+                });
+            });
+        })
+    });
     let time_part_2 = start_part_2.elapsed();
 
     // -------------------------------------------------------------------------
