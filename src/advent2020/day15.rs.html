@@ -248,7 +248,7 @@
     (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">said_big</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">turn</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">current</span>:<span class="ident">expr</span>) <span class="op">=</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">said_big</span>.<span class="ident">insert</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">current</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">turn</span> <span class="kw">as</span> <span class="ident">u32</span>) {
             <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="number">0</span>,
-            <span class="prelude-val">Some</span>(<span class="ident">value</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">turn</span> <span class="kw">as</span> <span class="ident">u32</span> <span class="op">-</span> <span class="ident">value</span>,
+            <span class="prelude-val">Some</span>(<span class="ident">value</span>) <span class="op">=</span><span class="op">&gt;</span> (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">turn</span> <span class="kw">as</span> <span class="ident">u32</span>).<span class="ident">saturating_sub</span>(<span class="ident">value</span>),
         }
     };
 }
@@ -276,7 +276,7 @@
 
     <span class="comment">// Upper portion of range</span>
     (<span class="ident">BREAKPOINT</span>..<span class="ident">n</span>).<span class="ident">fold</span>(<span class="ident">lower</span>, <span class="op">|</span><span class="ident">current</span>, <span class="ident">i</span><span class="op">|</span> {
-        <span class="kw">if</span> <span class="ident">current</span> <span class="op">&lt;</span> <span class="ident">BREAKPOINT</span> <span class="kw">as</span> <span class="ident">u32</span> {
+        <span class="kw">if</span> <span class="ident">current</span> <span class="op">&lt;</span> <span class="ident">said</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u32</span> {
             <span class="macro">turns_since_said</span><span class="macro">!</span>(<span class="ident">said</span>, <span class="ident">i</span>, <span class="ident">current</span>)
         } <span class="kw">else</span> {
             <span class="macro">turns_since_said_big</span><span class="macro">!</span>(<span class="ident">said_big</span>, <span class="ident">i</span>, <span class="ident">current</span>)
