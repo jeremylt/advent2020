@@ -48,7 +48,7 @@ macro_rules! turns_since_said_big {
     ($said_big:expr, $turn:expr, $current:expr) => {
         match $said_big.insert($current, $turn as u32) {
             None => 0,
-            Some(value) => $turn as u32 - value,
+            Some(value) => ($turn as u32).saturating_sub(value),
         }
     };
 }
@@ -76,7 +76,7 @@ fn part_2(n: usize, starters: &Vec<usize>) -> u32 {
 
     // Upper portion of range
     (BREAKPOINT..n).fold(lower, |current, i| {
-        if current < BREAKPOINT as u32 {
+        if current < said.len() as u32 {
             turns_since_said!(said, i, current)
         } else {
             turns_since_said_big!(said_big, i, current)
