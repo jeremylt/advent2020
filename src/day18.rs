@@ -8,9 +8,10 @@
 use crate::prelude::*;
 
 // -----------------------------------------------------------------------------
-// Part 1
+// Parse rightmost token
 // -----------------------------------------------------------------------------
-fn part_1(s: &str) -> usize {
+#[inline(always)]
+fn evaluate_next(s: &str, f: fn(&str) -> usize) -> (usize, usize) {
     let length = s.len();
     // Right side
     let right: usize;
@@ -37,11 +38,21 @@ fn part_1(s: &str) -> usize {
             })
             .unwrap()
             + 3;
-        right = part_1(&s[length - operation_index + 3..length - 1]);
+        right = f(&s[length - operation_index + 3..length - 1]);
     } else {
         right = (s.as_bytes()[length - 1] - b'0') as usize;
         operation_index = 3;
     }
+    (right, operation_index)
+}
+
+// -----------------------------------------------------------------------------
+// Part 1
+// -----------------------------------------------------------------------------
+fn part_1(s: &str) -> usize {
+    let length = s.len();
+    // Right side
+    let (right, operation_index) = evaluate_next(&s[0..length], part_1);
     if operation_index > length {
         return right;
     }
@@ -58,57 +69,22 @@ fn part_1(s: &str) -> usize {
 // -----------------------------------------------------------------------------
 // Part 2
 // -----------------------------------------------------------------------------
-fn evaluate_next(s: &str) -> (usize, usize) {
-    let length = s.len();
-    // Right side
-    let right: usize;
-    let operation_index: usize;
-    if s.as_bytes()[length - 1] == b')' {
-        let mut count = 1;
-        operation_index = s
-            .as_bytes()
-            .iter()
-            .rev()
-            .enumerate()
-            .skip(1)
-            .find_map(|(i, &c)| {
-                if c == b')' {
-                    count += 1;
-                } else if c == b'(' {
-                    count -= 1;
-                }
-                if count == 0 {
-                    Some(i)
-                } else {
-                    None
-                }
-            })
-            .unwrap()
-            + 3;
-        right = part_2(&s[length - operation_index + 3..length - 1]);
-    } else {
-        right = (s.as_bytes()[length - 1] - b'0') as usize;
-        operation_index = 3;
-    }
-    (right, operation_index)
-}
-
 fn part_2(s: &str) -> usize {
     let length = s.len();
     let mut current_index = length;
+    let mut current_product = 1;
     let mut current_sum = 0;
-    let mut product = 1;
     // Eagerly evaluate sums, then evaluate products, respecting ()s
     while current_index > 0 {
-        let (right, operation_index) = evaluate_next(&s[0..current_index]);
+        let (right, operation_index) = evaluate_next(&s[0..current_index], part_2);
         current_index = current_index.saturating_sub(operation_index + 1);
         current_sum += right;
         if current_index == 0 || s.as_bytes()[current_index + 1] == b'*' {
-            product *= current_sum;
+            current_product *= current_sum;
             current_sum = 0;
         }
     }
-    product
+    current_product
 }
 
 // -----------------------------------------------------------------------------
