@@ -97,18 +97,18 @@ fn part_2(s: &str) -> usize {
     let length = s.len();
     let mut current_index = length;
     let mut current_sum = 0;
-    let mut sums = vec![];
+    let mut product = 1;
     // Eagerly evaluate sums, then evaluate products, respecting ()s
     while current_index > 0 {
         let (right, operation_index) = evaluate_next(&s[0..current_index]);
         current_index = current_index.saturating_sub(operation_index + 1);
         current_sum += right;
         if current_index == 0 || s.as_bytes()[current_index + 1] == b'*' {
-            sums.push(current_sum);
+            product *= current_sum;
             current_sum = 0;
         }
     }
-    sums.iter().product()
+    product
 }
 
 // -----------------------------------------------------------------------------
