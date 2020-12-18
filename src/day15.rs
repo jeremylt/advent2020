@@ -8,7 +8,7 @@ use rustc_hash::FxHashMap;
 // Constants
 const YEAR: usize = 2020;
 const REALLY_BIG: usize = 30_000_000;
-const BREAKPOINT: usize = 1 << 22;
+const BREAKPOINT: usize = 3_000_000;
 
 // -----------------------------------------------------------------------------
 // Part 1
@@ -46,10 +46,11 @@ fn part_1(n: usize, starters: &Vec<usize>) -> u32 {
 // -----------------------------------------------------------------------------
 macro_rules! turns_since_said_big {
     ($said_big:expr, $turn:expr, $current:expr) => {
-        match $said_big.insert($current, $turn as u32) {
-            None => 0,
-            Some(value) => ($turn as u32).saturating_sub(value),
-        }
+        ($turn as u32).saturating_sub(
+            $said_big
+                .insert($current, $turn as u32)
+                .unwrap_or_else(|| u32::MAX),
+        )
     };
 }
 
@@ -58,7 +59,7 @@ fn part_2(n: usize, starters: &Vec<usize>) -> u32 {
     // Setup
     let mut said = vec![u32::MAX; BREAKPOINT];
     let mut said_big =
-        FxHashMap::<u32, u32>::with_capacity_and_hasher(BREAKPOINT / 8, Default::default());
+        FxHashMap::<u32, u32>::with_capacity_and_hasher(BREAKPOINT / 16 * 9, Default::default());
     let number_starters = starters.len();
     starters
         .iter()
@@ -92,7 +93,7 @@ fn combined(first: usize, second: usize, starters: &Vec<usize>) -> (u32, u32) {
     // Setup
     let mut said = vec![u32::MAX; BREAKPOINT];
     let mut said_big =
-        FxHashMap::<u32, u32>::with_capacity_and_hasher(BREAKPOINT / 8, Default::default());
+        FxHashMap::<u32, u32>::with_capacity_and_hasher(BREAKPOINT / 16 * 9, Default::default());
     let number_starters = starters.len();
     starters
         .iter()
@@ -108,9 +109,8 @@ fn combined(first: usize, second: usize, starters: &Vec<usize>) -> (u32, u32) {
         });
 
     // Lower portion of second range
-    let lower = (first..BREAKPOINT).fold(result_1 as u32, |current, i| {
-        turns_since_said!(said, i, current)
-    });
+    let lower =
+        (first..BREAKPOINT).fold(result_1, |current, i| turns_since_said!(said, i, current));
 
     // Upper portion of second range
     let result_2 = (BREAKPOINT..second).fold(lower, |current, i| {

@@ -24,7 +24,6 @@ macro_rules! index_3d {
     };
 }
 
-#[inline]
 fn count_neighbors_3d(
     i: usize,
     j: usize,
@@ -34,12 +33,20 @@ fn count_neighbors_3d(
     indices: &[i32; 26],
     cells: &ArrayVec<[bool; CAPACITY_3D]>,
 ) -> usize {
-    indices
-        .iter()
-        .filter(|&offset| {
-            cells[(index_3d!(i, j, k, row_length, column_length) as i32 + *offset) as usize]
-        })
-        .count()
+    let mut count = 0;
+    indices.iter().find_map(|&offset| {
+        let active =
+            cells[(index_3d!(i, j, k, row_length, column_length) as i32 + offset) as usize];
+        if active {
+            count += 1;
+        }
+        if count > NEIGHBOR_LIMIT {
+            Some(count)
+        } else {
+            None
+        }
+    });
+    count
 }
 
 fn game_of_life_3d(
