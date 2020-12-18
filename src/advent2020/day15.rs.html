@@ -208,7 +208,7 @@
 <span class="comment">// Constants</span>
 <span class="kw">const</span> <span class="ident">YEAR</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">2020</span>;
 <span class="kw">const</span> <span class="ident">REALLY_BIG</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">30_000_000</span>;
-<span class="kw">const</span> <span class="ident">BREAKPOINT</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">22</span>;
+<span class="kw">const</span> <span class="ident">BREAKPOINT</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">3_000_000</span>;
 
 <span class="comment">// -----------------------------------------------------------------------------</span>
 <span class="comment">// Part 1</span>
@@ -246,10 +246,11 @@
 <span class="comment">// -----------------------------------------------------------------------------</span>
 <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">turns_since_said_big</span> {
     (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">said_big</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">turn</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">current</span>:<span class="ident">expr</span>) <span class="op">=</span><span class="op">&gt;</span> {
-        <span class="kw">match</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">said_big</span>.<span class="ident">insert</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">current</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">turn</span> <span class="kw">as</span> <span class="ident">u32</span>) {
-            <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="number">0</span>,
-            <span class="prelude-val">Some</span>(<span class="ident">value</span>) <span class="op">=</span><span class="op">&gt;</span> (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">turn</span> <span class="kw">as</span> <span class="ident">u32</span>).<span class="ident">saturating_sub</span>(<span class="ident">value</span>),
-        }
+        (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">turn</span> <span class="kw">as</span> <span class="ident">u32</span>).<span class="ident">saturating_sub</span>(
+            <span class="macro-nonterminal">$</span><span class="macro-nonterminal">said_big</span>
+                .<span class="ident">insert</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">current</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">turn</span> <span class="kw">as</span> <span class="ident">u32</span>)
+                .<span class="ident">unwrap_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">u32</span>::<span class="ident">MAX</span>),
+        )
     };
 }
 
@@ -258,7 +259,7 @@
     <span class="comment">// Setup</span>
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">said</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[<span class="ident">u32</span>::<span class="ident">MAX</span>; <span class="ident">BREAKPOINT</span>];
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">said_big</span> <span class="op">=</span>
-        <span class="ident">FxHashMap</span>::<span class="op">&lt;</span><span class="ident">u32</span>, <span class="ident">u32</span><span class="op">&gt;</span>::<span class="ident">with_capacity_and_hasher</span>(<span class="ident">BREAKPOINT</span> <span class="op">/</span> <span class="number">8</span>, <span class="ident">Default</span>::<span class="ident">default</span>());
+        <span class="ident">FxHashMap</span>::<span class="op">&lt;</span><span class="ident">u32</span>, <span class="ident">u32</span><span class="op">&gt;</span>::<span class="ident">with_capacity_and_hasher</span>(<span class="ident">BREAKPOINT</span> <span class="op">/</span> <span class="number">16</span> <span class="op">*</span> <span class="number">9</span>, <span class="ident">Default</span>::<span class="ident">default</span>());
     <span class="kw">let</span> <span class="ident">number_starters</span> <span class="op">=</span> <span class="ident">starters</span>.<span class="ident">len</span>();
     <span class="ident">starters</span>
         .<span class="ident">iter</span>()
@@ -292,7 +293,7 @@
     <span class="comment">// Setup</span>
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">said</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[<span class="ident">u32</span>::<span class="ident">MAX</span>; <span class="ident">BREAKPOINT</span>];
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">said_big</span> <span class="op">=</span>
-        <span class="ident">FxHashMap</span>::<span class="op">&lt;</span><span class="ident">u32</span>, <span class="ident">u32</span><span class="op">&gt;</span>::<span class="ident">with_capacity_and_hasher</span>(<span class="ident">BREAKPOINT</span> <span class="op">/</span> <span class="number">8</span>, <span class="ident">Default</span>::<span class="ident">default</span>());
+        <span class="ident">FxHashMap</span>::<span class="op">&lt;</span><span class="ident">u32</span>, <span class="ident">u32</span><span class="op">&gt;</span>::<span class="ident">with_capacity_and_hasher</span>(<span class="ident">BREAKPOINT</span> <span class="op">/</span> <span class="number">16</span> <span class="op">*</span> <span class="number">9</span>, <span class="ident">Default</span>::<span class="ident">default</span>());
     <span class="kw">let</span> <span class="ident">number_starters</span> <span class="op">=</span> <span class="ident">starters</span>.<span class="ident">len</span>();
     <span class="ident">starters</span>
         .<span class="ident">iter</span>()
@@ -308,9 +309,8 @@
         });
 
     <span class="comment">// Lower portion of second range</span>
-    <span class="kw">let</span> <span class="ident">lower</span> <span class="op">=</span> (<span class="ident">first</span>..<span class="ident">BREAKPOINT</span>).<span class="ident">fold</span>(<span class="ident">result_1</span> <span class="kw">as</span> <span class="ident">u32</span>, <span class="op">|</span><span class="ident">current</span>, <span class="ident">i</span><span class="op">|</span> {
-        <span class="macro">turns_since_said</span><span class="macro">!</span>(<span class="ident">said</span>, <span class="ident">i</span>, <span class="ident">current</span>)
-    });
+    <span class="kw">let</span> <span class="ident">lower</span> <span class="op">=</span>
+        (<span class="ident">first</span>..<span class="ident">BREAKPOINT</span>).<span class="ident">fold</span>(<span class="ident">result_1</span>, <span class="op">|</span><span class="ident">current</span>, <span class="ident">i</span><span class="op">|</span> <span class="macro">turns_since_said</span><span class="macro">!</span>(<span class="ident">said</span>, <span class="ident">i</span>, <span class="ident">current</span>));
 
     <span class="comment">// Upper portion of second range</span>
     <span class="kw">let</span> <span class="ident">result_2</span> <span class="op">=</span> (<span class="ident">BREAKPOINT</span>..<span class="ident">second</span>).<span class="ident">fold</span>(<span class="ident">lower</span>, <span class="op">|</span><span class="ident">current</span>, <span class="ident">i</span><span class="op">|</span> {
