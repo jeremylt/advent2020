@@ -1,9 +1,12 @@
 //! Day 19:
+//! CYK is a good fit here, but with the size of the strings, the arrays are quite large,
+//! as can be seen with the capacity listed below.
 
 use crate::prelude::*;
 
 // Constants
 const CAPACITY: usize = 512;
+const TABLE_CAPACITY: usize = 1 << 20;
 
 // -----------------------------------------------------------------------------
 // Rules
@@ -50,7 +53,7 @@ fn cocke_younger_kasami(
 ) -> bool {
     let message_length = message.len();
     // Initialize first pass
-    let mut table = vec![false; message_length * (message_length + 1) / 2 * number_rules];
+    let mut table = vec![false; TABLE_CAPACITY];
     message.chars().enumerate().for_each(|(i, c)| {
         terminal_rules.iter().any(|terminal| {
             if c == terminal.symbol {
