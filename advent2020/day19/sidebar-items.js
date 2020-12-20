@@ -1,1 +1,1 @@
-initSidebarItems({"constant":[["CAPACITY",""],["TABLE_CAPACITY",""]],"fn":[["cocke_younger_kasami",""],["report",""],["run",""]],"struct":[["ProductionRule",""],["TerminalRule",""],["UnitRule",""]]});
+initSidebarItems({"constant":[["CAPACITY",""]],"fn":[["cocke_younger_kasami",""],["report",""],["run",""]],"struct":[["ProductionRule",""],["TerminalRule",""],["UnitRule",""]]});
