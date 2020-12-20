@@ -3,6 +3,7 @@
 //! as can be seen with the capacity listed below.
 
 use crate::prelude::*;
+use rayon::prelude::*;
 
 // Constants
 const CAPACITY: usize = 512;
@@ -53,7 +54,7 @@ fn cocke_younger_kasami(
 ) -> bool {
     let message_length = message.len();
     // Initialize first pass
-    let mut table = vec![false; TABLE_CAPACITY];
+    let mut table = [false; TABLE_CAPACITY];
     message.chars().enumerate().for_each(|(i, c)| {
         terminal_rules.iter().any(|terminal| {
             if c == terminal.symbol {
@@ -164,12 +165,16 @@ pub(crate) fn run() -> Results {
     // -------------------------------------------------------------------------
     // Count valid messages
     let start_part_1 = Instant::now();
-    let invalid_messages: Vec<String> = buffer
+    let messages: Vec<String> = buffer
         .split("\n\n")
         .skip(1)
         .next()
         .unwrap()
         .lines()
+        .map(|line| line.to_string())
+        .collect();
+    let invalid_messages: Vec<String> = messages
+        .par_iter()
         .filter_map(|message| {
             if cocke_younger_kasami(
                 message,
@@ -210,7 +215,7 @@ pub(crate) fn run() -> Results {
     });
     number_rules += 1;
     let count_extra = invalid_messages
-        .iter()
+        .par_iter()
         .filter(|message| {
             cocke_younger_kasami(
                 message,
