@@ -7,7 +7,6 @@ use rayon::prelude::*;
 
 // Constants
 const CAPACITY: usize = 512;
-const TABLE_CAPACITY: usize = 1 << 20;
 
 // -----------------------------------------------------------------------------
 // Rules
@@ -45,6 +44,7 @@ macro_rules! index_3d {
     };
 }
 
+#[inline]
 fn cocke_younger_kasami(
     message: &str,
     number_rules: usize,
@@ -54,7 +54,7 @@ fn cocke_younger_kasami(
 ) -> bool {
     let message_length = message.len();
     // Initialize first pass
-    let mut table = [false; TABLE_CAPACITY];
+    let mut table = vec![false; message_length * (message_length + 1) / 2 * number_rules];
     message.chars().enumerate().for_each(|(i, c)| {
         terminal_rules.iter().any(|terminal| {
             if c == terminal.symbol {
