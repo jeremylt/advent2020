@@ -9,7 +9,7 @@ const MAX_TILE_SIDE: usize = 1024; // 2 ^ 10
 const SEA_MONSTER_SIZE: usize = 15;
 
 // -----------------------------------------------------------------------------
-// Tile with orientation
+// Tile with orientation and rotation
 // -----------------------------------------------------------------------------
 #[derive(Debug)]
 struct Tile {
@@ -20,6 +20,32 @@ struct Tile {
     edges: [Edge; 4],
     shared_edges: u8,
 }
+
+// Tiles are structured as
+//
+//   <---Edge 1---
+//  |            /|\
+//  E  .#.#.#.#.  E
+//  d  #.#.#.#.#  d
+//  g  .#.#.#.#.  g
+//  e  #.#.#.#.#  e
+//     .#.#.#.#.
+//  2  #.#.#.#.#  0
+// \|/            |
+//   ---Edge 3--->
+//
+// `Orientation::Up` means the edges are numbered radianswise
+// `Orientation::Down` means the edges are numbered antiradianswise
+//
+// `Rotation::{Right, Top, Left, Bottom}` indicates the location of Edge 0
+//
+// `edges` are encoded as u16 values encoded from the boolean from
+//     traversing the edge radianwise and antiradianswise
+//
+// `image` is a boolean array, with `true` for every '#'
+//
+// 'shared_edges' counts the number of edges that match other tiles
+//    Note, this value will be a multiple of 2, for radians and antiradians
 
 impl std::str::FromStr for Tile {
     type Err = std::num::ParseIntError;
