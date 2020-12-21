@@ -1,5 +1,6 @@
 //! Day 21:
-//! No particular tricks in this one.
+//! No particular tricks in this one. As usual, we can get a mild improvement by
+//! reading and consuming the data at the same time.
 
 use crate::prelude::*;
 use rustc_hash::{FxHashMap, FxHashSet};
@@ -110,8 +111,9 @@ pub(crate) fn run() -> Results {
     let start_part_2 = Instant::now();
     let number_allergens = allergen_ingredients_map.len();
     let mut found_allergens: Vec<(String, String)> = Vec::with_capacity(number_allergens);
-    let mut all_found = 0;
-    while all_found != number_allergens {
+
+    let mut number_found = 0;
+    while number_found != number_allergens {
         let current = allergen_ingredients_map
             .iter()
             .find_map(|(allergen, ingredients)| {
@@ -129,12 +131,91 @@ pub(crate) fn run() -> Results {
                 ingredients.retain(|ingredient| *ingredient != current.1);
             });
         found_allergens.append(&mut vec![current]);
-        all_found += 1;
+        number_found += 1;
     }
     found_allergens.sort_by(|a, b| a.0.cmp(&b.0));
     // println!("{:?}", found_allergens) // Uncomment to print answer
-    let ordered_2 = all_found;
+    let ordered_2 = number_found;
     let time_part_2 = start_part_2.elapsed();
+
+    // -------------------------------------------------------------------------
+    // Combined
+    // -------------------------------------------------------------------------
+    // Count safe ingredients
+    let start_combined = Instant::now();
+
+    let buffer: String = std::fs::read_to_string("data/day21.txt").unwrap();
+    let mut allergen_ingredients_map =
+        FxHashMap::<String, Vec<String>>::with_capacity_and_hasher(CAPACITY, Default::default());
+
+    // Find possible allergens
+    buffer
+        .lines()
+        .map(|line| line.parse::<Food>().expect("failed to parse food"))
+        .for_each(|food| {
+            food.allergens.iter().for_each(|allergen| {
+                if allergen_ingredients_map.contains_key(allergen) {
+                    let ingredients = allergen_ingredients_map.get_mut(allergen).unwrap();
+                    if ingredients.len() != 1 {
+                        ingredients.retain(|ingredient| food.ingredients.contains(ingredient));
+                    }
+                } else {
+                    allergen_ingredients_map.insert(allergen.clone(), food.ingredients.clone());
+                }
+            })
+        });
+
+    // Set of ingredients with allergens
+    let mut allergen_ingredients_set =
+        FxHashSet::<String>::with_capacity_and_hasher(CAPACITY, Default::default());
+    allergen_ingredients_map
+        .iter()
+        .for_each(|(_, ingredients)| {
+            ingredients.iter().for_each(|ingredient| {
+                allergen_ingredients_set.insert(ingredient.clone());
+            })
+        });
+    // Count safe ingredients
+    let combined_1: usize = data
+        .iter()
+        .map(|food| {
+            food.ingredients
+                .iter()
+                .filter(|&ingredient| !allergen_ingredients_set.contains(ingredient))
+                .count()
+        })
+        .sum();
+
+    // List all allergen ingredients
+    let number_allergens = allergen_ingredients_map.len();
+    let mut found_allergens: Vec<(String, String)> = Vec::with_capacity(number_allergens);
+    let mut number_found = 0;
+
+    while number_found != number_allergens {
+        let current = allergen_ingredients_map
+            .iter()
+            .find_map(|(allergen, ingredients)| {
+                if ingredients.len() == 1 {
+                    Some((allergen.clone(), ingredients[0].clone()))
+                } else {
+                    None
+                }
+            })
+            .unwrap();
+        allergen_ingredients_map.remove(&current.0);
+        allergen_ingredients_map
+            .iter_mut()
+            .for_each(|(_, ingredients)| {
+                ingredients.retain(|ingredient| *ingredient != current.1);
+            });
+        found_allergens.append(&mut vec![current]);
+        number_found += 1;
+    }
+    found_allergens.sort_by(|a, b| a.0.cmp(&b.0));
+    let combined_2 = number_found;
+    let time_combined = start_combined.elapsed();
+    assert_eq!(count_1, combined_1);
+    assert_eq!(ordered_2, combined_2);
 
     // -------------------------------------------------------------------------
     // Return
@@ -142,12 +223,7 @@ pub(crate) fn run() -> Results {
     Results::new(
         count_1 as i64,
         ordered_2 as i64,
-        Timing::new(
-            time_setup,
-            time_part_1,
-            time_part_2,
-            std::time::Duration::new(0, 0),
-        ),
+        Timing::new(time_setup, time_part_1, time_part_2, time_combined),
     )
 }
 
