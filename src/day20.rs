@@ -508,13 +508,21 @@ pub(crate) fn report(results: &Results) {
 // Sea monster shapes
 // -----------------------------------------------------------------------------
 const SEA_MONSTER_OFFSETS: [(usize, usize, usize, usize); 8] = [
+    // Down, Right
     (18, 1, 0, 2),
+    // Down, Top
     (1, 18, 0, 2),
+    // Down, Left
     (18, 1, 2, 0),
+    // Down, Bottom
     (1, 18, 2, 0),
+    // Up, Right
     (0, 2, 18, 1),
+    // Up, Top
     (0, 2, 1, 18),
+    // Up, Left
     (2, 0, 18, 1),
+    // Up, Bottom
     (2, 0, 1, 18),
 ];
 
@@ -523,6 +531,7 @@ const SEA_MONSTER_OFFSETS: [(usize, usize, usize, usize); 8] = [
 //#    ##    ##    ###
 // #  #  #  #  #  #
 const SEA_MONSTER_INDICES: [[(i32, i32); 14]; 8] = [
+    // Down, Right
     [
         (-18, 1),
         (-13, 1),
@@ -539,6 +548,7 @@ const SEA_MONSTER_INDICES: [[(i32, i32); 14]; 8] = [
         (-5, 2),
         (-2, 2),
     ],
+    // Down, Top
     [
         (18, 1),
         (13, 1),
@@ -555,6 +565,7 @@ const SEA_MONSTER_INDICES: [[(i32, i32); 14]; 8] = [
         (5, 2),
         (2, 2),
     ],
+    // Down, Left
     [
         (-18, -1),
         (-13, -1),
@@ -571,6 +582,7 @@ const SEA_MONSTER_INDICES: [[(i32, i32); 14]; 8] = [
         (-5, -2),
         (-2, -2),
     ],
+    // Down, Bottom
     [
         (18, -1),
         (13, -1),
@@ -587,6 +599,7 @@ const SEA_MONSTER_INDICES: [[(i32, i32); 14]; 8] = [
         (5, -2),
         (2, -2),
     ],
+    // Up, Right
     [
         (1, -18),
         (1, -13),
@@ -603,6 +616,7 @@ const SEA_MONSTER_INDICES: [[(i32, i32); 14]; 8] = [
         (2, -5),
         (2, -2),
     ],
+    // Up, Top
     [
         (1, 18),
         (1, 13),
@@ -619,6 +633,7 @@ const SEA_MONSTER_INDICES: [[(i32, i32); 14]; 8] = [
         (2, 5),
         (2, 2),
     ],
+    // Up, Left
     [
         (-1, -18),
         (-1, -13),
@@ -635,6 +650,7 @@ const SEA_MONSTER_INDICES: [[(i32, i32); 14]; 8] = [
         (-2, -5),
         (-2, -2),
     ],
+    // Up, Bottom
     [
         (-1, 18),
         (-1, 13),
