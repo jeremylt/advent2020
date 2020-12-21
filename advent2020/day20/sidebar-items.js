@@ -1,0 +1,1 @@
+initSidebarItems({"constant":[["MAX_TILE_SIDE",""],["SEA_MONSTER_INDICES",""],["SEA_MONSTER_OFFSETS",""],["SEA_MONSTER_SIZE",""],["TILE_INDICES",""],["TILE_SIZE",""]],"enum":[["Orientation",""],["Side",""]],"fn":[["is_monster",""],["report",""],["run",""]],"struct":[["Edge",""],["Tile",""]]});
