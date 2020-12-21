@@ -288,7 +288,7 @@
     <span class="kw">let</span> <span class="ident">start_setup</span> <span class="op">=</span> <span class="ident">Instant</span>::<span class="ident">now</span>();
     <span class="kw">let</span> <span class="ident">buffer</span>: <span class="ident">String</span> <span class="op">=</span> <span class="ident">std</span>::<span class="ident">fs</span>::<span class="ident">read_to_string</span>(<span class="string">&quot;data/day02.txt&quot;</span>).<span class="ident">unwrap</span>();
 
-    <span class="comment">// Read to object iterator</span>
+    <span class="comment">// Read to vector</span>
     <span class="kw">let</span> <span class="ident">data</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">PasswordData</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">buffer</span>
         .<span class="ident">lines</span>()
         .<span class="ident">map</span>(<span class="op">|</span><span class="ident">line</span><span class="op">|</span> {
