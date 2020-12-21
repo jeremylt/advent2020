@@ -696,6 +696,22 @@
 <span id="693">693</span>
 <span id="694">694</span>
 <span id="695">695</span>
+<span id="696">696</span>
+<span id="697">697</span>
+<span id="698">698</span>
+<span id="699">699</span>
+<span id="700">700</span>
+<span id="701">701</span>
+<span id="702">702</span>
+<span id="703">703</span>
+<span id="704">704</span>
+<span id="705">705</span>
+<span id="706">706</span>
+<span id="707">707</span>
+<span id="708">708</span>
+<span id="709">709</span>
+<span id="710">710</span>
+<span id="711">711</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Day 20:</span>
 <span class="doccomment">//! Well then. That was hard, but the overall implementation was somewhat fast.</span>
@@ -1207,13 +1223,21 @@
 <span class="comment">// Sea monster shapes</span>
 <span class="comment">// -----------------------------------------------------------------------------</span>
 <span class="kw">const</span> <span class="ident">SEA_MONSTER_OFFSETS</span>: [(<span class="ident">usize</span>, <span class="ident">usize</span>, <span class="ident">usize</span>, <span class="ident">usize</span>); <span class="number">8</span>] <span class="op">=</span> [
+    <span class="comment">// Down, Right</span>
     (<span class="number">18</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">2</span>),
+    <span class="comment">// Down, Top</span>
     (<span class="number">1</span>, <span class="number">18</span>, <span class="number">0</span>, <span class="number">2</span>),
+    <span class="comment">// Down, Left</span>
     (<span class="number">18</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">0</span>),
+    <span class="comment">// Down, Bottom</span>
     (<span class="number">1</span>, <span class="number">18</span>, <span class="number">2</span>, <span class="number">0</span>),
+    <span class="comment">// Up, Right</span>
     (<span class="number">0</span>, <span class="number">2</span>, <span class="number">18</span>, <span class="number">1</span>),
+    <span class="comment">// Up, Top</span>
     (<span class="number">0</span>, <span class="number">2</span>, <span class="number">1</span>, <span class="number">18</span>),
+    <span class="comment">// Up, Left</span>
     (<span class="number">2</span>, <span class="number">0</span>, <span class="number">18</span>, <span class="number">1</span>),
+    <span class="comment">// Up, Bottom</span>
     (<span class="number">2</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">18</span>),
 ];
 
@@ -1222,6 +1246,7 @@
 <span class="comment">//#    ##    ##    ###</span>
 <span class="comment">// #  #  #  #  #  #</span>
 <span class="kw">const</span> <span class="ident">SEA_MONSTER_INDICES</span>: [[(<span class="ident">i32</span>, <span class="ident">i32</span>); <span class="number">14</span>]; <span class="number">8</span>] <span class="op">=</span> [
+    <span class="comment">// Down, Right</span>
     [
         (<span class="op">-</span><span class="number">18</span>, <span class="number">1</span>),
         (<span class="op">-</span><span class="number">13</span>, <span class="number">1</span>),
@@ -1238,6 +1263,7 @@
         (<span class="op">-</span><span class="number">5</span>, <span class="number">2</span>),
         (<span class="op">-</span><span class="number">2</span>, <span class="number">2</span>),
     ],
+    <span class="comment">// Down, Top</span>
     [
         (<span class="number">18</span>, <span class="number">1</span>),
         (<span class="number">13</span>, <span class="number">1</span>),
@@ -1254,6 +1280,7 @@
         (<span class="number">5</span>, <span class="number">2</span>),
         (<span class="number">2</span>, <span class="number">2</span>),
     ],
+    <span class="comment">// Down, Left</span>
     [
         (<span class="op">-</span><span class="number">18</span>, <span class="op">-</span><span class="number">1</span>),
         (<span class="op">-</span><span class="number">13</span>, <span class="op">-</span><span class="number">1</span>),
@@ -1270,6 +1297,7 @@
         (<span class="op">-</span><span class="number">5</span>, <span class="op">-</span><span class="number">2</span>),
         (<span class="op">-</span><span class="number">2</span>, <span class="op">-</span><span class="number">2</span>),
     ],
+    <span class="comment">// Down, Bottom</span>
     [
         (<span class="number">18</span>, <span class="op">-</span><span class="number">1</span>),
         (<span class="number">13</span>, <span class="op">-</span><span class="number">1</span>),
@@ -1286,6 +1314,7 @@
         (<span class="number">5</span>, <span class="op">-</span><span class="number">2</span>),
         (<span class="number">2</span>, <span class="op">-</span><span class="number">2</span>),
     ],
+    <span class="comment">// Up, Right</span>
     [
         (<span class="number">1</span>, <span class="op">-</span><span class="number">18</span>),
         (<span class="number">1</span>, <span class="op">-</span><span class="number">13</span>),
@@ -1302,6 +1331,7 @@
         (<span class="number">2</span>, <span class="op">-</span><span class="number">5</span>),
         (<span class="number">2</span>, <span class="op">-</span><span class="number">2</span>),
     ],
+    <span class="comment">// Up, Top</span>
     [
         (<span class="number">1</span>, <span class="number">18</span>),
         (<span class="number">1</span>, <span class="number">13</span>),
@@ -1318,6 +1348,7 @@
         (<span class="number">2</span>, <span class="number">5</span>),
         (<span class="number">2</span>, <span class="number">2</span>),
     ],
+    <span class="comment">// Up, Left</span>
     [
         (<span class="op">-</span><span class="number">1</span>, <span class="op">-</span><span class="number">18</span>),
         (<span class="op">-</span><span class="number">1</span>, <span class="op">-</span><span class="number">13</span>),
@@ -1334,6 +1365,7 @@
         (<span class="op">-</span><span class="number">2</span>, <span class="op">-</span><span class="number">5</span>),
         (<span class="op">-</span><span class="number">2</span>, <span class="op">-</span><span class="number">2</span>),
     ],
+    <span class="comment">// Up, Bottom</span>
     [
         (<span class="op">-</span><span class="number">1</span>, <span class="number">18</span>),
         (<span class="op">-</span><span class="number">1</span>, <span class="number">13</span>),
