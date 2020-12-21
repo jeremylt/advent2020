@@ -34,6 +34,8 @@ struct Tile {
 // \|/            |
 //   ---Edge 3--->
 //
+// Tiles are encoded relative to their initial position in the input.
+//
 // `Orientation::Up` means the edges are numbered radianswise
 // `Orientation::Down` means the edges are numbered antiradianswise
 //
