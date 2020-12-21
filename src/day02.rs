@@ -102,7 +102,7 @@ pub(crate) fn run() -> Results {
     let start_setup = Instant::now();
     let buffer: String = std::fs::read_to_string("data/day02.txt").unwrap();
 
-    // Read to object iterator
+    // Read to vector
     let data: Vec<PasswordData> = buffer
         .lines()
         .map(|line| {
