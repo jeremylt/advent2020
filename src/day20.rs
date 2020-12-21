@@ -519,9 +519,9 @@ const SEA_MONSTER_OFFSETS: [(usize, usize, usize, usize); 8] = [
 ];
 
 // Here be monsters
-//                  # 
+//                  #
 //#    ##    ##    ###
-// #  #  #  #  #  #   
+// #  #  #  #  #  #
 const SEA_MONSTER_INDICES: [[(i32, i32); 14]; 8] = [
     [
         (-18, 1),
