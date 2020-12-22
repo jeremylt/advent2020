@@ -119,45 +119,41 @@ pub(crate) fn run() -> Results {
     // Open file
     let start_setup = Instant::now();
     let buffer: String = std::fs::read_to_string("data/day19.txt").unwrap();
+    let mut data = buffer.split("\n\n");
 
     // Read to vector
     let mut production_rules: Vec<ProductionRule> = Vec::with_capacity(CAPACITY);
     let mut terminal_rules: Vec<TerminalRule> = Vec::with_capacity(CAPACITY);
     let mut unit_rules: Vec<UnitRule> = Vec::with_capacity(CAPACITY);
     let mut number_rules = 0;
-    buffer
-        .split("\n\n")
-        .next()
-        .unwrap()
-        .lines()
-        .for_each(|line| {
-            let mut data = line.splitn(2, ": ");
-            let index: u8 = data.next().unwrap().parse().unwrap();
-            let rule = data.next().unwrap();
-            if &rule[0..1] == "\"" {
-                terminal_rules.push(TerminalRule {
-                    left: index,
-                    symbol: rule.chars().nth(1).unwrap(),
-                });
-            } else {
-                rule.split(" | ").for_each(|sub| {
-                    let symbols: Vec<u8> = sub.split(" ").map(|c| c.parse().unwrap()).collect();
-                    match symbols.len() {
-                        1 => unit_rules.push(UnitRule {
-                            left: index,
-                            only: symbols[0],
-                        }),
-                        2 => production_rules.push(ProductionRule {
-                            left: index,
-                            first: symbols[0],
-                            second: symbols[1],
-                        }),
-                        _ => panic!("unmatched rule"),
-                    }
-                });
-            }
-            number_rules = std::cmp::max(number_rules, index + 1);
-        });
+    data.next().unwrap().lines().for_each(|line| {
+        let mut data = line.splitn(2, ": ");
+        let index: u8 = data.next().unwrap().parse().unwrap();
+        let rule = data.next().unwrap();
+        if &rule[0..1] == "\"" {
+            terminal_rules.push(TerminalRule {
+                left: index,
+                symbol: rule.chars().nth(1).unwrap(),
+            });
+        } else {
+            rule.split(" | ").for_each(|sub| {
+                let symbols: Vec<u8> = sub.split(" ").map(|c| c.parse().unwrap()).collect();
+                match symbols.len() {
+                    1 => unit_rules.push(UnitRule {
+                        left: index,
+                        only: symbols[0],
+                    }),
+                    2 => production_rules.push(ProductionRule {
+                        left: index,
+                        first: symbols[0],
+                        second: symbols[1],
+                    }),
+                    _ => panic!("unmatched rule"),
+                }
+            });
+        }
+        number_rules = std::cmp::max(number_rules, index + 1);
+    });
     let time_setup = start_setup.elapsed();
 
     // -------------------------------------------------------------------------
@@ -165,9 +161,7 @@ pub(crate) fn run() -> Results {
     // -------------------------------------------------------------------------
     // Count valid messages
     let start_part_1 = Instant::now();
-    let messages: Vec<String> = buffer
-        .split("\n\n")
-        .skip(1)
+    let messages: Vec<String> = data
         .next()
         .unwrap()
         .lines()
@@ -234,44 +228,40 @@ pub(crate) fn run() -> Results {
     // -------------------------------------------------------------------------
     let start_combined = Instant::now();
     let buffer: String = std::fs::read_to_string("data/day19.txt").unwrap();
+    let mut data = buffer.split("\n\n");
 
     let mut production_rules: Vec<ProductionRule> = Vec::with_capacity(CAPACITY);
     let mut terminal_rules: Vec<TerminalRule> = Vec::with_capacity(CAPACITY);
     let mut unit_rules: Vec<UnitRule> = Vec::with_capacity(CAPACITY);
     let mut number_rules = 0;
-    buffer
-        .split("\n\n")
-        .next()
-        .unwrap()
-        .lines()
-        .for_each(|line| {
-            let mut data = line.splitn(2, ": ");
-            let index: u8 = data.next().unwrap().parse().unwrap();
-            let rule = data.next().unwrap();
-            if &rule[0..1] == "\"" {
-                terminal_rules.push(TerminalRule {
-                    left: index,
-                    symbol: rule.chars().nth(1).unwrap(),
-                });
-            } else {
-                rule.split(" | ").for_each(|sub| {
-                    let symbols: Vec<u8> = sub.split(" ").map(|c| c.parse().unwrap()).collect();
-                    match symbols.len() {
-                        1 => unit_rules.push(UnitRule {
-                            left: index,
-                            only: symbols[0],
-                        }),
-                        2 => production_rules.push(ProductionRule {
-                            left: index,
-                            first: symbols[0],
-                            second: symbols[1],
-                        }),
-                        _ => panic!("unmatched rule"),
-                    }
-                });
-            }
-            number_rules = std::cmp::max(number_rules, index + 1);
-        });
+    data.next().unwrap().lines().for_each(|line| {
+        let mut data = line.splitn(2, ": ");
+        let index: u8 = data.next().unwrap().parse().unwrap();
+        let rule = data.next().unwrap();
+        if &rule[0..1] == "\"" {
+            terminal_rules.push(TerminalRule {
+                left: index,
+                symbol: rule.chars().nth(1).unwrap(),
+            });
+        } else {
+            rule.split(" | ").for_each(|sub| {
+                let symbols: Vec<u8> = sub.split(" ").map(|c| c.parse().unwrap()).collect();
+                match symbols.len() {
+                    1 => unit_rules.push(UnitRule {
+                        left: index,
+                        only: symbols[0],
+                    }),
+                    2 => production_rules.push(ProductionRule {
+                        left: index,
+                        first: symbols[0],
+                        second: symbols[1],
+                    }),
+                    _ => panic!("unmatched rule"),
+                }
+            });
+        }
+        number_rules = std::cmp::max(number_rules, index + 1);
+    });
 
     let mut production_rules_part_2 = production_rules.clone();
     production_rules_part_2.push(ProductionRule {
@@ -290,9 +280,7 @@ pub(crate) fn run() -> Results {
         second: 31,
     });
 
-    let (combined_1, combined_2) = buffer
-        .split("\n\n")
-        .skip(1)
+    let (combined_1, combined_2) = data
         .next()
         .unwrap()
         .par_lines()

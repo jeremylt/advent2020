@@ -42,20 +42,18 @@ fn part_1(
     // Play game
     while player_1_head != player_1_tail && player_2_head != player_2_tail {
         let card_1 = player_1_deck[player_1_head % DECK_SIZE];
-        player_1_head += 1;
         let card_2 = player_2_deck[player_2_head % DECK_SIZE];
+        player_1_head += 1;
         player_2_head += 1;
 
         if card_1 > card_2 {
             player_1_deck[player_1_tail % DECK_SIZE] = card_1;
-            player_1_tail += 1;
-            player_1_deck[player_1_tail % DECK_SIZE] = card_2;
-            player_1_tail += 1;
+            player_1_deck[(player_1_tail + 1) % DECK_SIZE] = card_2;
+            player_1_tail += 2;
         } else {
             player_2_deck[player_2_tail % DECK_SIZE] = card_2;
-            player_2_tail += 1;
-            player_2_deck[player_2_tail % DECK_SIZE] = card_1;
-            player_2_tail += 1;
+            player_2_deck[(player_2_tail + 1) % DECK_SIZE] = card_1;
+            player_2_tail += 2;
         }
     }
 
@@ -99,20 +97,31 @@ fn part_2(
     // Visited configurations
     let mut visited_configurations =
         FxHashSet::<u64>::with_capacity_and_hasher(CAPACITY, Default::default());
-    let hash_player_1 = (player_1_head..player_1_tail).fold(0, |acc, i| {
-        hash_two(acc, player_1_deck[i % DECK_SIZE] as u64)
-    });
-    let hash_player_2 = (player_2_head..player_2_tail).fold(0, |acc, i| {
-        hash_two(acc, player_2_deck[i % DECK_SIZE] as u64)
-    });
-    visited_configurations.insert(hash_two(hash_player_1, hash_player_2));
 
     // Play game
     while player_1_head != player_1_tail && player_2_head != player_2_tail {
+        // Check for visited configuration
+        let hash_player_1 = (player_1_head..player_1_tail).fold(0, |acc, i| {
+            hash_two(acc, player_1_deck[i % DECK_SIZE] as u64)
+        });
+        let hash_player_2 = (player_2_head..player_2_tail).fold(0, |acc, i| {
+            hash_two(acc, player_2_deck[i % DECK_SIZE] as u64)
+        });
+        if !visited_configurations.insert(hash_two(hash_player_1, hash_player_2)) {
+            return (
+                Winner::Player1,
+                if score {
+                    score_game(player_1_head, &player_1_deck)
+                } else {
+                    0
+                },
+            );
+        }
+
         // Draw cards
         let card_1 = player_1_deck[player_1_head % DECK_SIZE];
-        player_1_head += 1;
         let card_2 = player_2_deck[player_2_head % DECK_SIZE];
+        player_1_head += 1;
         player_2_head += 1;
 
         let winner: Winner;
@@ -139,32 +148,12 @@ fn part_2(
 
         if winner == Winner::Player1 {
             player_1_deck[player_1_tail % DECK_SIZE] = card_1;
-            player_1_tail += 1;
-            player_1_deck[player_1_tail % DECK_SIZE] = card_2;
-            player_1_tail += 1;
+            player_1_deck[(player_1_tail + 1) % DECK_SIZE] = card_2;
+            player_1_tail += 2;
         } else {
             player_2_deck[player_2_tail % DECK_SIZE] = card_2;
-            player_2_tail += 1;
-            player_2_deck[player_2_tail % DECK_SIZE] = card_1;
-            player_2_tail += 1;
-        }
-
-        // Check for visited configuration
-        let hash_player_1 = (player_1_head..player_1_tail).fold(0, |acc, i| {
-            hash_two(acc, player_1_deck[i % DECK_SIZE] as u64)
-        });
-        let hash_player_2 = (player_2_head..player_2_tail).fold(0, |acc, i| {
-            hash_two(acc, player_2_deck[i % DECK_SIZE] as u64)
-        });
-        if !visited_configurations.insert(hash_two(hash_player_1, hash_player_2)) {
-            return (
-                Winner::Player1,
-                if score {
-                    score_game(player_1_head, &player_1_deck)
-                } else {
-                    0
-                },
-            );
+            player_2_deck[(player_2_tail + 1) % DECK_SIZE] = card_1;
+            player_2_tail += 2;
         }
     }
 
