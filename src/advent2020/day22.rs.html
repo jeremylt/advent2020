@@ -280,6 +280,7 @@
 <span id="277">277</span>
 <span id="278">278</span>
 <span id="279">279</span>
+<span id="280">280</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Day 22:</span>
 <span class="doccomment">//! Part 1 was straighforward. I got good performance by using fixed sized arary and</span>
@@ -293,7 +294,7 @@
 
 <span class="comment">// Constant</span>
 <span class="kw">const</span> <span class="ident">DECK_SIZE</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">50</span>;
-<span class="kw">const</span> <span class="ident">CAPACITY</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">64</span>;
+<span class="kw">const</span> <span class="ident">CAPACITY</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">16</span>;
 
 <span class="comment">// -----------------------------------------------------------------------------</span>
 <span class="comment">// Part 1</span>
@@ -355,6 +356,7 @@
 <span class="comment">// -----------------------------------------------------------------------------</span>
 <span class="comment">// https://doi.org/10.1002/asi.10170</span>
 <span class="comment">// https://dl.acm.org/citation.cfm?id=759509</span>
+<span class="attribute">#[<span class="ident">inline</span>(<span class="ident">always</span>)]</span>
 <span class="kw">fn</span> <span class="ident">hash_two</span>(<span class="ident">first</span>: <span class="ident">u64</span>, <span class="ident">second</span>: <span class="ident">u64</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span> {
     <span class="ident">first</span> <span class="op">^</span> (<span class="ident">second</span> <span class="op">+</span> (<span class="ident">first</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">6</span>) <span class="op">+</span> (<span class="ident">first</span> <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">2</span>))
 }
