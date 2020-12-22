@@ -10,7 +10,7 @@ use rustc_hash::FxHashSet;
 
 // Constant
 const DECK_SIZE: usize = 50;
-const CAPACITY: usize = 64;
+const CAPACITY: usize = 16;
 
 // -----------------------------------------------------------------------------
 // Part 1
@@ -72,6 +72,7 @@ fn part_1(
 // -----------------------------------------------------------------------------
 // https://doi.org/10.1002/asi.10170
 // https://dl.acm.org/citation.cfm?id=759509
+#[inline(always)]
 fn hash_two(first: u64, second: u64) -> u64 {
     first ^ (second + (first << 6) + (first >> 2))
 }
