@@ -17,7 +17,7 @@ struct TerminalRule {
     symbol: char,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 struct ProductionRule {
     left: u8,
     first: u8,
@@ -230,17 +230,106 @@ pub(crate) fn run() -> Results {
     let time_part_2 = start_part_2.elapsed();
 
     // -------------------------------------------------------------------------
+    // Combined
+    // -------------------------------------------------------------------------
+    let start_combined = Instant::now();
+    let buffer: String = std::fs::read_to_string("data/day19.txt").unwrap();
+
+    let mut production_rules: Vec<ProductionRule> = Vec::with_capacity(CAPACITY);
+    let mut terminal_rules: Vec<TerminalRule> = Vec::with_capacity(CAPACITY);
+    let mut unit_rules: Vec<UnitRule> = Vec::with_capacity(CAPACITY);
+    let mut number_rules = 0;
+    buffer
+        .split("\n\n")
+        .next()
+        .unwrap()
+        .lines()
+        .for_each(|line| {
+            let mut data = line.splitn(2, ": ");
+            let index: u8 = data.next().unwrap().parse().unwrap();
+            let rule = data.next().unwrap();
+            if &rule[0..1] == "\"" {
+                terminal_rules.push(TerminalRule {
+                    left: index,
+                    symbol: rule.chars().nth(1).unwrap(),
+                });
+            } else {
+                rule.split(" | ").for_each(|sub| {
+                    let symbols: Vec<u8> = sub.split(" ").map(|c| c.parse().unwrap()).collect();
+                    match symbols.len() {
+                        1 => unit_rules.push(UnitRule {
+                            left: index,
+                            only: symbols[0],
+                        }),
+                        2 => production_rules.push(ProductionRule {
+                            left: index,
+                            first: symbols[0],
+                            second: symbols[1],
+                        }),
+                        _ => panic!("unmatched rule"),
+                    }
+                });
+            }
+            number_rules = std::cmp::max(number_rules, index + 1);
+        });
+
+    let mut production_rules_part_2 = production_rules.clone();
+    production_rules_part_2.push(ProductionRule {
+        left: 42,
+        first: 42,
+        second: 42,
+    });
+    production_rules_part_2.push(ProductionRule {
+        left: 11,
+        first: 42,
+        second: number_rules,
+    });
+    production_rules_part_2.push(ProductionRule {
+        left: number_rules,
+        first: 11,
+        second: 31,
+    });
+
+    let (combined_1, combined_2) = buffer
+        .split("\n\n")
+        .skip(1)
+        .next()
+        .unwrap()
+        .par_lines()
+        .map(|line| {
+            let message = line.to_string();
+            let part_1 = cocke_younger_kasami(
+                &message,
+                number_rules as usize,
+                &terminal_rules,
+                &production_rules,
+                &unit_rules,
+            );
+            let part_2 = part_1
+                || cocke_younger_kasami(
+                    &message,
+                    number_rules as usize + 1,
+                    &terminal_rules,
+                    &production_rules_part_2,
+                    &unit_rules,
+                );
+            (part_1 as usize, part_2 as usize)
+        })
+        .reduce(
+            || (0, 0),
+            |acc, partial| (acc.0 + partial.0, acc.1 + partial.1),
+        );
+    let time_combined = start_combined.elapsed();
+    assert_eq!(count_1, combined_1);
+    assert_eq!(count_2, combined_2);
+
+    // -------------------------------------------------------------------------
     // Return
     // -------------------------------------------------------------------------
     Results::new(
         count_1 as i64,
         count_2 as i64,
-        Timing::new(
-            time_setup,
-            time_part_1,
-            time_part_2,
-            std::time::Duration::new(0, 0),
-        ),
+        Timing::new(time_setup, time_part_1, time_part_2, time_combined),
     )
 }
 
