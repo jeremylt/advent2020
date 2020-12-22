@@ -6,7 +6,6 @@
 //! u64 representing the current game configuration.
 
 use crate::prelude::*;
-use arrayvec::ArrayVec;
 use rustc_hash::FxHashSet;
 
 // Constant
@@ -17,7 +16,7 @@ const CAPACITY: usize = 64;
 // Part 1
 // -----------------------------------------------------------------------------
 #[inline]
-fn score_game(head: usize, deck: &ArrayVec<[u8; DECK_SIZE]>) -> usize {
+fn score_game(head: usize, deck: &[u8; DECK_SIZE]) -> usize {
     let offset = DECK_SIZE - head % DECK_SIZE;
     deck.iter()
         .enumerate()
@@ -35,10 +34,10 @@ enum Winner {
 fn part_1(
     mut player_1_head: usize,
     mut player_1_tail: usize,
-    mut player_1_deck: ArrayVec<[u8; DECK_SIZE]>,
+    mut player_1_deck: [u8; DECK_SIZE],
     mut player_2_head: usize,
     mut player_2_tail: usize,
-    mut player_2_deck: ArrayVec<[u8; DECK_SIZE]>,
+    mut player_2_deck: [u8; DECK_SIZE],
 ) -> (Winner, usize) {
     // Play game
     while player_1_head != player_1_tail && player_2_head != player_2_tail {
@@ -80,10 +79,10 @@ fn hash_two(first: u64, second: u64) -> u64 {
 fn part_2(
     mut player_1_head: usize,
     mut player_1_tail: usize,
-    mut player_1_deck: ArrayVec<[u8; DECK_SIZE]>,
+    mut player_1_deck: [u8; DECK_SIZE],
     mut player_2_head: usize,
     mut player_2_tail: usize,
-    mut player_2_deck: ArrayVec<[u8; DECK_SIZE]>,
+    mut player_2_deck: [u8; DECK_SIZE],
     score: bool,
 ) -> (Winner, usize) {
     // Short circuit sub game if Player 1 has largest card
@@ -203,7 +202,7 @@ pub(crate) fn run() -> Results {
     let mut data = buffer.split("\n\n");
 
     // Read to arrays
-    let mut player_1_deck: ArrayVec<[u8; DECK_SIZE]> = ArrayVec::from([0; DECK_SIZE]);
+    let mut player_1_deck: [u8; DECK_SIZE] = [0; DECK_SIZE];
     let player_1_head = 0;
     let mut player_1_tail = 0;
     data.next().unwrap().lines().skip(1).for_each(|value| {
@@ -211,7 +210,7 @@ pub(crate) fn run() -> Results {
         player_1_tail += 1;
     });
 
-    let mut player_2_deck: ArrayVec<[u8; DECK_SIZE]> = ArrayVec::from([0; DECK_SIZE]);
+    let mut player_2_deck: [u8; DECK_SIZE] = [0; DECK_SIZE];
     let player_2_head = 0;
     let mut player_2_tail = 0;
     data.next().unwrap().lines().skip(1).for_each(|value| {
