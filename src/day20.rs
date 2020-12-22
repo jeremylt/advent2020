@@ -434,16 +434,8 @@ pub(crate) fn run() -> Results {
             }
             // Add to tile image
             let tile = &tiles[grid[index_2d!(i, j, side_length)]];
-            let (step_i, step_j, start): (i32, i32, i32) = match (&tile.side, &tile.orientation) {
-                (Side::Up, Orientation::Right) => TILE_INDICES[0],
-                (Side::Up, Orientation::Top) => TILE_INDICES[1],
-                (Side::Up, Orientation::Left) => TILE_INDICES[2],
-                (Side::Up, Orientation::Bottom) => TILE_INDICES[3],
-                (Side::Down, Orientation::Right) => TILE_INDICES[4],
-                (Side::Down, Orientation::Top) => TILE_INDICES[5],
-                (Side::Down, Orientation::Left) => TILE_INDICES[6],
-                (Side::Down, Orientation::Bottom) => TILE_INDICES[7],
-            };
+            let (step_i, step_j, start): (i32, i32, i32) =
+                TILE_INDICES[tile_index(&tile.side, &tile.orientation)];
             let offset = i * row_size * (TILE_SIZE - 2) + j * (TILE_SIZE - 2);
             (0..TILE_SIZE - 2).for_each(|ii| {
                 (0..TILE_SIZE - 2).for_each(|jj| {
@@ -674,6 +666,18 @@ const SEA_MONSTER_INDICES: [[(i32, i32); 14]; 8] = [
 // -----------------------------------------------------------------------------
 // Rotated/flipped tile indices
 // -----------------------------------------------------------------------------
+fn tile_index(side: &Side, orientation: &Orientation) -> usize {
+    match (side, orientation) {
+        (Side::Up, Orientation::Right) => 0,
+        (Side::Up, Orientation::Top) => 1,
+        (Side::Up, Orientation::Left) => 2,
+        (Side::Up, Orientation::Bottom) => 3,
+        (Side::Down, Orientation::Right) => 4,
+        (Side::Down, Orientation::Top) => 5,
+        (Side::Down, Orientation::Left) => 6,
+        (Side::Down, Orientation::Bottom) => 7,
+    }
+}
 
 const TILE_INDICES: [(i32, i32, i32); 8] = [
     // Up, Right
