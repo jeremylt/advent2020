@@ -1,4 +1,9 @@
 //! Day 22:
+//! Part 1 was straighforward. I got good performance by using fixed sized arary and
+//! indexing in with modular arithmetic. For Part 2, I continued this approach. For
+//! visited configurations of the game, I hashed Player 1's deck to a single u64,
+//! hashed Player 2's deck to a single u64, and hashed the two values to create a single
+//! u64 representing the current game configuration.
 
 use crate::prelude::*;
 use arrayvec::ArrayVec;
