@@ -66,9 +66,8 @@ The bitwise operations are straightforward, but the combinatorics make this tric
 slow in hitting all required floating mask values. I sum the data as I walk the list,
 visiting the instructions in reverse, to avoid repetition in traversing the map.</p>
 </td></tr><tr class='module-item'><td><a class="mod" href="day15/index.html" title='advent2020::day15 mod'>day15</a></td><td class='docblock-short'><p>Day 15:
-I am using an array for the dense portion of the integers and a hash map for
-the sparse portion of the integers. I got futher improvement by using
-u16s for values from 1..1 &lt;&lt; 16 and u32s for the larger values.</p>
+Nothing clever here. I am using a vec for the dense portion of the integers and a
+hash map for the sparse portion of the integers.</p>
 </td></tr><tr class='module-item'><td><a class="mod" href="day16/index.html" title='advent2020::day16 mod'>day16</a></td><td class='docblock-short'><p>Day 16:
 The range checking is somewhat expensive in this problem. I imagine there is a better
 way to organize the data for finding the rules, but I haven't put much thought into
