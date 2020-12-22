@@ -276,8 +276,18 @@
 <span id="273">273</span>
 <span id="274">274</span>
 <span id="275">275</span>
+<span id="276">276</span>
+<span id="277">277</span>
+<span id="278">278</span>
+<span id="279">279</span>
+<span id="280">280</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Day 22:</span>
+<span class="doccomment">//! Part 1 was straighforward. I got good performance by using fixed sized arary and</span>
+<span class="doccomment">//! indexing in with modular arithmetic. For Part 2, I continued this approach. For</span>
+<span class="doccomment">//! visited configurations of the game, I hashed Player 1&#39;s deck to a single u64,</span>
+<span class="doccomment">//! hashed Player 2&#39;s deck to a single u64, and hashed the two values to create a single</span>
+<span class="doccomment">//! u64 representing the current game configuration.</span>
 
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">prelude</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">arrayvec</span>::<span class="ident">ArrayVec</span>;

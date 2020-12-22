@@ -93,7 +93,12 @@ Well then. That was hard, but the overall implementation was somewhat fast.</p>
 </td></tr><tr class='module-item'><td><a class="mod" href="day21/index.html" title='advent2020::day21 mod'>day21</a></td><td class='docblock-short'><p>Day 21:
 No particular tricks in this one. As usual, we can get a mild improvement by
 reading and consuming the data at the same time.</p>
-</td></tr><tr class='module-item'><td><a class="mod" href="day22/index.html" title='advent2020::day22 mod'>day22</a></td><td class='docblock-short'><p>Day 22:</p>
+</td></tr><tr class='module-item'><td><a class="mod" href="day22/index.html" title='advent2020::day22 mod'>day22</a></td><td class='docblock-short'><p>Day 22:
+Part 1 was straighforward. I got good performance by using fixed sized arary and
+indexing in with modular arithmetic. For Part 2, I continued this approach. For
+visited configurations of the game, I hashed Player 1's deck to a single u64,
+hashed Player 2's deck to a single u64, and hashed the two values to create a single
+u64 representing the current game configuration.</p>
 </td></tr><tr class='module-item'><td><a class="mod" href="output/index.html" title='advent2020::output mod'>output</a></td><td class='docblock-short'><p>Output:
 This module collects some of my <code>println!</code> boilerplate between the days.</p>
 </td></tr><tr class='module-item'><td><a class="mod" href="prelude/index.html" title='advent2020::prelude mod'>prelude</a></td><td class='docblock-short'></td></tr></table><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
