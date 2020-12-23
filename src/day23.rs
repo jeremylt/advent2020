@@ -30,9 +30,8 @@ fn play_game(cups: &mut Vec<i32>, number_rounds: usize, number_cups: i32) {
         }
 
         // Update indices
-        cups[current_cup as usize] = cups[next_3 as usize];
-        cups[next_3 as usize] = cups[target_cup as usize];
-        cups[target_cup as usize] = next_1;
+        cups.swap(current_cup as usize, next_3 as usize);
+        cups.swap(next_3 as usize, target_cup as usize);
 
         // Increment current
         current_cup = cups[current_cup as usize];
