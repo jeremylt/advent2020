@@ -4,6 +4,8 @@
 //! visited configurations of the game, I hashed Player 1's deck to a single u64,
 //! hashed Player 2's deck to a single u64, and hashed the two values to create a single
 //! u64 representing the current game configuration.
+//! I updated the code to use a max number of rounds rather than checking for a repeated
+//! state. This is a cheat, but it works.
 
 use crate::prelude::*;
 
