@@ -252,6 +252,8 @@
 <span id="249">249</span>
 <span id="250">250</span>
 <span id="251">251</span>
+<span id="252">252</span>
+<span id="253">253</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Day 22:</span>
 <span class="doccomment">//! Part 1 was straighforward. I got good performance by using fixed sized arary and</span>
@@ -259,6 +261,8 @@
 <span class="doccomment">//! visited configurations of the game, I hashed Player 1&#39;s deck to a single u64,</span>
 <span class="doccomment">//! hashed Player 2&#39;s deck to a single u64, and hashed the two values to create a single</span>
 <span class="doccomment">//! u64 representing the current game configuration.</span>
+<span class="doccomment">//! I updated the code to use a max number of rounds rather than checking for a repeated</span>
+<span class="doccomment">//! state. This is a cheat, but it works.</span>
 
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">prelude</span>::<span class="kw-2">*</span>;
 
