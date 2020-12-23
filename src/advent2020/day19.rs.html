@@ -335,6 +335,10 @@
 <span id="332">332</span>
 <span id="333">333</span>
 <span id="334">334</span>
+<span id="335">335</span>
+<span id="336">336</span>
+<span id="337">337</span>
+<span id="338">338</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Day 19:</span>
 <span class="doccomment">//! CYK is a good fit here, but with the size of the strings, the arrays are quite large,</span>
@@ -342,109 +346,50 @@
 
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">prelude</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">rayon</span>::<span class="ident">prelude</span>::<span class="kw-2">*</span>;
-
-<span class="comment">// Constants</span>
-<span class="kw">const</span> <span class="ident">CAPACITY</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">512</span>;
+<span class="kw">use</span> <span class="ident">rustc_hash</span>::<span class="ident">FxHashMap</span>;
 
 <span class="comment">// -----------------------------------------------------------------------------</span>
 <span class="comment">// Rules</span>
 <span class="comment">// -----------------------------------------------------------------------------</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
-<span class="kw">struct</span> <span class="ident">TerminalRule</span> {
-    <span class="ident">left</span>: <span class="ident">u8</span>,
-    <span class="ident">symbol</span>: <span class="ident">char</span>,
-}
-
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>)]</span>
-<span class="kw">struct</span> <span class="ident">ProductionRule</span> {
-    <span class="ident">left</span>: <span class="ident">u8</span>,
-    <span class="ident">first</span>: <span class="ident">u8</span>,
-    <span class="ident">second</span>: <span class="ident">u8</span>,
+<span class="kw">enum</span> <span class="ident">Rule</span> {
+    <span class="ident">Terminal</span>(<span class="ident">u8</span>),      <span class="comment">// id: &quot;a&quot;, &quot;b&quot;</span>
+    <span class="ident">Any</span>(<span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span><span class="op">&gt;</span>), <span class="comment">// id: 1 | 2</span>
+    <span class="ident">All</span>(<span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>),      <span class="comment">// id: 1 2</span>
 }
 
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
-<span class="kw">struct</span> <span class="ident">UnitRule</span> {
-    <span class="ident">left</span>: <span class="ident">u8</span>,
-    <span class="ident">only</span>: <span class="ident">u8</span>,
-}
-
-<span class="comment">// -----------------------------------------------------------------------------</span>
-<span class="comment">// Cocke Younger Kasami</span>
-<span class="comment">// -----------------------------------------------------------------------------</span>
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">index_3d</span> {
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">i</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">j</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">k</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">message_length</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">number_rules</span>:<span class="ident">expr</span>) <span class="op">=</span><span class="op">&gt;</span> {
-        ((<span class="macro-nonterminal">$</span><span class="macro-nonterminal">message_length</span>) <span class="op">*</span> ((<span class="macro-nonterminal">$</span><span class="macro-nonterminal">message_length</span>) <span class="op">+</span> <span class="number">1</span>)
-            <span class="op">-</span> (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">message_length</span> <span class="op">-</span> (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">i</span>)) <span class="op">*</span> ((<span class="macro-nonterminal">$</span><span class="macro-nonterminal">message_length</span>) <span class="op">+</span> <span class="number">1</span> <span class="op">-</span> (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">i</span>)))
-            <span class="op">/</span> <span class="number">2</span>
-            <span class="op">*</span> (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">number_rules</span>)
-            <span class="op">+</span> (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">j</span>) <span class="op">*</span> (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">number_rules</span>)
-            <span class="op">+</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">k</span>
-    };
-}
-
-<span class="attribute">#[<span class="ident">inline</span>]</span>
-<span class="kw">fn</span> <span class="ident">cocke_younger_kasami</span>(
-    <span class="ident">message</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>,
-    <span class="ident">number_rules</span>: <span class="ident">usize</span>,
-    <span class="ident">terminal_rules</span>: <span class="kw-2">&amp;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">TerminalRule</span><span class="op">&gt;</span>,
-    <span class="ident">production_rules</span>: <span class="kw-2">&amp;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">ProductionRule</span><span class="op">&gt;</span>,
-    <span class="ident">unit_rules</span>: <span class="kw-2">&amp;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">UnitRule</span><span class="op">&gt;</span>,
-) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
-    <span class="kw">let</span> <span class="ident">message_length</span> <span class="op">=</span> <span class="ident">message</span>.<span class="ident">len</span>();
-    <span class="comment">// Initialize first pass</span>
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">table</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[<span class="bool-val">false</span>; <span class="ident">message_length</span> <span class="op">*</span> (<span class="ident">message_length</span> <span class="op">+</span> <span class="number">1</span>) <span class="op">/</span> <span class="number">2</span> <span class="op">*</span> <span class="ident">number_rules</span>];
-    <span class="ident">message</span>.<span class="ident">chars</span>().<span class="ident">enumerate</span>().<span class="ident">for_each</span>(<span class="op">|</span>(<span class="ident">i</span>, <span class="ident">c</span>)<span class="op">|</span> {
-        <span class="ident">terminal_rules</span>.<span class="ident">iter</span>().<span class="ident">any</span>(<span class="op">|</span><span class="ident">terminal</span><span class="op">|</span> {
-            <span class="kw">if</span> <span class="ident">c</span> <span class="op">=</span><span class="op">=</span> <span class="ident">terminal</span>.<span class="ident">symbol</span> {
-                <span class="ident">table</span>[<span class="macro">index_3d</span><span class="macro">!</span>(<span class="number">0</span>, <span class="ident">i</span>, <span class="ident">terminal</span>.<span class="ident">left</span> <span class="kw">as</span> <span class="ident">usize</span>, <span class="ident">message_length</span>, <span class="ident">number_rules</span>)] <span class="op">=</span> <span class="bool-val">true</span>;
-                <span class="bool-val">true</span>
+<span class="kw">fn</span> <span class="ident">check_rule</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>(<span class="ident">word</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span>, <span class="ident">rules</span>: <span class="kw-2">&amp;</span><span class="ident">FxHashMap</span><span class="op">&lt;</span><span class="ident">u8</span>, <span class="ident">Rule</span><span class="op">&gt;</span>, <span class="ident">rule</span>: <span class="kw-2">&amp;</span><span class="ident">Rule</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span>, ()<span class="op">&gt;</span> {
+    <span class="kw">if</span> <span class="ident">word</span>.<span class="ident">is_empty</span>() {
+        <span class="kw">return</span> <span class="prelude-val">Err</span>(());
+    }
+    <span class="kw">match</span> <span class="ident">rule</span> {
+        <span class="comment">// Character matches terminal rule</span>
+        <span class="ident">Rule</span>::<span class="ident">Terminal</span>(<span class="ident">c</span>) <span class="op">=</span><span class="op">&gt;</span> {
+            <span class="kw">if</span> <span class="ident">word</span>.<span class="ident">as_bytes</span>()[<span class="number">0</span>] <span class="op">=</span><span class="op">=</span> <span class="kw-2">*</span><span class="ident">c</span> {
+                <span class="prelude-val">Ok</span>(<span class="kw-2">&amp;</span><span class="ident">word</span>[<span class="number">1</span>..])
             } <span class="kw">else</span> {
-                <span class="bool-val">false</span>
+                <span class="prelude-val">Err</span>(())
             }
-        });
-        <span class="ident">unit_rules</span>.<span class="ident">iter</span>().<span class="ident">for_each</span>(<span class="op">|</span><span class="ident">unit</span><span class="op">|</span> {
-            <span class="ident">table</span>[<span class="macro">index_3d</span><span class="macro">!</span>(<span class="number">0</span>, <span class="ident">i</span>, <span class="ident">unit</span>.<span class="ident">left</span> <span class="kw">as</span> <span class="ident">usize</span>, <span class="ident">message_length</span>, <span class="ident">number_rules</span>)] <span class="op">|</span><span class="op">=</span>
-                <span class="ident">table</span>[<span class="macro">index_3d</span><span class="macro">!</span>(<span class="number">0</span>, <span class="ident">i</span>, <span class="ident">unit</span>.<span class="ident">only</span> <span class="kw">as</span> <span class="ident">usize</span>, <span class="ident">message_length</span>, <span class="ident">number_rules</span>)]
-        });
-    });
-    <span class="comment">// Apply CYK</span>
-    <span class="comment">// Span length</span>
-    (<span class="number">1</span>..<span class="ident">message_length</span>).<span class="ident">for_each</span>(<span class="op">|</span><span class="ident">l</span><span class="op">|</span> {
-        <span class="comment">// Span start</span>
-        (<span class="number">0</span>..<span class="ident">message_length</span> <span class="op">-</span> <span class="ident">l</span>).<span class="ident">for_each</span>(<span class="op">|</span><span class="ident">s</span><span class="op">|</span> {
-            <span class="comment">// Span partition</span>
-            (<span class="number">0</span>..<span class="ident">l</span>).<span class="ident">for_each</span>(<span class="op">|</span><span class="ident">p</span><span class="op">|</span> {
-                <span class="ident">production_rules</span>.<span class="ident">iter</span>().<span class="ident">for_each</span>(<span class="op">|</span><span class="ident">production</span><span class="op">|</span> {
-                    <span class="kw">if</span> <span class="ident">table</span>[<span class="macro">index_3d</span><span class="macro">!</span>(
-                        <span class="ident">p</span>,
-                        <span class="ident">s</span>,
-                        <span class="ident">production</span>.<span class="ident">first</span> <span class="kw">as</span> <span class="ident">usize</span>,
-                        <span class="ident">message_length</span>,
-                        <span class="ident">number_rules</span>
-                    )] <span class="op">&amp;&amp;</span> <span class="ident">table</span>[<span class="macro">index_3d</span><span class="macro">!</span>(
-                        <span class="ident">l</span> <span class="op">-</span> <span class="ident">p</span> <span class="op">-</span> <span class="number">1</span>,
-                        <span class="ident">s</span> <span class="op">+</span> <span class="ident">p</span> <span class="op">+</span> <span class="number">1</span>,
-                        <span class="ident">production</span>.<span class="ident">second</span> <span class="kw">as</span> <span class="ident">usize</span>,
-                        <span class="ident">message_length</span>,
-                        <span class="ident">number_rules</span>
-                    )] {
-                        <span class="ident">table</span>[<span class="macro">index_3d</span><span class="macro">!</span>(
-                            <span class="ident">l</span>,
-                            <span class="ident">s</span>,
-                            <span class="ident">production</span>.<span class="ident">left</span> <span class="kw">as</span> <span class="ident">usize</span>,
-                            <span class="ident">message_length</span>,
-                            <span class="ident">number_rules</span>
-                        )] <span class="op">=</span> <span class="bool-val">true</span>;
-                    }
-                });
-                <span class="ident">unit_rules</span>.<span class="ident">iter</span>().<span class="ident">for_each</span>(<span class="op">|</span><span class="ident">unit</span><span class="op">|</span> {
-                    <span class="ident">table</span>[<span class="macro">index_3d</span><span class="macro">!</span>(<span class="ident">l</span>, <span class="ident">s</span>, <span class="ident">unit</span>.<span class="ident">left</span> <span class="kw">as</span> <span class="ident">usize</span>, <span class="ident">message_length</span>, <span class="ident">number_rules</span>)] <span class="op">|</span><span class="op">=</span>
-                        <span class="ident">table</span>[<span class="macro">index_3d</span><span class="macro">!</span>(<span class="ident">l</span>, <span class="ident">s</span>, <span class="ident">unit</span>.<span class="ident">only</span> <span class="kw">as</span> <span class="ident">usize</span>, <span class="ident">message_length</span>, <span class="ident">number_rules</span>)]
-                });
-            })
-        });
-    });
-    <span class="ident">table</span>[<span class="macro">index_3d</span><span class="macro">!</span>(<span class="ident">message_length</span> <span class="op">-</span> <span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="ident">message_length</span>, <span class="ident">number_rules</span>)]
+        }
+        <span class="comment">// Any associated rule or set of rules matches</span>
+        <span class="ident">Rule</span>::<span class="ident">Any</span>(<span class="ident">sub_rules</span>) <span class="op">=</span><span class="op">&gt;</span> {
+            <span class="kw">for</span> <span class="ident">option</span> <span class="kw">in</span> <span class="ident">sub_rules</span> {
+                <span class="kw">let</span> <span class="ident">current</span> <span class="op">=</span> <span class="ident">check_rule</span>(<span class="ident">word</span>, <span class="ident">rules</span>, <span class="kw-2">&amp;</span><span class="ident">Rule</span>::<span class="ident">All</span>(<span class="ident">option</span>.<span class="ident">clone</span>()));
+                <span class="kw">if</span> <span class="ident">current</span>.<span class="ident">is_ok</span>() {
+                    <span class="kw">return</span> <span class="ident">current</span>;
+                }
+            }
+            <span class="prelude-val">Err</span>(())
+        }
+        <span class="comment">// All rules match</span>
+        <span class="ident">Rule</span>::<span class="ident">All</span>(<span class="ident">rule_indices</span>) <span class="op">=</span><span class="op">&gt;</span> {
+            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">remainder</span> <span class="op">=</span> <span class="ident">word</span>;
+            <span class="kw">for</span> <span class="ident">index</span> <span class="kw">in</span> <span class="ident">rule_indices</span> {
+                <span class="ident">remainder</span> <span class="op">=</span> <span class="ident">check_rule</span>(<span class="ident">remainder</span>, <span class="ident">rules</span>, <span class="kw-2">&amp;</span><span class="ident">rules</span>[<span class="kw-2">&amp;</span><span class="ident">index</span>])<span class="question-mark">?</span>;
+            }
+            <span class="prelude-val">Ok</span>(<span class="ident">remainder</span>)
+        }
+    }
 }
 
 <span class="comment">// -----------------------------------------------------------------------------</span>
@@ -459,39 +404,36 @@
     <span class="kw">let</span> <span class="ident">buffer</span>: <span class="ident">String</span> <span class="op">=</span> <span class="ident">std</span>::<span class="ident">fs</span>::<span class="ident">read_to_string</span>(<span class="string">&quot;data/day19.txt&quot;</span>).<span class="ident">unwrap</span>();
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">data</span> <span class="op">=</span> <span class="ident">buffer</span>.<span class="ident">split</span>(<span class="string">&quot;\n\n&quot;</span>);
 
-    <span class="comment">// Read to vector</span>
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">production_rules</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">ProductionRule</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">with_capacity</span>(<span class="ident">CAPACITY</span>);
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">terminal_rules</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">TerminalRule</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">with_capacity</span>(<span class="ident">CAPACITY</span>);
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">unit_rules</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">UnitRule</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">with_capacity</span>(<span class="ident">CAPACITY</span>);
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">number_rules</span> <span class="op">=</span> <span class="number">0</span>;
-    <span class="ident">data</span>.<span class="ident">next</span>().<span class="ident">unwrap</span>().<span class="ident">lines</span>().<span class="ident">for_each</span>(<span class="op">|</span><span class="ident">line</span><span class="op">|</span> {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">data</span> <span class="op">=</span> <span class="ident">line</span>.<span class="ident">splitn</span>(<span class="number">2</span>, <span class="string">&quot;: &quot;</span>);
-        <span class="kw">let</span> <span class="ident">index</span>: <span class="ident">u8</span> <span class="op">=</span> <span class="ident">data</span>.<span class="ident">next</span>().<span class="ident">unwrap</span>().<span class="ident">parse</span>().<span class="ident">unwrap</span>();
-        <span class="kw">let</span> <span class="ident">rule</span> <span class="op">=</span> <span class="ident">data</span>.<span class="ident">next</span>().<span class="ident">unwrap</span>();
-        <span class="kw">if</span> <span class="kw-2">&amp;</span><span class="ident">rule</span>[<span class="number">0</span>..<span class="number">1</span>] <span class="op">=</span><span class="op">=</span> <span class="string">&quot;\&quot;&quot;</span> {
-            <span class="ident">terminal_rules</span>.<span class="ident">push</span>(<span class="ident">TerminalRule</span> {
-                <span class="ident">left</span>: <span class="ident">index</span>,
-                <span class="ident">symbol</span>: <span class="ident">rule</span>.<span class="ident">chars</span>().<span class="ident">nth</span>(<span class="number">1</span>).<span class="ident">unwrap</span>(),
-            });
-        } <span class="kw">else</span> {
-            <span class="ident">rule</span>.<span class="ident">split</span>(<span class="string">&quot; | &quot;</span>).<span class="ident">for_each</span>(<span class="op">|</span><span class="ident">sub</span><span class="op">|</span> {
-                <span class="kw">let</span> <span class="ident">symbols</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">sub</span>.<span class="ident">split</span>(<span class="string">&quot; &quot;</span>).<span class="ident">map</span>(<span class="op">|</span><span class="ident">c</span><span class="op">|</span> <span class="ident">c</span>.<span class="ident">parse</span>().<span class="ident">unwrap</span>()).<span class="ident">collect</span>();
-                <span class="kw">match</span> <span class="ident">symbols</span>.<span class="ident">len</span>() {
-                    <span class="number">1</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">unit_rules</span>.<span class="ident">push</span>(<span class="ident">UnitRule</span> {
-                        <span class="ident">left</span>: <span class="ident">index</span>,
-                        <span class="ident">only</span>: <span class="ident">symbols</span>[<span class="number">0</span>],
-                    }),
-                    <span class="number">2</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">production_rules</span>.<span class="ident">push</span>(<span class="ident">ProductionRule</span> {
-                        <span class="ident">left</span>: <span class="ident">index</span>,
-                        <span class="ident">first</span>: <span class="ident">symbols</span>[<span class="number">0</span>],
-                        <span class="ident">second</span>: <span class="ident">symbols</span>[<span class="number">1</span>],
-                    }),
-                    <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;unmatched rule&quot;</span>),
+    <span class="comment">// Read to rules map</span>
+    <span class="kw">let</span> <span class="ident">rules</span>: <span class="ident">FxHashMap</span><span class="op">&lt;</span><span class="ident">u8</span>, <span class="ident">Rule</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">data</span>
+        .<span class="ident">next</span>()
+        .<span class="ident">unwrap</span>()
+        .<span class="ident">lines</span>()
+        .<span class="ident">map</span>(<span class="op">|</span><span class="ident">line</span><span class="op">|</span> {
+            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">data</span> <span class="op">=</span> <span class="ident">line</span>.<span class="ident">splitn</span>(<span class="number">2</span>, <span class="string">&quot;: &quot;</span>);
+            <span class="kw">let</span> <span class="ident">index</span>: <span class="ident">u8</span> <span class="op">=</span> <span class="ident">data</span>.<span class="ident">next</span>().<span class="ident">unwrap</span>().<span class="ident">parse</span>().<span class="ident">unwrap</span>();
+            <span class="kw">let</span> <span class="ident">rule</span>: <span class="ident">Rule</span>;
+            <span class="kw">let</span> <span class="ident">right_side</span> <span class="op">=</span> <span class="ident">data</span>.<span class="ident">next</span>().<span class="ident">unwrap</span>();
+            <span class="kw">if</span> <span class="kw-2">&amp;</span><span class="ident">right_side</span>[<span class="number">0</span>..<span class="number">1</span>] <span class="op">=</span><span class="op">=</span> <span class="string">&quot;\&quot;&quot;</span> {
+                <span class="ident">rule</span> <span class="op">=</span> <span class="ident">Rule</span>::<span class="ident">Terminal</span>(<span class="ident">right_side</span>.<span class="ident">as_bytes</span>()[<span class="number">1</span>]);
+            } <span class="kw">else</span> {
+                <span class="kw">let</span> <span class="ident">subs</span> <span class="op">=</span> <span class="ident">right_side</span>
+                    .<span class="ident">split</span>(<span class="string">&quot; | &quot;</span>)
+                    .<span class="ident">map</span>(<span class="op">|</span><span class="ident">sub</span><span class="op">|</span> {
+                        <span class="ident">sub</span>.<span class="ident">split</span>(<span class="string">&quot; &quot;</span>)
+                            .<span class="ident">map</span>(<span class="op">|</span><span class="ident">c</span><span class="op">|</span> <span class="ident">c</span>.<span class="ident">parse</span>().<span class="ident">unwrap</span>())
+                            .<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span><span class="op">&gt;</span>()
+                    })
+                    .<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>();
+                <span class="kw">if</span> <span class="ident">subs</span>.<span class="ident">len</span>() <span class="op">=</span><span class="op">=</span> <span class="number">1</span> {
+                    <span class="ident">rule</span> <span class="op">=</span> <span class="ident">Rule</span>::<span class="ident">All</span>(<span class="ident">subs</span>[<span class="number">0</span>].<span class="ident">clone</span>());
+                } <span class="kw">else</span> {
+                    <span class="ident">rule</span> <span class="op">=</span> <span class="ident">Rule</span>::<span class="ident">Any</span>(<span class="ident">subs</span>);
                 }
-            });
-        }
-        <span class="ident">number_rules</span> <span class="op">=</span> <span class="ident">std</span>::<span class="ident">cmp</span>::<span class="ident">max</span>(<span class="ident">number_rules</span>, <span class="ident">index</span> <span class="op">+</span> <span class="number">1</span>);
-    });
+            }
+            (<span class="ident">index</span>, <span class="ident">rule</span>)
+        })
+        .<span class="ident">collect</span>();
     <span class="kw">let</span> <span class="ident">time_setup</span> <span class="op">=</span> <span class="ident">start_setup</span>.<span class="ident">elapsed</span>();
 
     <span class="comment">// -------------------------------------------------------------------------</span>
@@ -508,13 +450,8 @@
     <span class="kw">let</span> <span class="ident">invalid_messages</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">messages</span>
         .<span class="ident">par_iter</span>()
         .<span class="ident">filter_map</span>(<span class="op">|</span><span class="ident">message</span><span class="op">|</span> {
-            <span class="kw">if</span> <span class="ident">cocke_younger_kasami</span>(
-                <span class="ident">message</span>,
-                <span class="ident">number_rules</span> <span class="kw">as</span> <span class="ident">usize</span>,
-                <span class="kw-2">&amp;</span><span class="ident">terminal_rules</span>,
-                <span class="kw-2">&amp;</span><span class="ident">production_rules</span>,
-                <span class="kw-2">&amp;</span><span class="ident">unit_rules</span>,
-            ) {
+            <span class="kw">let</span> <span class="ident">remainder</span> <span class="op">=</span> <span class="ident">check_rule</span>(<span class="ident">message</span>, <span class="kw-2">&amp;</span><span class="ident">rules</span>, <span class="kw-2">&amp;</span><span class="ident">rules</span>[<span class="kw-2">&amp;</span><span class="number">0</span>]);
+            <span class="kw">if</span> <span class="ident">remainder</span>.<span class="ident">is_ok</span>() <span class="op">&amp;&amp;</span> <span class="ident">remainder</span>.<span class="ident">unwrap</span>().<span class="ident">is_empty</span>() {
                 <span class="prelude-val">None</span>
             } <span class="kw">else</span> {
                 <span class="prelude-val">Some</span>(<span class="ident">message</span>.<span class="ident">to_string</span>())
@@ -530,32 +467,33 @@
     <span class="comment">// -------------------------------------------------------------------------</span>
     <span class="comment">// Count additional messages</span>
     <span class="kw">let</span> <span class="ident">start_part_2</span> <span class="op">=</span> <span class="ident">Instant</span>::<span class="ident">now</span>();
-    <span class="ident">production_rules</span>.<span class="ident">push</span>(<span class="ident">ProductionRule</span> {
-        <span class="ident">left</span>: <span class="number">42</span>,
-        <span class="ident">first</span>: <span class="number">42</span>,
-        <span class="ident">second</span>: <span class="number">42</span>,
-    });
-    <span class="ident">production_rules</span>.<span class="ident">push</span>(<span class="ident">ProductionRule</span> {
-        <span class="ident">left</span>: <span class="number">11</span>,
-        <span class="ident">first</span>: <span class="number">42</span>,
-        <span class="ident">second</span>: <span class="ident">number_rules</span>,
-    });
-    <span class="ident">production_rules</span>.<span class="ident">push</span>(<span class="ident">ProductionRule</span> {
-        <span class="ident">left</span>: <span class="ident">number_rules</span>,
-        <span class="ident">first</span>: <span class="number">11</span>,
-        <span class="ident">second</span>: <span class="number">31</span>,
-    });
-    <span class="ident">number_rules</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
     <span class="kw">let</span> <span class="ident">count_extra</span> <span class="op">=</span> <span class="ident">invalid_messages</span>
         .<span class="ident">par_iter</span>()
-        .<span class="ident">filter</span>(<span class="op">|</span><span class="ident">message</span><span class="op">|</span> {
-            <span class="ident">cocke_younger_kasami</span>(
-                <span class="ident">message</span>,
-                <span class="ident">number_rules</span> <span class="kw">as</span> <span class="ident">usize</span> <span class="op">+</span> <span class="number">1</span>,
-                <span class="kw-2">&amp;</span><span class="ident">terminal_rules</span>,
-                <span class="kw-2">&amp;</span><span class="ident">production_rules</span>,
-                <span class="kw-2">&amp;</span><span class="ident">unit_rules</span>,
-            )
+        .<span class="ident">filter</span>(<span class="op">|</span><span class="kw-2">&amp;</span><span class="ident">message</span><span class="op">|</span> {
+            <span class="comment">// Check rule 42</span>
+            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">count_42</span> <span class="op">=</span> <span class="number">0</span>;
+            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">remainder</span> <span class="op">=</span> <span class="ident">message</span>.<span class="ident">as_str</span>();
+            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">check_rule</span>(<span class="kw-2">&amp;</span><span class="ident">remainder</span>, <span class="kw-2">&amp;</span><span class="ident">rules</span>, <span class="kw-2">&amp;</span><span class="ident">rules</span>[<span class="kw-2">&amp;</span><span class="number">42</span>]);
+            <span class="kw">while</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">current</span>) <span class="op">=</span> <span class="ident">result</span> {
+                <span class="ident">count_42</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
+                <span class="ident">remainder</span> <span class="op">=</span> <span class="ident">current</span>;
+                <span class="ident">result</span> <span class="op">=</span> <span class="ident">check_rule</span>(<span class="kw-2">&amp;</span><span class="ident">remainder</span>, <span class="kw-2">&amp;</span><span class="ident">rules</span>, <span class="kw-2">&amp;</span><span class="ident">rules</span>[<span class="kw-2">&amp;</span><span class="number">42</span>]);
+            }
+
+            <span class="kw">if</span> <span class="ident">count_42</span> <span class="op">&lt;</span> <span class="number">2</span> {
+                <span class="kw">return</span> <span class="bool-val">false</span>;
+            }
+
+            <span class="comment">// Check rule 31</span>
+            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">count_31</span> <span class="op">=</span> <span class="number">0</span>;
+            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">check_rule</span>(<span class="kw-2">&amp;</span><span class="ident">remainder</span>, <span class="kw-2">&amp;</span><span class="ident">rules</span>, <span class="kw-2">&amp;</span><span class="ident">rules</span>[<span class="kw-2">&amp;</span><span class="number">31</span>]);
+            <span class="kw">while</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">current</span>) <span class="op">=</span> <span class="ident">result</span> {
+                <span class="ident">count_31</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
+                <span class="ident">remainder</span> <span class="op">=</span> <span class="ident">current</span>;
+                <span class="ident">result</span> <span class="op">=</span> <span class="ident">check_rule</span>(<span class="kw-2">&amp;</span><span class="ident">remainder</span>, <span class="kw-2">&amp;</span><span class="ident">rules</span>, <span class="kw-2">&amp;</span><span class="ident">rules</span>[<span class="kw-2">&amp;</span><span class="number">31</span>]);
+            }
+
+            <span class="ident">remainder</span>.<span class="ident">is_empty</span>() <span class="op">&amp;&amp;</span> <span class="ident">count_31</span> <span class="op">&gt;</span> <span class="number">0</span> <span class="op">&amp;&amp;</span> <span class="ident">count_42</span> <span class="op">&gt;</span> <span class="ident">count_31</span>
         })
         .<span class="ident">count</span>();
     <span class="kw">let</span> <span class="ident">count_2</span> <span class="op">=</span> <span class="ident">count_1</span> <span class="op">+</span> <span class="ident">count_extra</span>;
@@ -568,77 +506,68 @@
     <span class="kw">let</span> <span class="ident">buffer</span>: <span class="ident">String</span> <span class="op">=</span> <span class="ident">std</span>::<span class="ident">fs</span>::<span class="ident">read_to_string</span>(<span class="string">&quot;data/day19.txt&quot;</span>).<span class="ident">unwrap</span>();
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">data</span> <span class="op">=</span> <span class="ident">buffer</span>.<span class="ident">split</span>(<span class="string">&quot;\n\n&quot;</span>);
 
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">production_rules</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">ProductionRule</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">with_capacity</span>(<span class="ident">CAPACITY</span>);
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">terminal_rules</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">TerminalRule</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">with_capacity</span>(<span class="ident">CAPACITY</span>);
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">unit_rules</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">UnitRule</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">with_capacity</span>(<span class="ident">CAPACITY</span>);
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">number_rules</span> <span class="op">=</span> <span class="number">0</span>;
-    <span class="ident">data</span>.<span class="ident">next</span>().<span class="ident">unwrap</span>().<span class="ident">lines</span>().<span class="ident">for_each</span>(<span class="op">|</span><span class="ident">line</span><span class="op">|</span> {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">data</span> <span class="op">=</span> <span class="ident">line</span>.<span class="ident">splitn</span>(<span class="number">2</span>, <span class="string">&quot;: &quot;</span>);
-        <span class="kw">let</span> <span class="ident">index</span>: <span class="ident">u8</span> <span class="op">=</span> <span class="ident">data</span>.<span class="ident">next</span>().<span class="ident">unwrap</span>().<span class="ident">parse</span>().<span class="ident">unwrap</span>();
-        <span class="kw">let</span> <span class="ident">rule</span> <span class="op">=</span> <span class="ident">data</span>.<span class="ident">next</span>().<span class="ident">unwrap</span>();
-        <span class="kw">if</span> <span class="kw-2">&amp;</span><span class="ident">rule</span>[<span class="number">0</span>..<span class="number">1</span>] <span class="op">=</span><span class="op">=</span> <span class="string">&quot;\&quot;&quot;</span> {
-            <span class="ident">terminal_rules</span>.<span class="ident">push</span>(<span class="ident">TerminalRule</span> {
-                <span class="ident">left</span>: <span class="ident">index</span>,
-                <span class="ident">symbol</span>: <span class="ident">rule</span>.<span class="ident">chars</span>().<span class="ident">nth</span>(<span class="number">1</span>).<span class="ident">unwrap</span>(),
-            });
-        } <span class="kw">else</span> {
-            <span class="ident">rule</span>.<span class="ident">split</span>(<span class="string">&quot; | &quot;</span>).<span class="ident">for_each</span>(<span class="op">|</span><span class="ident">sub</span><span class="op">|</span> {
-                <span class="kw">let</span> <span class="ident">symbols</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">sub</span>.<span class="ident">split</span>(<span class="string">&quot; &quot;</span>).<span class="ident">map</span>(<span class="op">|</span><span class="ident">c</span><span class="op">|</span> <span class="ident">c</span>.<span class="ident">parse</span>().<span class="ident">unwrap</span>()).<span class="ident">collect</span>();
-                <span class="kw">match</span> <span class="ident">symbols</span>.<span class="ident">len</span>() {
-                    <span class="number">1</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">unit_rules</span>.<span class="ident">push</span>(<span class="ident">UnitRule</span> {
-                        <span class="ident">left</span>: <span class="ident">index</span>,
-                        <span class="ident">only</span>: <span class="ident">symbols</span>[<span class="number">0</span>],
-                    }),
-                    <span class="number">2</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">production_rules</span>.<span class="ident">push</span>(<span class="ident">ProductionRule</span> {
-                        <span class="ident">left</span>: <span class="ident">index</span>,
-                        <span class="ident">first</span>: <span class="ident">symbols</span>[<span class="number">0</span>],
-                        <span class="ident">second</span>: <span class="ident">symbols</span>[<span class="number">1</span>],
-                    }),
-                    <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;unmatched rule&quot;</span>),
+    <span class="kw">let</span> <span class="ident">rules</span>: <span class="ident">FxHashMap</span><span class="op">&lt;</span><span class="ident">u8</span>, <span class="ident">Rule</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">data</span>
+        .<span class="ident">next</span>()
+        .<span class="ident">unwrap</span>()
+        .<span class="ident">lines</span>()
+        .<span class="ident">map</span>(<span class="op">|</span><span class="ident">line</span><span class="op">|</span> {
+            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">data</span> <span class="op">=</span> <span class="ident">line</span>.<span class="ident">splitn</span>(<span class="number">2</span>, <span class="string">&quot;: &quot;</span>);
+            <span class="kw">let</span> <span class="ident">index</span>: <span class="ident">u8</span> <span class="op">=</span> <span class="ident">data</span>.<span class="ident">next</span>().<span class="ident">unwrap</span>().<span class="ident">parse</span>().<span class="ident">unwrap</span>();
+            <span class="kw">let</span> <span class="ident">rule</span>: <span class="ident">Rule</span>;
+            <span class="kw">let</span> <span class="ident">right_side</span> <span class="op">=</span> <span class="ident">data</span>.<span class="ident">next</span>().<span class="ident">unwrap</span>();
+            <span class="kw">if</span> <span class="kw-2">&amp;</span><span class="ident">right_side</span>[<span class="number">0</span>..<span class="number">1</span>] <span class="op">=</span><span class="op">=</span> <span class="string">&quot;\&quot;&quot;</span> {
+                <span class="ident">rule</span> <span class="op">=</span> <span class="ident">Rule</span>::<span class="ident">Terminal</span>(<span class="ident">right_side</span>.<span class="ident">as_bytes</span>()[<span class="number">1</span>]);
+            } <span class="kw">else</span> {
+                <span class="kw">let</span> <span class="ident">subs</span> <span class="op">=</span> <span class="ident">right_side</span>
+                    .<span class="ident">split</span>(<span class="string">&quot; | &quot;</span>)
+                    .<span class="ident">map</span>(<span class="op">|</span><span class="ident">sub</span><span class="op">|</span> {
+                        <span class="ident">sub</span>.<span class="ident">split</span>(<span class="string">&quot; &quot;</span>)
+                            .<span class="ident">map</span>(<span class="op">|</span><span class="ident">c</span><span class="op">|</span> <span class="ident">c</span>.<span class="ident">parse</span>().<span class="ident">unwrap</span>())
+                            .<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span><span class="op">&gt;</span>()
+                    })
+                    .<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>();
+                <span class="kw">if</span> <span class="ident">subs</span>.<span class="ident">len</span>() <span class="op">=</span><span class="op">=</span> <span class="number">1</span> {
+                    <span class="ident">rule</span> <span class="op">=</span> <span class="ident">Rule</span>::<span class="ident">All</span>(<span class="ident">subs</span>[<span class="number">0</span>].<span class="ident">clone</span>());
+                } <span class="kw">else</span> {
+                    <span class="ident">rule</span> <span class="op">=</span> <span class="ident">Rule</span>::<span class="ident">Any</span>(<span class="ident">subs</span>);
                 }
-            });
-        }
-        <span class="ident">number_rules</span> <span class="op">=</span> <span class="ident">std</span>::<span class="ident">cmp</span>::<span class="ident">max</span>(<span class="ident">number_rules</span>, <span class="ident">index</span> <span class="op">+</span> <span class="number">1</span>);
-    });
-
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">production_rules_part_2</span> <span class="op">=</span> <span class="ident">production_rules</span>.<span class="ident">clone</span>();
-    <span class="ident">production_rules_part_2</span>.<span class="ident">push</span>(<span class="ident">ProductionRule</span> {
-        <span class="ident">left</span>: <span class="number">42</span>,
-        <span class="ident">first</span>: <span class="number">42</span>,
-        <span class="ident">second</span>: <span class="number">42</span>,
-    });
-    <span class="ident">production_rules_part_2</span>.<span class="ident">push</span>(<span class="ident">ProductionRule</span> {
-        <span class="ident">left</span>: <span class="number">11</span>,
-        <span class="ident">first</span>: <span class="number">42</span>,
-        <span class="ident">second</span>: <span class="ident">number_rules</span>,
-    });
-    <span class="ident">production_rules_part_2</span>.<span class="ident">push</span>(<span class="ident">ProductionRule</span> {
-        <span class="ident">left</span>: <span class="ident">number_rules</span>,
-        <span class="ident">first</span>: <span class="number">11</span>,
-        <span class="ident">second</span>: <span class="number">31</span>,
-    });
+            }
+            (<span class="ident">index</span>, <span class="ident">rule</span>)
+        })
+        .<span class="ident">collect</span>();
 
     <span class="kw">let</span> (<span class="ident">combined_1</span>, <span class="ident">combined_2</span>) <span class="op">=</span> <span class="ident">data</span>
         .<span class="ident">next</span>()
         .<span class="ident">unwrap</span>()
         .<span class="ident">par_lines</span>()
         .<span class="ident">map</span>(<span class="op">|</span><span class="ident">line</span><span class="op">|</span> {
-            <span class="kw">let</span> <span class="ident">message</span> <span class="op">=</span> <span class="ident">line</span>.<span class="ident">to_string</span>();
-            <span class="kw">let</span> <span class="ident">part_1</span> <span class="op">=</span> <span class="ident">cocke_younger_kasami</span>(
-                <span class="kw-2">&amp;</span><span class="ident">message</span>,
-                <span class="ident">number_rules</span> <span class="kw">as</span> <span class="ident">usize</span>,
-                <span class="kw-2">&amp;</span><span class="ident">terminal_rules</span>,
-                <span class="kw-2">&amp;</span><span class="ident">production_rules</span>,
-                <span class="kw-2">&amp;</span><span class="ident">unit_rules</span>,
-            );
-            <span class="kw">let</span> <span class="ident">part_2</span> <span class="op">=</span> <span class="ident">part_1</span>
-                <span class="op">|</span><span class="op">|</span> <span class="ident">cocke_younger_kasami</span>(
-                    <span class="kw-2">&amp;</span><span class="ident">message</span>,
-                    <span class="ident">number_rules</span> <span class="kw">as</span> <span class="ident">usize</span> <span class="op">+</span> <span class="number">1</span>,
-                    <span class="kw-2">&amp;</span><span class="ident">terminal_rules</span>,
-                    <span class="kw-2">&amp;</span><span class="ident">production_rules_part_2</span>,
-                    <span class="kw-2">&amp;</span><span class="ident">unit_rules</span>,
-                );
+            <span class="kw">let</span> <span class="ident">message</span> <span class="op">=</span> <span class="ident">line</span>.<span class="ident">clone</span>();
+
+            <span class="kw">let</span> <span class="ident">remainder</span> <span class="op">=</span> <span class="ident">check_rule</span>(<span class="ident">message</span>, <span class="kw-2">&amp;</span><span class="ident">rules</span>, <span class="kw-2">&amp;</span><span class="ident">rules</span>[<span class="kw-2">&amp;</span><span class="number">0</span>]);
+            <span class="kw">let</span> <span class="ident">part_1</span> <span class="op">=</span> <span class="ident">remainder</span>.<span class="ident">is_ok</span>() <span class="op">&amp;&amp;</span> <span class="ident">remainder</span>.<span class="ident">unwrap</span>().<span class="ident">is_empty</span>();
+
+            <span class="kw">let</span> <span class="ident">part_2</span> <span class="op">=</span> <span class="ident">part_1</span> <span class="op">|</span><span class="op">|</span> {
+                <span class="comment">// Check rule 42</span>
+                <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">count_42</span> <span class="op">=</span> <span class="number">0</span>;
+                <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">remainder</span> <span class="op">=</span> <span class="ident">message</span>;
+                <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">check_rule</span>(<span class="kw-2">&amp;</span><span class="ident">remainder</span>, <span class="kw-2">&amp;</span><span class="ident">rules</span>, <span class="kw-2">&amp;</span><span class="ident">rules</span>[<span class="kw-2">&amp;</span><span class="number">42</span>]);
+                <span class="kw">while</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">current</span>) <span class="op">=</span> <span class="ident">result</span> {
+                    <span class="ident">count_42</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
+                    <span class="ident">remainder</span> <span class="op">=</span> <span class="ident">current</span>;
+                    <span class="ident">result</span> <span class="op">=</span> <span class="ident">check_rule</span>(<span class="kw-2">&amp;</span><span class="ident">remainder</span>, <span class="kw-2">&amp;</span><span class="ident">rules</span>, <span class="kw-2">&amp;</span><span class="ident">rules</span>[<span class="kw-2">&amp;</span><span class="number">42</span>]);
+                }
+
+                <span class="comment">// Check rule 31</span>
+                <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">count_31</span> <span class="op">=</span> <span class="number">0</span>;
+                <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">check_rule</span>(<span class="kw-2">&amp;</span><span class="ident">remainder</span>, <span class="kw-2">&amp;</span><span class="ident">rules</span>, <span class="kw-2">&amp;</span><span class="ident">rules</span>[<span class="kw-2">&amp;</span><span class="number">31</span>]);
+                <span class="kw">while</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">current</span>) <span class="op">=</span> <span class="ident">result</span> {
+                    <span class="ident">count_31</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
+                    <span class="ident">remainder</span> <span class="op">=</span> <span class="ident">current</span>;
+                    <span class="ident">result</span> <span class="op">=</span> <span class="ident">check_rule</span>(<span class="kw-2">&amp;</span><span class="ident">remainder</span>, <span class="kw-2">&amp;</span><span class="ident">rules</span>, <span class="kw-2">&amp;</span><span class="ident">rules</span>[<span class="kw-2">&amp;</span><span class="number">31</span>]);
+                }
+
+                <span class="ident">remainder</span>.<span class="ident">is_empty</span>() <span class="op">&amp;&amp;</span> <span class="ident">count_42</span> <span class="op">&gt;</span><span class="op">=</span> <span class="number">2</span> <span class="op">&amp;&amp;</span> <span class="ident">count_31</span> <span class="op">&gt;</span> <span class="number">0</span> <span class="op">&amp;&amp;</span> <span class="ident">count_42</span> <span class="op">&gt;</span> <span class="ident">count_31</span>
+            };
             (<span class="ident">part_1</span> <span class="kw">as</span> <span class="ident">usize</span>, <span class="ident">part_2</span> <span class="kw">as</span> <span class="ident">usize</span>)
         })
         .<span class="ident">reduce</span>(
@@ -668,6 +597,85 @@
     <span class="ident">output</span>::<span class="ident">print_part</span>(<span class="number">2</span>, <span class="string">&quot;🦕 Valid&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{}&quot;</span>, <span class="ident">results</span>.<span class="ident">part_2</span>));
     <span class="ident">output</span>::<span class="ident">print_timing</span>(<span class="kw-2">&amp;</span><span class="ident">results</span>.<span class="ident">times</span>);
 }
+
+<span class="comment">// -----------------------------------------------------------------------------</span>
+<span class="comment">// Cocke Younger Kasami</span>
+<span class="comment">// -----------------------------------------------------------------------------</span>
+<span class="comment">/*macro_rules! index_3d {
+    ($i:expr, $j:expr, $k:expr, $message_length:expr, $number_rules:expr) =&gt; {
+        (($message_length) * (($message_length) + 1)
+            - ($message_length - ($i)) * (($message_length) + 1 - ($i)))
+            / 2
+            * ($number_rules)
+            + ($j) * ($number_rules)
+            + $k
+    };
+}
+
+#[inline]
+fn cocke_younger_kasami(
+    message: &amp;str,
+    number_rules: usize,
+    terminal_rules: &amp;Vec&lt;TerminalRule&gt;,
+    production_rules: &amp;Vec&lt;ProductionRule&gt;,
+    unit_rules: &amp;Vec&lt;UnitRule&gt;,
+) -&gt; bool {
+    let message_length = message.len();
+    // Initialize first pass
+    let mut table = vec![false; message_length * (message_length + 1) / 2 * number_rules];
+    message.chars().enumerate().for_each(|(i, c)| {
+        terminal_rules.iter().any(|terminal| {
+            if c == terminal.symbol {
+                table[index_3d!(0, i, terminal.left as usize, message_length, number_rules)] = true;
+                true
+            } else {
+                false
+            }
+        });
+        unit_rules.iter().for_each(|unit| {
+            table[index_3d!(0, i, unit.left as usize, message_length, number_rules)] |=
+                table[index_3d!(0, i, unit.only as usize, message_length, number_rules)]
+        });
+    });
+    // Apply CYK
+    // Span length
+    (1..message_length).for_each(|l| {
+        // Span start
+        (0..message_length - l).for_each(|s| {
+            // Span partition
+            (0..l).for_each(|p| {
+                production_rules.iter().for_each(|production| {
+                    if table[index_3d!(
+                        p,
+                        s,
+                        production.first as usize,
+                        message_length,
+                        number_rules
+                    )] &amp;&amp; table[index_3d!(
+                        l - p - 1,
+                        s + p + 1,
+                        production.second as usize,
+                        message_length,
+                        number_rules
+                    )] {
+                        table[index_3d!(
+                            l,
+                            s,
+                            production.left as usize,
+                            message_length,
+                            number_rules
+                        )] = true;
+                    }
+                });
+                unit_rules.iter().for_each(|unit| {
+                    table[index_3d!(l, s, unit.left as usize, message_length, number_rules)] |=
+                        table[index_3d!(l, s, unit.only as usize, message_length, number_rules)]
+                });
+            })
+        });
+    });
+    table[index_3d!(message_length - 1, 0, 0, message_length, number_rules)]
+}*/</span>
 
 <span class="comment">// -----------------------------------------------------------------------------</span>
 </pre></div>
