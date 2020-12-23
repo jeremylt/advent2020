@@ -154,7 +154,7 @@ pub(crate) fn run() -> Results {
     // -------------------------------------------------------------------------
     // Part 2
     // -------------------------------------------------------------------------
-    // Find 30000000th number
+    // Find 30,000,000th number
     let start_part_2 = Instant::now();
     let number_2 = part_2(REALLY_BIG, &values);
     let time_part_2 = start_part_2.elapsed();
