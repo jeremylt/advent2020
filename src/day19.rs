@@ -19,34 +19,31 @@ enum Rule {
     All(Vec<u8>),      // id: 1 2
 }
 
-fn check_rule<'a>(word: &'a str, rules: &Vec<Rule>, rule: &Rule) -> Result<&'a str, ()> {
-    if word.is_empty() {
-        return Err(());
-    }
+fn check_rule<'a>(message: &'a str, rules: &Vec<Rule>, rule: &Rule) -> Result<&'a str, ()> {
     match rule {
         // Character matches terminal rule
         Rule::Terminal(c) => {
-            if word.as_bytes()[0] == *c {
-                Ok(&word[1..])
+            if !message.is_empty() && message.as_bytes()[0] == *c {
+                Ok(&message[1..])
             } else {
                 Err(())
             }
         }
         // Any associated rule or set of rules matches
         Rule::Any(sub_rules) => {
-            for option in sub_rules {
-                let current = check_rule(word, rules, &Rule::All(option.clone()));
-                if current.is_ok() {
-                    return current;
+            for current in sub_rules {
+                let result = check_rule(message, rules, &Rule::All(current.clone()));
+                if result.is_ok() {
+                    return result;
                 }
             }
             Err(())
         }
         // All rules match
-        Rule::All(rule_indices) => {
-            let mut remainder = word;
-            for index in rule_indices {
-                remainder = check_rule(remainder, rules, &rules[*index as usize])?;
+        Rule::All(sub_rules) => {
+            let mut remainder = message;
+            for current in sub_rules {
+                remainder = check_rule(remainder, rules, &rules[*current as usize])?;
             }
             Ok(remainder)
         }
@@ -107,8 +104,8 @@ pub(crate) fn run() -> Results {
     let invalid_messages: Vec<String> = messages
         .par_iter()
         .filter_map(|message| {
-            let remainder = check_rule(message, &rules, &rules[0]);
-            if remainder.is_ok() && remainder.unwrap().is_empty() {
+            let result = check_rule(message, &rules, &rules[0]);
+            if result.is_ok() && result.unwrap().is_empty() {
                 None
             } else {
                 Some(message.to_string())
@@ -195,10 +192,10 @@ pub(crate) fn run() -> Results {
         .par_lines()
         .map(|line| {
             let message = line.clone();
-
-            let remainder = check_rule(message, &rules, &rules[0]);
-            let part_1 = remainder.is_ok() && remainder.unwrap().is_empty();
-
+            // Part 1
+            let result = check_rule(message, &rules, &rules[0]);
+            let part_1 = result.is_ok() && result.unwrap().is_empty();
+            // Part 2
             let part_2 = part_1 || {
                 // Check rule 42
                 let mut count_42 = 0;
