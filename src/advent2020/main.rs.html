@@ -624,7 +624,7 @@
         .<span class="ident">iter</span>()
         .<span class="ident">map</span>(<span class="op">|</span><span class="ident">day</span><span class="op">|</span> {
             <span class="kw">if</span> <span class="ident">day</span>.<span class="ident">combined</span>.<span class="ident">as_nanos</span>() <span class="op">&gt;</span> <span class="number">1</span> {
-                <span class="ident">day</span>.<span class="ident">combined</span>
+                <span class="ident">std</span>::<span class="ident">cmp</span>::<span class="ident">min</span>(<span class="ident">day</span>.<span class="ident">combined</span>, <span class="ident">day</span>.<span class="ident">setup</span> <span class="op">+</span> <span class="ident">day</span>.<span class="ident">part_1</span> <span class="op">+</span> <span class="ident">day</span>.<span class="ident">part_2</span>)
             } <span class="kw">else</span> {
                 <span class="ident">day</span>.<span class="ident">setup</span> <span class="op">+</span> <span class="ident">day</span>.<span class="ident">part_1</span> <span class="op">+</span> <span class="ident">day</span>.<span class="ident">part_2</span>
             }
