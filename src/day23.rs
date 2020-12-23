@@ -1,6 +1,6 @@
 //! Day 23:
 //! Another "do the same thing millions of times" challenge. Using arrays instead of
-//! vectors would be easier, but that large of arrays can overflow the stack for the
+//! vectors would be faster, but that large of arrays can overflow the stack for the
 //! test suite.
 
 use crate::prelude::*;
