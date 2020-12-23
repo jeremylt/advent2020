@@ -1,10 +1,13 @@
 //! Day 19:
-//! CYK is a good fit here, but with the size of the strings, the arrays are quite large,
-//! as can be seen with the capacity listed below.
+//! CYK is a good fit here, but with the size of the strings, the arrays are quite large.
+//! I looked around at some other solutions and tried this new recursive, top-down
+//! approach which works much better.
 
 use crate::prelude::*;
 use rayon::prelude::*;
-use rustc_hash::FxHashMap;
+
+// Constants
+const CAPACITY: usize = 135;
 
 // -----------------------------------------------------------------------------
 // Rules
@@ -16,7 +19,7 @@ enum Rule {
     All(Vec<u8>),      // id: 1 2
 }
 
-fn check_rule<'a>(word: &'a str, rules: &FxHashMap<u8, Rule>, rule: &Rule) -> Result<&'a str, ()> {
+fn check_rule<'a>(word: &'a str, rules: &Vec<Rule>, rule: &Rule) -> Result<&'a str, ()> {
     if word.is_empty() {
         return Err(());
     }
@@ -43,7 +46,7 @@ fn check_rule<'a>(word: &'a str, rules: &FxHashMap<u8, Rule>, rule: &Rule) -> Re
         Rule::All(rule_indices) => {
             let mut remainder = word;
             for index in rule_indices {
-                remainder = check_rule(remainder, rules, &rules[&index])?;
+                remainder = check_rule(remainder, rules, &rules[*index as usize])?;
             }
             Ok(remainder)
         }
@@ -63,35 +66,31 @@ pub(crate) fn run() -> Results {
     let mut data = buffer.split("\n\n");
 
     // Read to rules map
-    let rules: FxHashMap<u8, Rule> = data
-        .next()
-        .unwrap()
-        .lines()
-        .map(|line| {
-            let mut data = line.splitn(2, ": ");
-            let index: u8 = data.next().unwrap().parse().unwrap();
-            let rule: Rule;
-            let right_side = data.next().unwrap();
-            if &right_side[0..1] == "\"" {
-                rule = Rule::Terminal(right_side.as_bytes()[1]);
+    let mut rules: Vec<Rule> = vec![Rule::Terminal(b'z' as u8); CAPACITY];
+    data.next().unwrap().lines().for_each(|line| {
+        let mut data = line.splitn(2, ": ");
+        let index: u8 = data.next().unwrap().parse().unwrap();
+        let rule: Rule;
+        let right_side = data.next().unwrap();
+        if &right_side[0..1] == "\"" {
+            rule = Rule::Terminal(right_side.as_bytes()[1]);
+        } else {
+            let subs = right_side
+                .split(" | ")
+                .map(|sub| {
+                    sub.split(" ")
+                        .map(|c| c.parse().unwrap())
+                        .collect::<Vec<u8>>()
+                })
+                .collect::<Vec<Vec<u8>>>();
+            if subs.len() == 1 {
+                rule = Rule::All(subs[0].clone());
             } else {
-                let subs = right_side
-                    .split(" | ")
-                    .map(|sub| {
-                        sub.split(" ")
-                            .map(|c| c.parse().unwrap())
-                            .collect::<Vec<u8>>()
-                    })
-                    .collect::<Vec<Vec<u8>>>();
-                if subs.len() == 1 {
-                    rule = Rule::All(subs[0].clone());
-                } else {
-                    rule = Rule::Any(subs);
-                }
+                rule = Rule::Any(subs);
             }
-            (index, rule)
-        })
-        .collect();
+        }
+        rules[index as usize] = rule;
+    });
     let time_setup = start_setup.elapsed();
 
     // -------------------------------------------------------------------------
@@ -108,7 +107,7 @@ pub(crate) fn run() -> Results {
     let invalid_messages: Vec<String> = messages
         .par_iter()
         .filter_map(|message| {
-            let remainder = check_rule(message, &rules, &rules[&0]);
+            let remainder = check_rule(message, &rules, &rules[0]);
             if remainder.is_ok() && remainder.unwrap().is_empty() {
                 None
             } else {
@@ -131,11 +130,11 @@ pub(crate) fn run() -> Results {
             // Check rule 42
             let mut count_42 = 0;
             let mut remainder = message.as_str();
-            let mut result = check_rule(&remainder, &rules, &rules[&42]);
+            let mut result = check_rule(&remainder, &rules, &rules[42]);
             while let Ok(current) = result {
                 count_42 += 1;
                 remainder = current;
-                result = check_rule(&remainder, &rules, &rules[&42]);
+                result = check_rule(&remainder, &rules, &rules[42]);
             }
 
             if count_42 < 2 {
@@ -144,11 +143,11 @@ pub(crate) fn run() -> Results {
 
             // Check rule 31
             let mut count_31 = 0;
-            let mut result = check_rule(&remainder, &rules, &rules[&31]);
+            let mut result = check_rule(&remainder, &rules, &rules[31]);
             while let Ok(current) = result {
                 count_31 += 1;
                 remainder = current;
-                result = check_rule(&remainder, &rules, &rules[&31]);
+                result = check_rule(&remainder, &rules, &rules[31]);
             }
 
             remainder.is_empty() && count_31 > 0 && count_42 > count_31
@@ -164,35 +163,31 @@ pub(crate) fn run() -> Results {
     let buffer: String = std::fs::read_to_string("data/day19.txt").unwrap();
     let mut data = buffer.split("\n\n");
 
-    let rules: FxHashMap<u8, Rule> = data
-        .next()
-        .unwrap()
-        .lines()
-        .map(|line| {
-            let mut data = line.splitn(2, ": ");
-            let index: u8 = data.next().unwrap().parse().unwrap();
-            let rule: Rule;
-            let right_side = data.next().unwrap();
-            if &right_side[0..1] == "\"" {
-                rule = Rule::Terminal(right_side.as_bytes()[1]);
+    let mut rules: Vec<Rule> = vec![Rule::Terminal(b'z' as u8); CAPACITY];
+    data.next().unwrap().lines().for_each(|line| {
+        let mut data = line.splitn(2, ": ");
+        let index: u8 = data.next().unwrap().parse().unwrap();
+        let rule: Rule;
+        let right_side = data.next().unwrap();
+        if &right_side[0..1] == "\"" {
+            rule = Rule::Terminal(right_side.as_bytes()[1]);
+        } else {
+            let subs = right_side
+                .split(" | ")
+                .map(|sub| {
+                    sub.split(" ")
+                        .map(|c| c.parse().unwrap())
+                        .collect::<Vec<u8>>()
+                })
+                .collect::<Vec<Vec<u8>>>();
+            if subs.len() == 1 {
+                rule = Rule::All(subs[0].clone());
             } else {
-                let subs = right_side
-                    .split(" | ")
-                    .map(|sub| {
-                        sub.split(" ")
-                            .map(|c| c.parse().unwrap())
-                            .collect::<Vec<u8>>()
-                    })
-                    .collect::<Vec<Vec<u8>>>();
-                if subs.len() == 1 {
-                    rule = Rule::All(subs[0].clone());
-                } else {
-                    rule = Rule::Any(subs);
-                }
+                rule = Rule::Any(subs);
             }
-            (index, rule)
-        })
-        .collect();
+        }
+        rules[index as usize] = rule;
+    });
 
     let (combined_1, combined_2) = data
         .next()
@@ -201,27 +196,27 @@ pub(crate) fn run() -> Results {
         .map(|line| {
             let message = line.clone();
 
-            let remainder = check_rule(message, &rules, &rules[&0]);
+            let remainder = check_rule(message, &rules, &rules[0]);
             let part_1 = remainder.is_ok() && remainder.unwrap().is_empty();
 
             let part_2 = part_1 || {
                 // Check rule 42
                 let mut count_42 = 0;
                 let mut remainder = message;
-                let mut result = check_rule(&remainder, &rules, &rules[&42]);
+                let mut result = check_rule(&remainder, &rules, &rules[42]);
                 while let Ok(current) = result {
                     count_42 += 1;
                     remainder = current;
-                    result = check_rule(&remainder, &rules, &rules[&42]);
+                    result = check_rule(&remainder, &rules, &rules[42]);
                 }
 
                 // Check rule 31
                 let mut count_31 = 0;
-                let mut result = check_rule(&remainder, &rules, &rules[&31]);
+                let mut result = check_rule(&remainder, &rules, &rules[31]);
                 while let Ok(current) = result {
                     count_31 += 1;
                     remainder = current;
-                    result = check_rule(&remainder, &rules, &rules[&31]);
+                    result = check_rule(&remainder, &rules, &rules[31]);
                 }
 
                 remainder.is_empty() && count_42 >= 2 && count_31 > 0 && count_42 > count_31
