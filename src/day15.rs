@@ -57,7 +57,7 @@ macro_rules! turns_since_said_big {
 #[inline]
 fn part_2(n: usize, starters: &Vec<usize>) -> u32 {
     // Setup
-    let mut said = vec![u32::MAX; BREAKPOINT];
+    let mut said = vec![u32::MAX; BREAKPOINT].into_boxed_slice();
     let mut said_big =
         FxHashMap::<u32, u32>::with_capacity_and_hasher(BREAKPOINT / 16 * 9, Default::default());
     let number_starters = starters.len();
@@ -91,7 +91,7 @@ fn part_2(n: usize, starters: &Vec<usize>) -> u32 {
 #[inline]
 fn combined(first: usize, second: usize, starters: &Vec<usize>) -> (u32, u32) {
     // Setup
-    let mut said = vec![u32::MAX; BREAKPOINT];
+    let mut said = vec![u32::MAX; BREAKPOINT].into_boxed_slice();
     let mut said_big =
         FxHashMap::<u32, u32>::with_capacity_and_hasher(BREAKPOINT / 16 * 9, Default::default());
     let number_starters = starters.len();

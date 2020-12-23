@@ -6,11 +6,10 @@
 //! u64 representing the current game configuration.
 
 use crate::prelude::*;
-use rustc_hash::FxHashSet;
 
 // Constant
 const DECK_SIZE: usize = 50;
-const CAPACITY: usize = 16;
+const MAX_ROUNDS: u32 = 1_000;
 
 // -----------------------------------------------------------------------------
 // Part 1
@@ -68,13 +67,6 @@ fn part_1(
 // -----------------------------------------------------------------------------
 // Part 2
 // -----------------------------------------------------------------------------
-// https://doi.org/10.1002/asi.10170
-// https://dl.acm.org/citation.cfm?id=759509
-#[inline(always)]
-fn hash_two(first: u64, second: u64) -> u64 {
-    first ^ (second + (first << 6) + (first >> 2))
-}
-
 fn part_2(
     mut player_1_head: usize,
     mut player_1_tail: usize,
@@ -94,30 +86,9 @@ fn part_2(
         }
     }
 
-    // Visited configurations
-    let mut visited_configurations =
-        FxHashSet::<u64>::with_capacity_and_hasher(CAPACITY, Default::default());
-
     // Play game
-    while player_1_head != player_1_tail && player_2_head != player_2_tail {
-        // Check for visited configuration
-        let hash_player_1 = (player_1_head..player_1_tail).fold(0, |acc, i| {
-            hash_two(acc, player_1_deck[i % DECK_SIZE] as u64)
-        });
-        let hash_player_2 = (player_2_head..player_2_tail).fold(0, |acc, i| {
-            hash_two(acc, player_2_deck[i % DECK_SIZE] as u64)
-        });
-        if !visited_configurations.insert(hash_two(hash_player_1, hash_player_2)) {
-            return (
-                Winner::Player1,
-                if score {
-                    score_game(player_1_head, &player_1_deck)
-                } else {
-                    0
-                },
-            );
-        }
-
+    let mut round = 0;
+    while round < MAX_ROUNDS && player_1_head != player_1_tail && player_2_head != player_2_tail {
         // Draw cards
         let card_1 = player_1_deck[player_1_head % DECK_SIZE];
         let card_2 = player_2_deck[player_2_head % DECK_SIZE];
@@ -155,10 +126,11 @@ fn part_2(
             player_2_deck[(player_2_tail + 1) % DECK_SIZE] = card_1;
             player_2_tail += 2;
         }
+        round += 1;
     }
 
     // Report winner
-    if player_2_head == player_2_tail {
+    if player_2_head == player_2_tail || round == MAX_ROUNDS {
         (
             Winner::Player1,
             if score {
@@ -265,5 +237,15 @@ pub(crate) fn report(results: &Results) {
     output::print_part(2, "🦀 Score", &format!("{}", results.part_2));
     output::print_timing(&results.times);
 }
+
+// -----------------------------------------------------------------------------
+// Deck state hashing function
+// -----------------------------------------------------------------------------
+// https://doi.org/10.1002/asi.10170
+// https://dl.acm.org/citation.cfm?id=759509
+//#[inline(always)]
+//fn hash_two(first: u64, second: u64) -> u64 {
+//    first ^ (second + (first << 6) + (first >> 2))
+//}
 
 // -----------------------------------------------------------------------------
