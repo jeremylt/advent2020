@@ -104,16 +104,17 @@ pub(crate) fn print_timing(times: &Timing) {
 pub(crate) fn print_days_timing(times: &Vec<std::time::Duration>, std_devs: &Vec<f64>) {
     println!("- {}", "Timing Comparison".bold());
     println!("    {}: {}", "Repetitions".purple().bold(), REPETITIONS);
+    println!("    {}: Logarithmic", "Scale".purple().bold());
     println!("    {}", "-".repeat(NUMBER_DASHES - 4).blue().bold());
     let total: std::time::Duration = times.iter().sum();
-    let longest = times.iter().max().unwrap().as_nanos();
+    let longest = (times.iter().max().unwrap().as_nanos() as f64).log10();
     for (i, (&time, &std_dev)) in times.iter().zip(std_devs).enumerate() {
         let part_length = std::cmp::max(
             1,
-            ((NUMBER_DASHES - 4) as f64 * (time.as_nanos() as f64 / longest as f64)) as usize,
+            ((NUMBER_DASHES - 4) as f64 * ((time.as_nanos() as f64).log10() / longest)) as usize,
         );
         let dashes = "-".repeat(part_length);
-        println!("    Dec {:02}: {:?} (std dev {:.3})", i + 1, time, std_dev);
+        println!("    Dec {:02}: {:?} (Std Dev {:.3})", i + 1, time, std_dev);
         println!(
             "    {}",
             if i % 2 == 0 {
