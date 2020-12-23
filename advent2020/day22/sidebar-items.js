@@ -1,1 +1,1 @@
-initSidebarItems({"constant":[["CAPACITY",""],["DECK_SIZE",""]],"enum":[["Winner",""]],"fn":[["hash_two",""],["part_1",""],["part_2",""],["report",""],["run",""],["score_game",""]]});
+initSidebarItems({"constant":[["DECK_SIZE",""],["MAX_ROUNDS",""]],"enum":[["Winner",""]],"fn":[["part_1",""],["part_2",""],["report",""],["run",""],["score_game",""]]});
