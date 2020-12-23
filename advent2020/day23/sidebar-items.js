@@ -1,0 +1,1 @@
+initSidebarItems({"constant":[["NUMBER_CUPS_BIG",""],["NUMBER_CUPS_SMALL",""],["NUMBER_ROUNDS_BIG",""],["NUMBER_ROUNDS_SMALL",""]],"fn":[["play_game",""],["report",""],["run",""]]});
