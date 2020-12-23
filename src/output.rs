@@ -114,7 +114,19 @@ pub(crate) fn print_days_timing(times: &Vec<std::time::Duration>, std_devs: &Vec
             ((NUMBER_DASHES - 4) as f64 * ((time.as_nanos() as f64).log10() / longest)) as usize,
         );
         let dashes = "-".repeat(part_length);
-        println!("    Dec {:02}: {:?} (Std Dev {:.3})", i + 1, time, std_dev);
+        let display_std_dev = if time.as_secs() > 1 {
+            std_dev / 1_000_000.0
+        } else if time.as_millis() > 1 {
+            std_dev / 1_000.0
+        } else {
+            std_dev
+        };
+        println!(
+            "    Dec {:02}: {:?} (Std Dev {:.3})",
+            i + 1,
+            time,
+            display_std_dev
+        );
         println!(
             "    {}",
             if i % 2 == 0 {
