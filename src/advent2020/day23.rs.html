@@ -121,7 +121,6 @@
 <span id="118">118</span>
 <span id="119">119</span>
 <span id="120">120</span>
-<span id="121">121</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Day 23:</span>
 <span class="doccomment">//! Another &quot;do the same thing millions of times&quot; challenge. Using arrays instead of</span>
@@ -155,9 +154,8 @@
         }
 
         <span class="comment">// Update indices</span>
-        <span class="ident">cups</span>[<span class="ident">current_cup</span> <span class="kw">as</span> <span class="ident">usize</span>] <span class="op">=</span> <span class="ident">cups</span>[<span class="ident">next_3</span> <span class="kw">as</span> <span class="ident">usize</span>];
-        <span class="ident">cups</span>[<span class="ident">next_3</span> <span class="kw">as</span> <span class="ident">usize</span>] <span class="op">=</span> <span class="ident">cups</span>[<span class="ident">target_cup</span> <span class="kw">as</span> <span class="ident">usize</span>];
-        <span class="ident">cups</span>[<span class="ident">target_cup</span> <span class="kw">as</span> <span class="ident">usize</span>] <span class="op">=</span> <span class="ident">next_1</span>;
+        <span class="ident">cups</span>.<span class="ident">swap</span>(<span class="ident">current_cup</span> <span class="kw">as</span> <span class="ident">usize</span>, <span class="ident">next_3</span> <span class="kw">as</span> <span class="ident">usize</span>);
+        <span class="ident">cups</span>.<span class="ident">swap</span>(<span class="ident">next_3</span> <span class="kw">as</span> <span class="ident">usize</span>, <span class="ident">target_cup</span> <span class="kw">as</span> <span class="ident">usize</span>);
 
         <span class="comment">// Increment current</span>
         <span class="ident">current_cup</span> <span class="op">=</span> <span class="ident">cups</span>[<span class="ident">current_cup</span> <span class="kw">as</span> <span class="ident">usize</span>];
