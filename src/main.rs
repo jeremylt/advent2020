@@ -213,7 +213,7 @@ fn main() {
         .iter()
         .map(|day| {
             if day.combined.as_nanos() > 1 {
-                day.combined
+                std::cmp::min(day.combined, day.setup + day.part_1 + day.part_2)
             } else {
                 day.setup + day.part_1 + day.part_2
             }
