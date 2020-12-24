@@ -103,12 +103,16 @@ fn game_of_life(tiles: &mut [bool; GRID_SIZE * GRID_SIZE], generations: usize) {
         (GENERATIONS - 1 - generation..GRID_SIZE - GENERATIONS - 1 + generation).for_each(|i| {
             (GENERATIONS - 1 - generation..GRID_SIZE - GENERATIONS - 1 + generation).for_each(
                 |j| {
-                    let neighbors = offsets
-                        .iter()
-                        .filter(|&offset| tiles[index_2d!(i + offset.0, j + offset.1, GRID_SIZE)])
-                        .count();
-                    next_tiles[index_2d!(i + 1, j + 1, GRID_SIZE)] = (neighbors == 2)
-                        || (tiles[index_2d!(i + 1, j + 1, GRID_SIZE)] && neighbors == 1);
+                    let current = if tiles[index_2d!(i + 1, j + 1, GRID_SIZE)] {
+                        1
+                    } else {
+                        0
+                    };
+                    let count = offsets.iter().fold(current, |acc, &offset| {
+                        (acc << 1)
+                            | tiles[index_2d!(i + offset.0, j + offset.1, GRID_SIZE)] as usize
+                    });
+                    next_tiles[index_2d!(i + 1, j + 1, GRID_SIZE)] = NEIGHBORS[count];
                 },
             );
         });
@@ -176,5 +180,21 @@ pub(crate) fn report(results: &Results) {
     output::print_part(2, "🏨 Count", &format!("{}", results.part_2));
     output::print_timing(&results.times);
 }
+
+// -----------------------------------------------------------------------------
+// Boolean array for neighbor states
+// -----------------------------------------------------------------------------
+const NEIGHBORS: [bool; 1 << 7] = [
+    false, false, false, true, false, true, true, false, false, true, true, false, true, false,
+    false, false, false, true, true, false, true, false, false, false, true, false, false, false,
+    false, false, false, false, false, true, true, false, true, false, false, false, true, false,
+    false, false, false, false, false, false, true, false, false, false, false, false, false,
+    false, false, false, false, false, false, false, false, false, false, true, true, true, true,
+    true, true, false, true, true, true, false, true, false, false, false, true, true, true, false,
+    true, false, false, false, true, false, false, false, false, false, false, false, true, true,
+    true, false, true, false, false, false, true, false, false, false, false, false, false, false,
+    true, false, false, false, false, false, false, false, false, false, false, false, false,
+    false, false, false,
+];
 
 // -----------------------------------------------------------------------------
