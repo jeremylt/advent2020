@@ -1,1 +1,1 @@
-initSidebarItems({"constant":[["GENERATIONS",""],["GRID_SIZE",""],["OFFSET",""]],"fn":[["game_of_life",""],["report",""],["run",""]],"struct":[["Coordinate",""]]});
+initSidebarItems({"constant":[["GENERATIONS",""],["GRID_SIZE",""],["NEIGHBORS",""],["OFFSET",""]],"fn":[["game_of_life",""],["report",""],["run",""]],"struct":[["Coordinate",""]]});
