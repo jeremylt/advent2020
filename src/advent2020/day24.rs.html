@@ -198,6 +198,7 @@
 <span id="195">195</span>
 <span id="196">196</span>
 <span id="197">197</span>
+<span id="198">198</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Day 24:</span>
 <span class="doccomment">//! Game of Life on a hexagonal grid. I largely recycled older code, with some new</span>
@@ -289,6 +290,7 @@
 }
 
 <span class="kw">fn</span> <span class="ident">game_of_life</span>(<span class="ident">tiles</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="ident">bool</span>; <span class="ident">GRID_SIZE</span> <span class="op">*</span> <span class="ident">GRID_SIZE</span>], <span class="ident">generations</span>: <span class="ident">usize</span>) {
+    <span class="comment">// index with an offset to keep everything uints</span>
     <span class="kw">let</span> <span class="ident">offset</span> <span class="op">=</span> <span class="number">1</span> <span class="op">+</span> <span class="ident">GRID_SIZE</span> <span class="kw">as</span> <span class="ident">u16</span>;
     <span class="kw">let</span> <span class="ident">neighbor_offsets</span> <span class="op">=</span> [
         <span class="number">1</span>,
