@@ -195,12 +195,6 @@
 <span id="192">192</span>
 <span id="193">193</span>
 <span id="194">194</span>
-<span id="195">195</span>
-<span id="196">196</span>
-<span id="197">197</span>
-<span id="198">198</span>
-<span id="199">199</span>
-<span id="200">200</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Day 24:</span>
 <span class="doccomment">//! Game of Life on a hexagonal grid. I largely recycled older code, with some new</span>
@@ -255,26 +249,20 @@
                 <span class="ident">east</span> <span class="op">-</span><span class="op">=</span> <span class="number">1</span>;
                 <span class="ident">i</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
             } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">s</span>.<span class="ident">as_bytes</span>()[<span class="ident">i</span>] <span class="op">=</span><span class="op">=</span> <span class="string">b&#39;n&#39;</span> {
-                <span class="kw">if</span> <span class="ident">s</span>.<span class="ident">as_bytes</span>()[<span class="ident">i</span> <span class="op">+</span> <span class="number">1</span>] <span class="op">=</span><span class="op">=</span> <span class="string">b&#39;e&#39;</span> {
-                    <span class="comment">// Northeast</span>
-                    <span class="ident">north_east</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
-                    <span class="ident">i</span> <span class="op">+</span><span class="op">=</span> <span class="number">2</span>;
-                } <span class="kw">else</span> {
+                <span class="comment">// Northeast</span>
+                <span class="ident">north_east</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
+                <span class="ident">i</span> <span class="op">+</span><span class="op">=</span> <span class="number">2</span>;
+                <span class="kw">if</span> <span class="ident">s</span>.<span class="ident">as_bytes</span>()[<span class="ident">i</span> <span class="op">-</span> <span class="number">1</span>] <span class="op">=</span><span class="op">=</span> <span class="string">b&#39;w&#39;</span> {
                     <span class="comment">// Northeast + anti-east (northwest)</span>
-                    <span class="ident">north_east</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
                     <span class="ident">east</span> <span class="op">-</span><span class="op">=</span> <span class="number">1</span>;
-                    <span class="ident">i</span> <span class="op">+</span><span class="op">=</span> <span class="number">2</span>;
                 }
             } <span class="kw">else</span> {
-                <span class="kw">if</span> <span class="ident">s</span>.<span class="ident">as_bytes</span>()[<span class="ident">i</span> <span class="op">+</span> <span class="number">1</span>] <span class="op">=</span><span class="op">=</span> <span class="string">b&#39;e&#39;</span> {
+                <span class="comment">// Anti-northeast (southwest)</span>
+                <span class="ident">north_east</span> <span class="op">-</span><span class="op">=</span> <span class="number">1</span>;
+                <span class="ident">i</span> <span class="op">+</span><span class="op">=</span> <span class="number">2</span>;
+                <span class="kw">if</span> <span class="ident">s</span>.<span class="ident">as_bytes</span>()[<span class="ident">i</span> <span class="op">-</span> <span class="number">1</span>] <span class="op">=</span><span class="op">=</span> <span class="string">b&#39;e&#39;</span> {
                     <span class="comment">// Anti-northeast + east (southeast)</span>
-                    <span class="ident">north_east</span> <span class="op">-</span><span class="op">=</span> <span class="number">1</span>;
                     <span class="ident">east</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
-                    <span class="ident">i</span> <span class="op">+</span><span class="op">=</span> <span class="number">2</span>;
-                } <span class="kw">else</span> {
-                    <span class="comment">// Anti-northeast (southwest)</span>
-                    <span class="ident">north_east</span> <span class="op">-</span><span class="op">=</span> <span class="number">1</span>;
-                    <span class="ident">i</span> <span class="op">+</span><span class="op">=</span> <span class="number">2</span>;
                 }
             }
         }
