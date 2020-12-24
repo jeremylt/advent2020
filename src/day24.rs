@@ -88,26 +88,29 @@ macro_rules! index_2d {
 }
 
 fn game_of_life(tiles: &mut [bool; GRID_SIZE * GRID_SIZE], generations: usize) {
-    let offsets = [
-        -1,
+    let offset = 1 + GRID_SIZE as u16;
+    let neighbor_offsets = [
         1,
-        -(GRID_SIZE as i16),
-        GRID_SIZE as i16,
-        -1 + GRID_SIZE as i16,
-        1 - (GRID_SIZE as i16),
+        2,
+        GRID_SIZE as u16,
+        2 * (GRID_SIZE as u16),
+        1 + 2 * (GRID_SIZE as u16),
+        2 + GRID_SIZE as u16,
     ];
     let mut next_tiles = [false; GRID_SIZE * GRID_SIZE];
 
-    let min_window = GENERATIONS;
-    let max_window = GRID_SIZE - GENERATIONS;
+    let min_window = GENERATIONS - 1;
+    let max_window = GRID_SIZE - GENERATIONS - 1;
     (0..generations).for_each(|generation| {
         (min_window - generation..max_window + generation).for_each(|i| {
             (min_window - generation..max_window + generation).for_each(|j| {
                 let index = index_2d!(i, j, GRID_SIZE);
-                let count = offsets.iter().fold(tiles[index] as u8, |acc, &offset| {
-                    (acc << 1) | tiles[(index as i32 + offset as i32) as usize] as u8
-                });
-                next_tiles[index] = NEIGHBORS[count as usize];
+                let count = neighbor_offsets
+                    .iter()
+                    .fold(tiles[index + offset as usize] as u8, |acc, &offset| {
+                        (acc << 1) | tiles[index + offset as usize] as u8
+                    });
+                next_tiles[index + offset as usize] = NEIGHBORS[count as usize];
             });
         });
         std::mem::swap(tiles, &mut next_tiles);
