@@ -199,10 +199,16 @@
 <span id="196">196</span>
 <span id="197">197</span>
 <span id="198">198</span>
+<span id="199">199</span>
+<span id="200">200</span>
+<span id="201">201</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Day 24:</span>
 <span class="doccomment">//! Game of Life on a hexagonal grid. I largely recycled older code, with some new</span>
 <span class="doccomment">//! code for parsing a line into a location onto a 2D hexagonal coordinate system.</span>
+<span class="doccomment">//! Of note is shifting my iteration loop so I am always indexing with an offset</span>
+<span class="doccomment">//! into my boolean tile array, letting me avoid casting back and forth between signed</span>
+<span class="doccomment">//! and unsigned integers.</span>
 
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">prelude</span>::<span class="kw-2">*</span>;
 
