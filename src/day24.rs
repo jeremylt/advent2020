@@ -1,6 +1,9 @@
 //! Day 24:
 //! Game of Life on a hexagonal grid. I largely recycled older code, with some new
 //! code for parsing a line into a location onto a 2D hexagonal coordinate system.
+//! Of note is shifting my iteration loop so I am always indexing with an offset
+//! into my boolean tile array, letting me avoid casting back and forth between signed
+//! and unsigned integers.
 
 use crate::prelude::*;
 
