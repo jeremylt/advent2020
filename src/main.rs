@@ -80,7 +80,7 @@ impl Timing {
 // -----------------------------------------------------------------------------
 // Prelude
 // -----------------------------------------------------------------------------
-const REPETITIONS: u32 = 1;
+const REPETITIONS: u32 = 5;
 pub(crate) mod prelude {
     pub(crate) use crate::REPETITIONS;
     pub(crate) use crate::{output, Results, Timing};
