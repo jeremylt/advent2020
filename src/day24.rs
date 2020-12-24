@@ -1,7 +1,7 @@
 //! Day 24:
 //! Game of Life on a hexagonal grid. I largely recycled older code, with some new
 //! code for parsing a line into a location onto a 2D hexagonal coordinate system.
-//! Of note is my indexing trick to be able to use the smaller u16s instead of i32s.
+//! Of note is my indexing trick to avoid casting to i32s.
 
 use crate::prelude::*;
 
