@@ -58,6 +58,7 @@ macro_rules! turns_since_said_big {
 fn part_2(n: usize, starters: &Vec<usize>) -> u32 {
     // Setup
     let mut said = vec![u32::MAX; BREAKPOINT].into_boxed_slice();
+    let breakpoint = said.len();
     let mut said_big =
         FxHashMap::<u32, u32>::with_capacity_and_hasher(BREAKPOINT / 16 * 9, Default::default());
     let number_starters = starters.len();
@@ -70,14 +71,14 @@ fn part_2(n: usize, starters: &Vec<usize>) -> u32 {
         });
 
     // Lower portion of range
-    let lower = (number_starters..BREAKPOINT)
+    let lower = (number_starters..breakpoint)
         .fold(starters[number_starters - 1] as u32, |current, i| {
             turns_since_said!(said, i, current)
         });
 
     // Upper portion of range
-    (BREAKPOINT..n).fold(lower, |current, i| {
-        if current < said.len() as u32 {
+    (breakpoint..n).fold(lower, |current, i| {
+        if (current as usize) < breakpoint {
             turns_since_said!(said, i, current)
         } else {
             turns_since_said_big!(said_big, i, current)
@@ -92,6 +93,8 @@ fn part_2(n: usize, starters: &Vec<usize>) -> u32 {
 fn combined(first: usize, second: usize, starters: &Vec<usize>) -> (u32, u32) {
     // Setup
     let mut said = vec![u32::MAX; BREAKPOINT].into_boxed_slice();
+    let breakpoint = said.len();
+    assert!(first < breakpoint);
     let mut said_big =
         FxHashMap::<u32, u32>::with_capacity_and_hasher(BREAKPOINT / 16 * 9, Default::default());
     let number_starters = starters.len();
@@ -110,11 +113,11 @@ fn combined(first: usize, second: usize, starters: &Vec<usize>) -> (u32, u32) {
 
     // Lower portion of second range
     let lower =
-        (first..BREAKPOINT).fold(result_1, |current, i| turns_since_said!(said, i, current));
+        (first..breakpoint).fold(result_1, |current, i| turns_since_said!(said, i, current));
 
     // Upper portion of second range
-    let result_2 = (BREAKPOINT..second).fold(lower, |current, i| {
-        if current < said.len() as u32 {
+    let result_2 = (breakpoint..second).fold(lower, |current, i| {
+        if (current as usize) < breakpoint {
             turns_since_said!(said, i, current)
         } else {
             turns_since_said_big!(said_big, i, current)

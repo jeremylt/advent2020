@@ -93,11 +93,8 @@ fn game_of_life_3d(
                     let count =
                         count_neighbors_3d(i, j, k, row_length, column_length, &neighbors, &cells);
                     let activated = cells[index_3d!(i, j, k, row_length, column_length)];
-                    if (activated && (count == 2 || count == 3)) || (!activated && count == 3) {
-                        next_cells[index_3d!(i, j, k, row_length, column_length)] = true;
-                    } else {
-                        next_cells[index_3d!(i, j, k, row_length, column_length)] = false;
-                    }
+                    next_cells[index_3d!(i, j, k, row_length, column_length)] =
+                        (activated && (count == 2 || count == 3)) || (!activated && count == 3);
                 });
             })
         });
@@ -255,11 +252,8 @@ fn game_of_life_4d(
                             &cells,
                         );
                         let activated = cells[index_4d!(i, j, k, l, row_length, column_length)];
-                        if (activated && (count == 2 || count == 3)) || (!activated && count == 3) {
-                            next_cells[index_4d!(i, j, k, l, row_length, column_length)] = true;
-                        } else {
-                            next_cells[index_4d!(i, j, k, l, row_length, column_length)] = false;
-                        }
+                        next_cells[index_4d!(i, j, k, l, row_length, column_length)] =
+                            (activated && (count == 2 || count == 3)) || (!activated && count == 3);
                     })
                 })
             })

@@ -15,7 +15,8 @@ const NUMBER_ROUNDS_BIG: usize = 10_000_000;
 // Play the game
 // -----------------------------------------------------------------------------
 #[inline(always)]
-fn play_game(cups: &mut Vec<i32>, number_rounds: usize, number_cups: i32) {
+fn play_game(cups: &mut Vec<i32>, number_rounds: usize) {
+    let number_cups = cups.len() as i32;
     let mut current_cup: i32 = 0;
     (0..number_rounds).for_each(|_| {
         // Next 3 cups
@@ -65,7 +66,7 @@ pub(crate) fn run() -> Results {
     // -------------------------------------------------------------------------
     // Find 100th move
     let start_part_1 = Instant::now();
-    play_game(&mut cups, NUMBER_ROUNDS_SMALL, NUMBER_CUPS_SMALL);
+    play_game(&mut cups, NUMBER_ROUNDS_SMALL);
 
     let mut current_index = cups[0];
     let number_1 = (0..NUMBER_CUPS_SMALL - 1).fold(0, |acc, _| {
@@ -87,7 +88,7 @@ pub(crate) fn run() -> Results {
     (NUMBER_CUPS_SMALL as usize..NUMBER_CUPS_BIG as usize)
         .for_each(|i| more_cups[i] = (i as i32 + 1) % NUMBER_CUPS_BIG);
 
-    play_game(&mut more_cups, NUMBER_ROUNDS_BIG, NUMBER_CUPS_BIG);
+    play_game(&mut more_cups, NUMBER_ROUNDS_BIG);
 
     let number_2 = (more_cups[0] as usize + 1) * (more_cups[more_cups[0] as usize] as usize + 1);
     let time_part_2 = start_part_2.elapsed();
