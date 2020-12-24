@@ -25,18 +25,13 @@ macro_rules! index_3d {
 }
 
 fn count_neighbors_3d(
-    i: usize,
-    j: usize,
-    k: usize,
-    row_length: usize,
-    column_length: usize,
-    indices: &[i32; 26],
+    index: usize,
+    neighbors: &[u32; 26],
     cells: &ArrayVec<[bool; CAPACITY_3D]>,
 ) -> usize {
     let mut count = 0;
-    indices.iter().find_map(|&offset| {
-        let active =
-            cells[(index_3d!(i, j, k, row_length, column_length) as i32 + offset) as usize];
+    neighbors.iter().find_map(|&offset| {
+        let active = cells[index + offset as usize];
         if active {
             count += 1;
         }
@@ -54,46 +49,47 @@ fn game_of_life_3d(
     column_length: usize,
     cells: &mut ArrayVec<[bool; CAPACITY_3D]>,
 ) {
-    let row = row_length as i32;
-    let column = column_length as i32;
-    let neighbors: [i32; 26] = [
-        -row * column - row - 1,
-        -row * column - row,
-        -row * column - row + 1,
-        -row * column - 1,
-        -row * column,
-        -row * column + 1,
-        -row * column + row - 1,
-        -row * column + row,
-        -row * column + row + 1,
-        -row - 1,
-        -row,
-        -row + 1,
-        -1,
+    let row = row_length as u32;
+    let column = column_length as u32;
+    let offset = row * column + row + 1;
+    let neighbors: [u32; 26] = [
+        0,
         1,
-        row - 1,
+        2,
         row,
         row + 1,
-        row * column - row - 1,
-        row * column - row,
-        row * column - row + 1,
-        row * column - 1,
+        row + 2,
+        2 * row,
+        2 * row + 1,
+        2 * row + 2,
         row * column,
         row * column + 1,
-        row * column + row - 1,
+        row * column + 2,
         row * column + row,
-        row * column + row + 1,
+        row * column + row + 2,
+        row * column + 2 * row,
+        row * column + 2 * row + 1,
+        row * column + 2 * row + 2,
+        2 * row * column,
+        2 * row * column + 1,
+        2 * row * column + 2,
+        2 * row * column + row,
+        2 * row * column + row + 1,
+        2 * row * column + row + 2,
+        2 * row * column + 2 * row,
+        2 * row * column + 2 * row + 1,
+        2 * row * column + 2 * row + 2,
     ];
 
     let mut next_cells = ArrayVec::from([false; CAPACITY_3D]);
     (0..CYCLES).for_each(|cycle| {
-        (CYCLES - cycle..row_length - CYCLES + cycle).for_each(|i| {
-            (CYCLES - cycle..column_length - CYCLES + cycle).for_each(|j| {
-                (1..3 + cycle).for_each(|k| {
-                    let count =
-                        count_neighbors_3d(i, j, k, row_length, column_length, &neighbors, &cells);
-                    let activated = cells[index_3d!(i, j, k, row_length, column_length)];
-                    next_cells[index_3d!(i, j, k, row_length, column_length)] =
+        (CYCLES - cycle - 1..row_length - CYCLES - 1 + cycle).for_each(|i| {
+            (CYCLES - cycle - 1..column_length - CYCLES - 1 + cycle).for_each(|j| {
+                (0..2 + cycle).for_each(|k| {
+                    let index = index_3d!(i, j, k, row_length, column_length);
+                    let count = count_neighbors_3d(index, &neighbors, &cells);
+                    let activated = cells[index + offset as usize];
+                    next_cells[index + offset as usize] =
                         (activated && (count == 2 || count == 3)) || (!activated && count == 3);
                 });
             })
@@ -119,19 +115,13 @@ macro_rules! index_4d {
 }
 
 fn count_neighbors_4d(
-    i: usize,
-    j: usize,
-    k: usize,
-    l: usize,
-    row_length: usize,
-    column_length: usize,
-    indices: &[i32; 80],
+    index: usize,
+    indices: &[u32; 80],
     cells: &ArrayVec<[bool; CAPACITY_4D]>,
 ) -> usize {
     let mut count = 0;
     indices.iter().find_map(|&offset| {
-        let active =
-            cells[(index_4d!(i, j, k, l, row_length, column_length) as i32 + offset) as usize];
+        let active = cells[index + offset as usize];
         if active {
             count += 1;
         }
@@ -149,110 +139,103 @@ fn game_of_life_4d(
     column_length: usize,
     cells: &mut ArrayVec<[bool; CAPACITY_4D]>,
 ) {
-    let row = row_length as i32;
-    let column = column_length as i32;
-    let slab = row * column * (CYCLES + 3) as i32;
-    let neighbors: [i32; 80] = [
-        -slab - row * column - row - 1,
-        -slab - row * column - row,
-        -slab - row * column - row + 1,
-        -slab - row * column - 1,
-        -slab - row * column,
-        -slab - row * column + 1,
-        -slab - row * column + row - 1,
-        -slab - row * column + row,
-        -slab - row * column + row + 1,
-        -slab - row - 1,
-        -slab - row,
-        -slab - row + 1,
-        -slab - 1,
-        -slab,
-        -slab + 1,
-        -slab + row - 1,
-        -slab + row,
-        -slab + row + 1,
-        -slab + row * column - row - 1,
-        -slab + row * column - row,
-        -slab + row * column - row + 1,
-        -slab + row * column - 1,
-        -slab + row * column,
-        -slab + row * column + 1,
-        -slab + row * column + row - 1,
-        -slab + row * column + row,
-        -slab + row * column + row + 1,
-        -row * column - row - 1,
-        -row * column - row,
-        -row * column - row + 1,
-        -row * column - 1,
-        -row * column,
-        -row * column + 1,
-        -row * column + row - 1,
-        -row * column + row,
-        -row * column + row + 1,
-        -row - 1,
-        -row,
-        -row + 1,
-        -1,
+    let row = row_length as u32;
+    let column = column_length as u32;
+    let slab = row * column * (CYCLES + 3) as u32;
+    let offset = slab + row * column + row + 1;
+    let neighbors: [u32; 80] = [
+        0,
         1,
-        row - 1,
+        2,
         row,
         row + 1,
-        row * column - row - 1,
-        row * column - row,
-        row * column - row + 1,
-        row * column - 1,
+        row + 2,
+        2 * row,
+        2 * row + 1,
+        2 * row + 2,
         row * column,
         row * column + 1,
-        row * column + row - 1,
+        row * column + 2,
         row * column + row,
         row * column + row + 1,
-        slab - row * column - row - 1,
-        slab - row * column - row,
-        slab - row * column - row + 1,
-        slab - row * column - 1,
-        slab - row * column,
-        slab - row * column + 1,
-        slab - row * column + row - 1,
-        slab - row * column + row,
-        slab - row * column + row + 1,
-        slab - row - 1,
-        slab - row,
-        slab - row + 1,
-        slab - 1,
-        slab,
+        row * column + row + 2,
+        row * column + 2 * row,
+        row * column + 2 * row + 1,
+        row * column + 2 * row + 2,
+        2 * row * column,
+        2 * row * column + 1,
+        2 * row * column + 2,
+        2 * row * column + row,
+        2 * row * column + row + 1,
+        2 * row * column + row + 2,
+        2 * row * column + 2 * row,
+        2 * row * column + 2 * row + 1,
+        2 * row * column + 2 * row + 2,
+        slab + 0,
         slab + 1,
-        slab + row - 1,
+        slab + 2,
         slab + row,
         slab + row + 1,
-        slab + row * column - row - 1,
-        slab + row * column - row,
-        slab + row * column - row + 1,
-        slab + row * column - 1,
+        slab + row + 2,
+        slab + 2 * row,
+        slab + 2 * row + 1,
+        slab + 2 * row + 2,
         slab + row * column,
         slab + row * column + 1,
-        slab + row * column + row - 1,
+        slab + row * column + 2,
         slab + row * column + row,
-        slab + row * column + row + 1,
+        slab + row * column + row + 2,
+        slab + row * column + 2 * row,
+        slab + row * column + 2 * row + 1,
+        slab + row * column + 2 * row + 2,
+        slab + 2 * row * column,
+        slab + 2 * row * column + 1,
+        slab + 2 * row * column + 2,
+        slab + 2 * row * column + row,
+        slab + 2 * row * column + row + 1,
+        slab + 2 * row * column + row + 2,
+        slab + 2 * row * column + 2 * row,
+        slab + 2 * row * column + 2 * row + 1,
+        slab + 2 * row * column + 2 * row + 2,
+        2 * slab,
+        2 * slab + 1,
+        2 * slab + 2,
+        2 * slab + row,
+        2 * slab + row + 1,
+        2 * slab + row + 2,
+        2 * slab + 2 * row,
+        2 * slab + 2 * row + 1,
+        2 * slab + 2 * row + 2,
+        2 * slab + row * column,
+        2 * slab + row * column + 1,
+        2 * slab + row * column + 2,
+        2 * slab + row * column + row,
+        2 * slab + row * column + row + 1,
+        2 * slab + row * column + row + 2,
+        2 * slab + row * column + 2 * row,
+        2 * slab + row * column + 2 * row + 1,
+        2 * slab + row * column + 2 * row + 2,
+        2 * slab + 2 * row * column,
+        2 * slab + 2 * row * column + 1,
+        2 * slab + 2 * row * column + 2,
+        2 * slab + 2 * row * column + row,
+        2 * slab + 2 * row * column + row + 1,
+        2 * slab + 2 * row * column + row + 2,
+        2 * slab + 2 * row * column + 2 * row,
+        2 * slab + 2 * row * column + 2 * row + 1,
+        2 * slab + 2 * row * column + 2 * row + 2,
     ];
 
     let mut next_cells = ArrayVec::from([false; CAPACITY_4D]);
     (0..CYCLES).for_each(|cycle| {
-        (CYCLES - cycle..row_length - CYCLES + cycle).for_each(|i| {
-            (CYCLES - cycle..column_length - CYCLES + cycle).for_each(|j| {
-                (1..3 + cycle).for_each(|k| {
-                    (1..3 + cycle).for_each(|l| {
-                        let count = count_neighbors_4d(
-                            i,
-                            j,
-                            k,
-                            l,
-                            row_length,
-                            column_length,
-                            &neighbors,
-                            &cells,
-                        );
-                        let activated = cells[index_4d!(i, j, k, l, row_length, column_length)];
-                        next_cells[index_4d!(i, j, k, l, row_length, column_length)] =
+        (CYCLES - cycle - 1..row_length - CYCLES - 1 + cycle).for_each(|i| {
+            (CYCLES - cycle - 1..column_length - CYCLES - 1 + cycle).for_each(|j| {
+                (0..2 + cycle).for_each(|k| {
+                    (0..2 + cycle).for_each(|l| {
+                        let index = index_4d!(i, j, k, l, row_length, column_length);
+                        let count = count_neighbors_4d(index, &neighbors, &cells);
+                        let activated = cells[index + offset as usize];
+                        next_cells[index + offset as usize] =
                             (activated && (count == 2 || count == 3)) || (!activated && count == 3);
                     })
                 })

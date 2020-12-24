@@ -88,6 +88,7 @@ macro_rules! index_2d {
 }
 
 fn game_of_life(tiles: &mut [bool; GRID_SIZE * GRID_SIZE], generations: usize) {
+    // index with an offset to keep everything uints
     let offset = 1 + GRID_SIZE as u16;
     let neighbor_offsets = [
         1,
