@@ -15,7 +15,7 @@ const OFFSET: usize = GRID_SIZE / 2;
 // -----------------------------------------------------------------------------
 // Hexagonal coordinates
 // -----------------------------------------------------------------------------
-#[derive(Debug, Hash, PartialEq, Eq)]
+#[derive(Debug)]
 struct Coordinate {
     east: i16,
     north_east: i16,
