@@ -1,7 +1,6 @@
 //! Day 24:
 //! Game of Life on a hexagonal grid. I largely recycled older code, with some new
 //! code for parsing a line into a location onto a 2D hexagonal coordinate system.
-//! Of note is my indexing trick to avoid casting to i32s.
 
 use crate::prelude::*;
 
@@ -89,22 +88,26 @@ macro_rules! index_2d {
 }
 
 fn game_of_life(tiles: &mut [bool; GRID_SIZE * GRID_SIZE], generations: usize) {
-    // Note: indexing off of i + 1, j + 1 to avoid signed integer casts
-    let offsets = [(0, 1), (0, 2), (1, 0), (1, 2), (2, 0), (2, 1)];
+    let offsets = [
+        -1,
+        1,
+        -(GRID_SIZE as i16),
+        GRID_SIZE as i16,
+        -1 + GRID_SIZE as i16,
+        1 - (GRID_SIZE as i16),
+    ];
     let mut next_tiles = [false; GRID_SIZE * GRID_SIZE];
 
-    let min_window = GENERATIONS - 1;
-    let max_window = GRID_SIZE - GENERATIONS - 1;
+    let min_window = GENERATIONS;
+    let max_window = GRID_SIZE - GENERATIONS;
     (0..generations).for_each(|generation| {
         (min_window - generation..max_window + generation).for_each(|i| {
             (min_window - generation..max_window + generation).for_each(|j| {
-                let count = offsets.iter().fold(
-                    tiles[index_2d!(i + 1, j + 1, GRID_SIZE)] as u8,
-                    |acc, &offset| {
-                        (acc << 1) | tiles[index_2d!(i + offset.0, j + offset.1, GRID_SIZE)] as u8
-                    },
-                );
-                next_tiles[index_2d!(i + 1, j + 1, GRID_SIZE)] = NEIGHBORS[count as usize];
+                let index = index_2d!(i, j, GRID_SIZE);
+                let count = offsets.iter().fold(tiles[index] as u8, |acc, &offset| {
+                    (acc << 1) | tiles[(index as i32 + offset as i32) as usize] as u8
+                });
+                next_tiles[index] = NEIGHBORS[count as usize];
             });
         });
         std::mem::swap(tiles, &mut next_tiles);
