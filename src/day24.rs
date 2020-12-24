@@ -97,16 +97,14 @@ fn game_of_life(tiles: &mut [bool; GRID_SIZE * GRID_SIZE], generations: usize) {
         (GENERATIONS - 1 - generation..GRID_SIZE - GENERATIONS - 1 + generation).for_each(|i| {
             (GENERATIONS - 1 - generation..GRID_SIZE - GENERATIONS - 1 + generation).for_each(
                 |j| {
-                    let current = if tiles[index_2d!(i + 1, j + 1, GRID_SIZE)] {
-                        1
-                    } else {
-                        0
-                    };
-                    let count = offsets.iter().fold(current, |acc, &offset| {
-                        (acc << 1)
-                            | tiles[index_2d!(i + offset.0, j + offset.1, GRID_SIZE)] as usize
-                    });
-                    next_tiles[index_2d!(i + 1, j + 1, GRID_SIZE)] = NEIGHBORS[count];
+                    let count = offsets.iter().fold(
+                        tiles[index_2d!(i + 1, j + 1, GRID_SIZE)] as u8,
+                        |acc, &offset| {
+                            (acc << 1)
+                                | tiles[index_2d!(i + offset.0, j + offset.1, GRID_SIZE)] as u8
+                        },
+                    );
+                    next_tiles[index_2d!(i + 1, j + 1, GRID_SIZE)] = NEIGHBORS[count as usize];
                 },
             );
         });
