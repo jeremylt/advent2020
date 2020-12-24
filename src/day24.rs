@@ -51,26 +51,20 @@ impl std::str::FromStr for Coordinate {
                 east -= 1;
                 i += 1;
             } else if s.as_bytes()[i] == b'n' {
-                if s.as_bytes()[i + 1] == b'e' {
-                    // Northeast
-                    north_east += 1;
-                    i += 2;
-                } else {
+                // Northeast
+                north_east += 1;
+                i += 2;
+                if s.as_bytes()[i - 1] == b'w' {
                     // Northeast + anti-east (northwest)
-                    north_east += 1;
                     east -= 1;
-                    i += 2;
                 }
             } else {
-                if s.as_bytes()[i + 1] == b'e' {
+                // Anti-northeast (southwest)
+                north_east -= 1;
+                i += 2;
+                if s.as_bytes()[i - 1] == b'e' {
                     // Anti-northeast + east (southeast)
-                    north_east -= 1;
                     east += 1;
-                    i += 2;
-                } else {
-                    // Anti-northeast (southwest)
-                    north_east -= 1;
-                    i += 2;
                 }
             }
         }
