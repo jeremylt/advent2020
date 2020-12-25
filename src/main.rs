@@ -28,6 +28,7 @@ mod day21;
 mod day22;
 mod day23;
 mod day24;
+mod day25;
 mod output;
 
 // -----------------------------------------------------------------------------
@@ -93,7 +94,7 @@ pub(crate) mod prelude {
 // -----------------------------------------------------------------------------
 fn main() {
     // Setup
-    const DAYS: usize = 24;
+    const DAYS: usize = 25;
     let runs = [
         day01::run,
         day02::run,
@@ -119,6 +120,7 @@ fn main() {
         day22::run,
         day23::run,
         day24::run,
+        day25::run,
     ];
     let reports = [
         day01::report,
@@ -145,11 +147,13 @@ fn main() {
         day22::report,
         day23::report,
         day24::report,
+        day25::report,
     ];
 
     // Each day
     output::print_header();
     let mut day_results: [Vec<Results>; DAYS] = [
+        vec![],
         vec![],
         vec![],
         vec![],
@@ -412,6 +416,13 @@ mod tests {
         let results = day24::run();
         assert_eq!(results.part_1, 332);
         assert_eq!(results.part_2, 3_900);
+    }
+
+    #[test]
+    fn test_25() {
+        let results = day25::run();
+        assert_eq!(results.part_1, 18_608_573);
+        assert_eq!(results.part_2, 0);
     }
 }
 
