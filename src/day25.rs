@@ -61,10 +61,10 @@ pub(crate) fn run() -> Results {
     // -------------------------------------------------------------------------
     // Part 1
     // -------------------------------------------------------------------------
-    // Discover public key
+    // Discover shared secret
     let start_part_1 = Instant::now();
     let door_private_key = discrete_log(door_public_key);
-    let key_1 = (0..door_private_key - 1).fold(card_public_key, |acc, _| {
+    let secret_1 = (0..door_private_key - 1).fold(card_public_key, |acc, _| {
         ((acc as u64 * card_public_key as u64) % P as u64) as u32
     });
     let time_part_1 = start_part_1.elapsed();
@@ -81,7 +81,7 @@ pub(crate) fn run() -> Results {
     // Return
     // -------------------------------------------------------------------------
     Results::new(
-        key_1 as i64,
+        secret_1 as i64,
         count_2 as i64,
         Timing::new(
             time_setup,
@@ -97,7 +97,7 @@ pub(crate) fn run() -> Results {
 // -----------------------------------------------------------------------------
 pub(crate) fn report(results: &Results) {
     output::print_day(25, "Combo Breaker");
-    output::print_part(1, "🔓 Key", &format!("{}", results.part_1));
+    output::print_part(1, "🔓 Secret", &format!("{}", results.part_1));
     output::print_part(2, "🔓 HAPPY HOLIDAYS", &format!("{}", results.part_2));
     output::print_timing(&results.times);
 }
