@@ -170,10 +170,10 @@
     <span class="comment">// -------------------------------------------------------------------------</span>
     <span class="comment">// Part 1</span>
     <span class="comment">// -------------------------------------------------------------------------</span>
-    <span class="comment">// Discover public key</span>
+    <span class="comment">// Discover shared secret</span>
     <span class="kw">let</span> <span class="ident">start_part_1</span> <span class="op">=</span> <span class="ident">Instant</span>::<span class="ident">now</span>();
     <span class="kw">let</span> <span class="ident">door_private_key</span> <span class="op">=</span> <span class="ident">discrete_log</span>(<span class="ident">door_public_key</span>);
-    <span class="kw">let</span> <span class="ident">key_1</span> <span class="op">=</span> (<span class="number">0</span>..<span class="ident">door_private_key</span> <span class="op">-</span> <span class="number">1</span>).<span class="ident">fold</span>(<span class="ident">card_public_key</span>, <span class="op">|</span><span class="ident">acc</span>, <span class="kw">_</span><span class="op">|</span> {
+    <span class="kw">let</span> <span class="ident">secret_1</span> <span class="op">=</span> (<span class="number">0</span>..<span class="ident">door_private_key</span> <span class="op">-</span> <span class="number">1</span>).<span class="ident">fold</span>(<span class="ident">card_public_key</span>, <span class="op">|</span><span class="ident">acc</span>, <span class="kw">_</span><span class="op">|</span> {
         ((<span class="ident">acc</span> <span class="kw">as</span> <span class="ident">u64</span> <span class="op">*</span> <span class="ident">card_public_key</span> <span class="kw">as</span> <span class="ident">u64</span>) <span class="op">%</span> <span class="ident">P</span> <span class="kw">as</span> <span class="ident">u64</span>) <span class="kw">as</span> <span class="ident">u32</span>
     });
     <span class="kw">let</span> <span class="ident">time_part_1</span> <span class="op">=</span> <span class="ident">start_part_1</span>.<span class="ident">elapsed</span>();
@@ -190,7 +190,7 @@
     <span class="comment">// Return</span>
     <span class="comment">// -------------------------------------------------------------------------</span>
     <span class="ident">Results</span>::<span class="ident">new</span>(
-        <span class="ident">key_1</span> <span class="kw">as</span> <span class="ident">i64</span>,
+        <span class="ident">secret_1</span> <span class="kw">as</span> <span class="ident">i64</span>,
         <span class="ident">count_2</span> <span class="kw">as</span> <span class="ident">i64</span>,
         <span class="ident">Timing</span>::<span class="ident">new</span>(
             <span class="ident">time_setup</span>,
@@ -206,7 +206,7 @@
 <span class="comment">// -----------------------------------------------------------------------------</span>
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">report</span>(<span class="ident">results</span>: <span class="kw-2">&amp;</span><span class="ident">Results</span>) {
     <span class="ident">output</span>::<span class="ident">print_day</span>(<span class="number">25</span>, <span class="string">&quot;Combo Breaker&quot;</span>);
-    <span class="ident">output</span>::<span class="ident">print_part</span>(<span class="number">1</span>, <span class="string">&quot;🔓 Key&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{}&quot;</span>, <span class="ident">results</span>.<span class="ident">part_1</span>));
+    <span class="ident">output</span>::<span class="ident">print_part</span>(<span class="number">1</span>, <span class="string">&quot;🔓 Secret&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{}&quot;</span>, <span class="ident">results</span>.<span class="ident">part_1</span>));
     <span class="ident">output</span>::<span class="ident">print_part</span>(<span class="number">2</span>, <span class="string">&quot;🔓 HAPPY HOLIDAYS&quot;</span>, <span class="kw-2">&amp;</span><span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{}&quot;</span>, <span class="ident">results</span>.<span class="ident">part_2</span>));
     <span class="ident">output</span>::<span class="ident">print_timing</span>(<span class="kw-2">&amp;</span><span class="ident">results</span>.<span class="ident">times</span>);
 }
