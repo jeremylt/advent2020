@@ -27,3 +27,7 @@ Note that this may be quite slow to download and install all of the packages.
 ## Observations
 
 You can read my daily notes [here](https://jeremylt.github.io/advent2020/) in the automatically generated documentation.
+
+## Final Map
+
+![final_ascii](https://raw.githubusercontent.com/jeremylt/advent2020/main/advent-2020.png?raw=true)
