@@ -419,6 +419,17 @@
 <span id="416">416</span>
 <span id="417">417</span>
 <span id="418">418</span>
+<span id="419">419</span>
+<span id="420">420</span>
+<span id="421">421</span>
+<span id="422">422</span>
+<span id="423">423</span>
+<span id="424">424</span>
+<span id="425">425</span>
+<span id="426">426</span>
+<span id="427">427</span>
+<span id="428">428</span>
+<span id="429">429</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="attribute">#[<span class="ident">macro_use</span>]</span>
 <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">lazy_static</span>;
@@ -450,6 +461,7 @@
 <span class="kw">mod</span> <span class="ident">day22</span>;
 <span class="kw">mod</span> <span class="ident">day23</span>;
 <span class="kw">mod</span> <span class="ident">day24</span>;
+<span class="kw">mod</span> <span class="ident">day25</span>;
 <span class="kw">mod</span> <span class="ident">output</span>;
 
 <span class="comment">// -----------------------------------------------------------------------------</span>
@@ -515,7 +527,7 @@
 <span class="comment">// -----------------------------------------------------------------------------</span>
 <span class="kw">fn</span> <span class="ident">main</span>() {
     <span class="comment">// Setup</span>
-    <span class="kw">const</span> <span class="ident">DAYS</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">24</span>;
+    <span class="kw">const</span> <span class="ident">DAYS</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">25</span>;
     <span class="kw">let</span> <span class="ident">runs</span> <span class="op">=</span> [
         <span class="ident">day01</span>::<span class="ident">run</span>,
         <span class="ident">day02</span>::<span class="ident">run</span>,
@@ -541,6 +553,7 @@
         <span class="ident">day22</span>::<span class="ident">run</span>,
         <span class="ident">day23</span>::<span class="ident">run</span>,
         <span class="ident">day24</span>::<span class="ident">run</span>,
+        <span class="ident">day25</span>::<span class="ident">run</span>,
     ];
     <span class="kw">let</span> <span class="ident">reports</span> <span class="op">=</span> [
         <span class="ident">day01</span>::<span class="ident">report</span>,
@@ -567,11 +580,13 @@
         <span class="ident">day22</span>::<span class="ident">report</span>,
         <span class="ident">day23</span>::<span class="ident">report</span>,
         <span class="ident">day24</span>::<span class="ident">report</span>,
+        <span class="ident">day25</span>::<span class="ident">report</span>,
     ];
 
     <span class="comment">// Each day</span>
     <span class="ident">output</span>::<span class="ident">print_header</span>();
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">day_results</span>: [<span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Results</span><span class="op">&gt;</span>; <span class="ident">DAYS</span>] <span class="op">=</span> [
+        <span class="macro">vec</span><span class="macro">!</span>[],
         <span class="macro">vec</span><span class="macro">!</span>[],
         <span class="macro">vec</span><span class="macro">!</span>[],
         <span class="macro">vec</span><span class="macro">!</span>[],
@@ -834,6 +849,13 @@
         <span class="kw">let</span> <span class="ident">results</span> <span class="op">=</span> <span class="ident">day24</span>::<span class="ident">run</span>();
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">results</span>.<span class="ident">part_1</span>, <span class="number">332</span>);
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">results</span>.<span class="ident">part_2</span>, <span class="number">3_900</span>);
+    }
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">test_25</span>() {
+        <span class="kw">let</span> <span class="ident">results</span> <span class="op">=</span> <span class="ident">day25</span>::<span class="ident">run</span>();
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">results</span>.<span class="ident">part_1</span>, <span class="number">18_608_573</span>);
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">results</span>.<span class="ident">part_2</span>, <span class="number">0</span>);
     }
 }
 
