@@ -118,16 +118,12 @@
 <span id="115">115</span>
 <span id="116">116</span>
 <span id="117">117</span>
-<span id="118">118</span>
-<span id="119">119</span>
-<span id="120">120</span>
-<span id="121">121</span>
-<span id="122">122</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Day 25:</span>
 <span class="doccomment">//! For this puzzle I used the baby step, giant step algorithm to compute</span>
 <span class="doccomment">//! the discrete logarithm. With a known base and modulus, I hard-coded the</span>
-<span class="doccomment">//! prerequsite values for the algorithm.</span>
+<span class="doccomment">//! prerequsite values for the algorithm. I use squares to efficiently apply</span>
+<span class="doccomment">//! the secret key to derive the shared secret.</span>
 
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">prelude</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">rustc_hash</span>::<span class="ident">FxHashMap</span>;
@@ -191,25 +187,19 @@
     <span class="kw">let</span> <span class="ident">start_part_1</span> <span class="op">=</span> <span class="ident">Instant</span>::<span class="ident">now</span>();
     <span class="kw">let</span> <span class="ident">door_private_key</span> <span class="op">=</span> <span class="ident">discrete_log</span>(<span class="ident">door_public_key</span>);
     <span class="kw">let</span> <span class="ident">number_digits</span> <span class="op">=</span> (<span class="ident">door_private_key</span> <span class="kw">as</span> <span class="ident">f32</span>).<span class="ident">log2</span>().<span class="ident">ceil</span>() <span class="kw">as</span> <span class="ident">usize</span>;
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">digits</span> <span class="op">=</span> <span class="ident">door_private_key</span> <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">1</span>;
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">square</span> <span class="op">=</span> ((<span class="ident">card_public_key</span> <span class="kw">as</span> <span class="ident">u64</span> <span class="op">*</span> <span class="ident">card_public_key</span> <span class="kw">as</span> <span class="ident">u64</span>) <span class="op">%</span> <span class="ident">P</span> <span class="kw">as</span> <span class="ident">u64</span>) <span class="kw">as</span> <span class="ident">u32</span>;
-    <span class="kw">let</span> <span class="ident">secret_1</span> <span class="op">=</span> (<span class="number">1</span>..<span class="ident">number_digits</span>).<span class="ident">fold</span>(
-        <span class="kw">if</span> <span class="ident">door_private_key</span> <span class="op">%</span> <span class="number">2</span> <span class="op">=</span><span class="op">=</span> <span class="number">1</span> {
-            <span class="ident">card_public_key</span>
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">digits</span> <span class="op">=</span> <span class="ident">door_private_key</span>;
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">square</span> <span class="op">=</span> <span class="ident">card_public_key</span>;
+    <span class="comment">// Multiply result by powers of two found in binary representation of loop size</span>
+    <span class="kw">let</span> <span class="ident">secret_1</span> <span class="op">=</span> (<span class="number">0</span>..<span class="ident">number_digits</span>).<span class="ident">fold</span>(<span class="number">1</span>, <span class="op">|</span><span class="ident">acc</span>, <span class="kw">_</span><span class="op">|</span> {
+        <span class="kw">let</span> <span class="ident">new_result</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">digits</span> <span class="op">%</span> <span class="number">2</span> <span class="op">=</span><span class="op">=</span> <span class="number">1</span> {
+            ((<span class="ident">acc</span> <span class="kw">as</span> <span class="ident">u64</span> <span class="op">*</span> <span class="ident">square</span> <span class="kw">as</span> <span class="ident">u64</span>) <span class="op">%</span> <span class="ident">P</span> <span class="kw">as</span> <span class="ident">u64</span>) <span class="kw">as</span> <span class="ident">u32</span>
         } <span class="kw">else</span> {
-            <span class="number">1</span>
-        },
-        <span class="op">|</span><span class="ident">acc</span>, <span class="kw">_</span><span class="op">|</span> {
-            <span class="kw">let</span> <span class="ident">new_result</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">digits</span> <span class="op">%</span> <span class="number">2</span> <span class="op">=</span><span class="op">=</span> <span class="number">1</span> {
-                ((<span class="ident">acc</span> <span class="kw">as</span> <span class="ident">u64</span> <span class="op">*</span> <span class="ident">square</span> <span class="kw">as</span> <span class="ident">u64</span>) <span class="op">%</span> <span class="ident">P</span> <span class="kw">as</span> <span class="ident">u64</span>) <span class="kw">as</span> <span class="ident">u32</span>
-            } <span class="kw">else</span> {
-                <span class="ident">acc</span>
-            };
-            <span class="ident">square</span> <span class="op">=</span> ((<span class="ident">square</span> <span class="kw">as</span> <span class="ident">u64</span> <span class="op">*</span> <span class="ident">square</span> <span class="kw">as</span> <span class="ident">u64</span>) <span class="op">%</span> <span class="ident">P</span> <span class="kw">as</span> <span class="ident">u64</span>) <span class="kw">as</span> <span class="ident">u32</span>;
-            <span class="ident">digits</span> <span class="op">=</span> <span class="ident">digits</span> <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">1</span>;
-            <span class="ident">new_result</span>
-        },
-    );
+            <span class="ident">acc</span>
+        };
+        <span class="ident">square</span> <span class="op">=</span> ((<span class="ident">square</span> <span class="kw">as</span> <span class="ident">u64</span> <span class="op">*</span> <span class="ident">square</span> <span class="kw">as</span> <span class="ident">u64</span>) <span class="op">%</span> <span class="ident">P</span> <span class="kw">as</span> <span class="ident">u64</span>) <span class="kw">as</span> <span class="ident">u32</span>;
+        <span class="ident">digits</span> <span class="op">=</span> <span class="ident">digits</span> <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">1</span>;
+        <span class="ident">new_result</span>
+    });
     <span class="kw">let</span> <span class="ident">time_part_1</span> <span class="op">=</span> <span class="ident">start_part_1</span>.<span class="ident">elapsed</span>();
 
     <span class="comment">// -------------------------------------------------------------------------</span>
