@@ -11,7 +11,7 @@ use crate::prelude::*;
 
 // Constant
 const DECK_SIZE: usize = 50;
-const MAX_ROUNDS: u32 = 1_000;
+const MAX_ROUNDS: u32 = 2_500; // 50 * 50
 
 // -----------------------------------------------------------------------------
 // Part 1
