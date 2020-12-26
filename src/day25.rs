@@ -64,9 +64,26 @@ pub(crate) fn run() -> Results {
     // Discover shared secret
     let start_part_1 = Instant::now();
     let door_private_key = discrete_log(door_public_key);
-    let secret_1 = (0..door_private_key - 1).fold(card_public_key, |acc, _| {
-        ((acc as u64 * card_public_key as u64) % P as u64) as u32
-    });
+    let number_digits = (door_private_key as f32).log2().ceil() as usize;
+    let mut digits = door_private_key >> 1;
+    let mut square = ((card_public_key as u64 * card_public_key as u64) % P as u64) as u32;
+    let secret_1 = (1..number_digits).fold(
+        if door_private_key % 2 == 1 {
+            card_public_key
+        } else {
+            1
+        },
+        |acc, _| {
+            let new_result = if digits % 2 == 1 {
+                ((acc as u64 * square as u64) % P as u64) as u32
+            } else {
+                acc
+            };
+            square = ((square as u64 * square as u64) % P as u64) as u32;
+            digits = digits >> 1;
+            new_result
+        },
+    );
     let time_part_1 = start_part_1.elapsed();
 
     // -------------------------------------------------------------------------
