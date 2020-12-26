@@ -1,7 +1,8 @@
 //! Day 25:
 //! For this puzzle I used the baby step, giant step algorithm to compute
 //! the discrete logarithm. With a known base and modulus, I hard-coded the
-//! prerequsite values for the algorithm.
+//! prerequsite values for the algorithm. I use squares to efficiently apply
+//! the secret key to derive the shared secret.
 
 use crate::prelude::*;
 use rustc_hash::FxHashMap;
@@ -65,25 +66,19 @@ pub(crate) fn run() -> Results {
     let start_part_1 = Instant::now();
     let door_private_key = discrete_log(door_public_key);
     let number_digits = (door_private_key as f32).log2().ceil() as usize;
-    let mut digits = door_private_key >> 1;
-    let mut square = ((card_public_key as u64 * card_public_key as u64) % P as u64) as u32;
-    let secret_1 = (1..number_digits).fold(
-        if door_private_key % 2 == 1 {
-            card_public_key
+    let mut digits = door_private_key;
+    let mut square = card_public_key;
+    // Multiply result by powers of two found in binary representation of loop size
+    let secret_1 = (0..number_digits).fold(1, |acc, _| {
+        let new_result = if digits % 2 == 1 {
+            ((acc as u64 * square as u64) % P as u64) as u32
         } else {
-            1
-        },
-        |acc, _| {
-            let new_result = if digits % 2 == 1 {
-                ((acc as u64 * square as u64) % P as u64) as u32
-            } else {
-                acc
-            };
-            square = ((square as u64 * square as u64) % P as u64) as u32;
-            digits = digits >> 1;
-            new_result
-        },
-    );
+            acc
+        };
+        square = ((square as u64 * square as u64) % P as u64) as u32;
+        digits = digits >> 1;
+        new_result
+    });
     let time_part_1 = start_part_1.elapsed();
 
     // -------------------------------------------------------------------------
