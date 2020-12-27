@@ -46,11 +46,11 @@ fn part_1(n: usize, starters: &Vec<usize>) -> u32 {
 // -----------------------------------------------------------------------------
 macro_rules! turns_since_said_big {
     ($said_big:expr, $turn:expr, $current:expr) => {
-        ($turn as u32).saturating_sub(
-            $said_big
-                .insert($current, $turn as u32)
-                .unwrap_or_else(|| u32::MAX),
-        )
+        if let Some(previous) = $said_big.insert($current, $turn as u32) {
+            ($turn as u32).saturating_sub(previous)
+        } else {
+            0
+        }
     };
 }
 
