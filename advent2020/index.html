@@ -67,7 +67,9 @@ slow in hitting all required floating mask values. I sum the data as I walk the 
 visiting the instructions in reverse, to avoid repetition in traversing the map.</p>
 </td></tr><tr class='module-item'><td><a class="mod" href="day15/index.html" title='advent2020::day15 mod'>day15</a></td><td class='docblock-short'><p>Day 15:
 Nothing clever here. I am using a vec for the dense portion of the integers and a
-hash map for the sparse portion of the integers.</p>
+hash map for the sparse portion of the integers.
+Update - using a single vector and a bitset to check if the value has been set yet
+is much faster than using the hash map. Hashing is expensive again.</p>
 </td></tr><tr class='module-item'><td><a class="mod" href="day16/index.html" title='advent2020::day16 mod'>day16</a></td><td class='docblock-short'><p>Day 16:
 The range checking is somewhat expensive in this problem. I imagine there is a better
 way to organize the data for finding the rules, but I haven't put much thought into
