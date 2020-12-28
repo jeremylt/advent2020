@@ -1,14 +1,16 @@
 //! Day 15:
 //! Nothing clever here. I am using a vec for the dense portion of the integers and a
 //! hash map for the sparse portion of the integers.
+//! Update - using a single vector and a bitset to check if the value has been set yet
+//! is much faster than using the hash map. Hashing is expensive again.
 
 use crate::prelude::*;
-use rustc_hash::FxHashMap;
+use fixedbitset::FixedBitSet;
 
 // Constants
 const YEAR: usize = 2020;
 const REALLY_BIG: usize = 30_000_000;
-const BREAKPOINT: usize = 3_000_000;
+const BREAKPOINT: usize = 1_000_000;
 
 // -----------------------------------------------------------------------------
 // Part 1
@@ -45,22 +47,25 @@ fn part_1(n: usize, starters: &Vec<usize>) -> u32 {
 // Part 2
 // -----------------------------------------------------------------------------
 macro_rules! turns_since_said_big {
-    ($said_big:expr, $turn:expr, $current:expr) => {
-        ($turn as u32).saturating_sub(
-            $said_big
-                .insert($current, $turn as u32)
-                .unwrap_or_else(|| u32::MAX),
-        )
+    ($said:expr, $said_bitset:expr, $turn:expr, $current:expr) => {
+        if ($said_bitset).contains($current as usize) {
+            ($turn as u32).saturating_sub(std::mem::replace(
+                &mut $said[$current as usize],
+                $turn as u32,
+            ))
+        } else {
+            ($said_bitset).set($current as usize, true);
+            $said[$current as usize] = $turn as u32;
+            0
+        }
     };
 }
 
 #[inline]
 fn part_2(n: usize, starters: &Vec<usize>) -> u32 {
     // Setup
-    let mut said = vec![u32::MAX; BREAKPOINT].into_boxed_slice();
-    let breakpoint = said.len();
-    let mut said_big =
-        FxHashMap::<u32, u32>::with_capacity_and_hasher(BREAKPOINT / 16 * 9, Default::default());
+    let mut said = vec![u32::MAX; REALLY_BIG].into_boxed_slice();
+    let mut said_bitset = FixedBitSet::with_capacity(REALLY_BIG);
     let number_starters = starters.len();
     starters
         .iter()
@@ -71,17 +76,17 @@ fn part_2(n: usize, starters: &Vec<usize>) -> u32 {
         });
 
     // Lower portion of range
-    let lower = (number_starters..breakpoint)
+    let lower = (number_starters..BREAKPOINT)
         .fold(starters[number_starters - 1] as u32, |current, i| {
             turns_since_said!(said, i, current)
         });
 
     // Upper portion of range
-    (breakpoint..n).fold(lower, |current, i| {
-        if (current as usize) < breakpoint {
+    (BREAKPOINT..n).fold(lower, |current, i| {
+        if (current as usize) < BREAKPOINT {
             turns_since_said!(said, i, current)
         } else {
-            turns_since_said_big!(said_big, i, current)
+            turns_since_said_big!(said, said_bitset, i, current)
         }
     })
 }
@@ -92,11 +97,8 @@ fn part_2(n: usize, starters: &Vec<usize>) -> u32 {
 #[inline]
 fn combined(first: usize, second: usize, starters: &Vec<usize>) -> (u32, u32) {
     // Setup
-    let mut said = vec![u32::MAX; BREAKPOINT].into_boxed_slice();
-    let breakpoint = said.len();
-    assert!(first < breakpoint);
-    let mut said_big =
-        FxHashMap::<u32, u32>::with_capacity_and_hasher(BREAKPOINT / 16 * 9, Default::default());
+    let mut said = vec![u32::MAX; REALLY_BIG].into_boxed_slice();
+    let mut said_bitset = FixedBitSet::with_capacity(REALLY_BIG);
     let number_starters = starters.len();
     starters
         .iter()
@@ -113,14 +115,14 @@ fn combined(first: usize, second: usize, starters: &Vec<usize>) -> (u32, u32) {
 
     // Lower portion of second range
     let lower =
-        (first..breakpoint).fold(result_1, |current, i| turns_since_said!(said, i, current));
+        (first..BREAKPOINT).fold(result_1, |current, i| turns_since_said!(said, i, current));
 
     // Upper portion of second range
-    let result_2 = (breakpoint..second).fold(lower, |current, i| {
-        if (current as usize) < breakpoint {
+    let result_2 = (BREAKPOINT..second).fold(lower, |current, i| {
+        if (current as usize) < BREAKPOINT {
             turns_since_said!(said, i, current)
         } else {
-            turns_since_said_big!(said_big, i, current)
+            turns_since_said_big!(said, said_bitset, i, current)
         }
     });
 
